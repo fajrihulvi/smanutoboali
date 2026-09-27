@@ -1,0 +1,17 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| {{ module }} routes
+|--------------------------------------------------------------------------
+|
+| Dimuat oleh {{ module }}ServiceProvider di dalam middleware group 'web'.
+| Kelompokkan per role, contoh:
+|
+| Route::middleware(['auth', 'active.role:teacher'])
+|     ->prefix('guru')->name('teacher.')
+|     ->group(function () { ... });
+|
+*/

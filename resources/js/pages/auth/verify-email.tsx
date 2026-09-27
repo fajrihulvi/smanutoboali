@@ -1,9 +1,9 @@
 // Components
 import { Form, Head } from '@inertiajs/react';
-import TextLink from '@/components/text-link';
-import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
-import AuthLayout from '@/layouts/auth-layout';
+import TextLink from '@/Components/text-link';
+import { Button } from '@/Components/ui/button';
+import { Spinner } from '@/Components/ui/spinner';
+import AuthLayout from '@/Layouts/auth-layout';
 import { logout } from '@/routes';
 import { send } from '@/routes/verification';
 

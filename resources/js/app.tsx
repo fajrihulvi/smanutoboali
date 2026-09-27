@@ -1,20 +1,16 @@
 import { createInertiaApp } from '@inertiajs/react';
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { TooltipProvider } from '@/components/ui/tooltip';
+import { TooltipProvider } from '@/Components/ui/tooltip';
 import '../css/app.css';
 import { initializeTheme } from '@/hooks/use-appearance';
+import { resolvePage } from '@/lib/resolve-page';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'Skoolia';
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
-    resolve: (name) =>
-        resolvePageComponent(
-            `./pages/${name}.tsx`,
-            import.meta.glob('./pages/**/*.tsx'),
-        ),
+    resolve: (name) => resolvePage(name),
     setup({ el, App, props }) {
         const root = createRoot(el);
 

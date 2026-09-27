@@ -6,3 +6,6 @@ parameters:
     paths:
         - app/
     tmpDir: storage/framework/cache/phpstan
+    ignoreErrors:
+        # Trait infrastruktur (HasPublicId, dll.) boleh ada sebelum dipakai model.
+        - identifier: trait.unused

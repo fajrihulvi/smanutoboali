@@ -1,8 +1,8 @@
 import { Head } from '@inertiajs/react';
-import AppearanceTabs from '@/components/appearance-tabs';
-import Heading from '@/components/heading';
-import AppLayout from '@/layouts/app-layout';
-import SettingsLayout from '@/layouts/settings/layout';
+import AppearanceTabs from '@/Components/appearance-tabs';
+import Heading from '@/Components/heading';
+import AppLayout from '@/Layouts/app-layout';
+import SettingsLayout from '@/Layouts/settings/layout';
 import { edit as editAppearance } from '@/routes/appearance';
 import type { BreadcrumbItem } from '@/types';
 

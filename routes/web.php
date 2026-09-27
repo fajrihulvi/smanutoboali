@@ -1,11 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Laravel\Fortify\Features;
 
-Route::inertia('/', 'welcome', [
-    'canRegister' => Features::enabled(Features::registration()),
-])->name('home');
+/*
+|--------------------------------------------------------------------------
+| Web routes lintas modul
+|--------------------------------------------------------------------------
+|
+| Route fitur berada di app/Modules/<Module>/routes/web.php.
+|
+*/
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');

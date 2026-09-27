@@ -12,7 +12,7 @@ import { navigationFor } from '@/config/navigation';
 import { portals } from '@/config/portals';
 
 export function AppSidebar() {
-    const { auth } = usePage().props;
+    const { auth, school } = usePage().props;
     const items = navigationFor(auth.activeRole, auth.permissions);
     const home = items[0]?.href ?? '/';
 
@@ -30,9 +30,14 @@ export function AppSidebar() {
 
             {auth.activeRole && (
                 <SidebarFooter className="px-4 pb-4 group-data-[collapsible=icon]:hidden">
-                    <p className="rounded-xl bg-white/5 px-3 py-2 text-xs text-white/60">
-                        {portals[auth.activeRole].title}
-                    </p>
+                    <div className="rounded-xl bg-white/5 px-3 py-2">
+                        <p className="truncate text-xs font-medium text-white/80">
+                            {school.name}
+                        </p>
+                        <p className="text-[11px] text-white/50">
+                            {portals[auth.activeRole].title}
+                        </p>
+                    </div>
                 </SidebarFooter>
             )}
 

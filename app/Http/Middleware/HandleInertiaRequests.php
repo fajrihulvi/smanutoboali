@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Modules\Auth\Http\Resources\AuthUserResource;
 use App\Modules\Auth\Services\ActiveRoleService;
 use App\Modules\Core\Enums\Role;
+use App\Modules\Core\Services\SchoolProfile;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -49,8 +50,10 @@ class HandleInertiaRequests extends Middleware
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
             ],
-            // Jumlah notifikasi belum dibaca (S07).
-            'notifications' => ['unread' => 0],
+            'notifications' => fn () => [
+                'unread' => $user instanceof User ? $user->unreadNotifications()->count() : 0,
+            ],
+            'school' => fn () => app(SchoolProfile::class)->toArray(),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }

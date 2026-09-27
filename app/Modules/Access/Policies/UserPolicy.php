@@ -12,6 +12,15 @@ class UserPolicy
         return $actor->can(Permission::UserManage->value);
     }
 
+    /**
+     * Data akun: diri sendiri atau pengelola user (dipakai juga FilePolicy
+     * untuk file milik user, mis. foto profil).
+     */
+    public function view(User $actor, User $user): bool
+    {
+        return $actor->is($user) || $actor->can(Permission::UserManage->value);
+    }
+
     public function create(User $actor): bool
     {
         return $actor->can(Permission::UserManage->value);

@@ -4,6 +4,7 @@ namespace App\Modules\Auth\Database\Seeders;
 
 use App\Models\User;
 use App\Modules\Core\Enums\Role;
+use App\Modules\Core\Notifications\WelcomeNotification;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role as RoleModel;
 
@@ -42,6 +43,10 @@ class DemoUserSeeder extends Seeder
             );
 
             $user->syncRoles(array_map(fn (Role $role) => $role->value, $account['roles']));
+
+            if (! $user->notifications()->exists()) {
+                $user->notify(new WelcomeNotification);
+            }
         }
     }
 }

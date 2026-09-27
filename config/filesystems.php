@@ -33,8 +33,17 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
+            'serve' => false,
             'throw' => false,
+            'report' => false,
+        ],
+
+        // File privat Skoolia: hanya disajikan lewat FileController + FilePolicy.
+        'private' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private'),
+            'visibility' => 'private',
+            'throw' => true,
             'report' => false,
         ],
 

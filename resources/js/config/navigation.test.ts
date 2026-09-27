@@ -35,6 +35,7 @@ describe('navigasi per role sesuai matriks permission', () => {
             'Keuangan',
             'PPDB',
             'Laporan',
+            'Audit Log',
             'Chat',
             'Profil',
         ]);
@@ -79,6 +80,7 @@ describe('navigasi per role sesuai matriks permission', () => {
             'User Management',
             'Role & Permission',
             'Laporan',
+            'Audit Log',
             'Pengaturan Sekolah',
             'Profil',
         ]);

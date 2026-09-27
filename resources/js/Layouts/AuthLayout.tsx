@@ -15,7 +15,7 @@ export default function AuthLayout({
     description,
     portal = null,
 }: AuthLayoutProps) {
-    const { name } = usePage().props;
+    const { school } = usePage().props;
     const meta = portal ? portals[portal] : null;
     const PortalIcon = meta?.icon ?? ShieldCheck;
     const heading = meta?.title ?? 'Selamat datang di Skoolia';
@@ -51,7 +51,7 @@ export default function AuthLayout({
                     </div>
 
                     <p className="relative z-10 text-xs text-white/50">
-                        © {new Date().getFullYear()} {name}
+                        © {new Date().getFullYear()} {school.name}
                     </p>
                 </aside>
 

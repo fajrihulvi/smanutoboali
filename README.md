@@ -38,6 +38,10 @@ npm run build
 
 ## Catatan
 
+- Cron di server (satu baris): `* * * * * cd /path/skoolia && php artisan schedule:run >> /dev/null 2>&1`
+  (queue worker berhenti sendiri tiap menit, prune file, bersihkan audit log lama).
+- Tanpa `storage:link`, file publik tetap tersaji lewat route `/media/{public_id}`.
+
 - Versi platform PHP di `composer.json` dikunci ke 8.2.0 agar dependensi cocok dengan hosting.
 - Queue, cache, dan session memakai driver `database`; queue diproses oleh scheduler (`php artisan schedule:run` via cron).
 - Aset frontend dibangun lokal (`npm run build`), server hanya menerima `public/build`.

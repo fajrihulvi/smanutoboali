@@ -16,6 +16,7 @@ import {
     MessagesSquare,
     NotebookPen,
     ScrollText,
+    History,
     Settings,
     Shapes,
     ShieldCheck,
@@ -91,6 +92,12 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             href: '/kepala-sekolah/laporan',
             icon: BarChart3,
             permission: 'report.export',
+        },
+        {
+            label: 'Audit Log',
+            href: '/kepala-sekolah/audit-log',
+            icon: History,
+            permission: 'audit_log.view',
         },
         {
             label: 'Chat',
@@ -275,6 +282,12 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             href: '/operator/reports',
             icon: BarChart3,
             permission: 'report.export',
+        },
+        {
+            label: 'Audit Log',
+            href: '/operator/audit-log',
+            icon: History,
+            permission: 'audit_log.view',
         },
         {
             label: 'Pengaturan Sekolah',

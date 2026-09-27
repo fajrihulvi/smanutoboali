@@ -36,6 +36,10 @@ npm test              # Vitest (logika frontend, mis. filter menu)
 npm run build
 ```
 
+## Deploy
+
+Lihat [docs/DEPLOY_CPANEL.md](docs/DEPLOY_CPANEL.md). Ringkasnya: `scripts/build-release.sh` → unggah zip → ikuti langkah pertama kali.
+
 ## Catatan
 
 - Cron di server (satu baris): `* * * * * cd /path/skoolia && php artisan schedule:run >> /dev/null 2>&1`

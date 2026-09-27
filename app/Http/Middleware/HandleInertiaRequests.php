@@ -6,7 +6,8 @@ use App\Models\User;
 use App\Modules\Auth\Http\Resources\AuthUserResource;
 use App\Modules\Auth\Services\ActiveRoleService;
 use App\Modules\Core\Enums\Role;
-use App\Modules\Core\Services\SchoolProfile;
+use App\Modules\School\Services\SchoolProfile;
+use App\Support\ActivePeriod;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -54,6 +55,7 @@ class HandleInertiaRequests extends Middleware
                 'unread' => $user instanceof User ? $user->unreadNotifications()->count() : 0,
             ],
             'school' => fn () => app(SchoolProfile::class)->toArray(),
+            'activePeriod' => fn () => $user ? app(ActivePeriod::class)->toArray() : null,
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }

@@ -3,23 +3,17 @@
 namespace App\Modules\Core\Enums;
 
 /**
- * Kunci pengaturan sekolah beserta nilai default.
+ * Kunci pengaturan sistem beserta nilai default.
+ * Identitas sekolah ada di tabel `schools` (modul School).
  */
 enum SettingKey: string
 {
-    case SchoolName = 'school_name';
-    case SchoolLogo = 'school_logo';
-    case SchoolAddress = 'school_address';
-    case SchoolPhone = 'school_phone';
-    case SchoolEmail = 'school_email';
     case Timezone = 'timezone';
     case UploadMaxSizeKb = 'upload_max_size_kb';
 
     public function default(): mixed
     {
         return match ($this) {
-            self::SchoolName => 'Sekolah Skoolia',
-            self::SchoolLogo, self::SchoolAddress, self::SchoolPhone, self::SchoolEmail => null,
             self::Timezone => 'Asia/Jakarta',
             self::UploadMaxSizeKb => (int) config('skoolia.upload.default_max_kb', 5120),
         };

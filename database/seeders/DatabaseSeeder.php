@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Modules\Access\Database\Seeders\RolesAndPermissionsSeeder;
 use App\Modules\Auth\Database\Seeders\DemoUserSeeder;
+use App\Modules\School\Database\Seeders\AcademicYearSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -16,6 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RolesAndPermissionsSeeder::class,
             DemoUserSeeder::class,
+            AcademicYearSeeder::class,
         ]);
     }
 }

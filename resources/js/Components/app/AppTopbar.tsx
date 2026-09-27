@@ -1,4 +1,5 @@
 import { Search } from 'lucide-react';
+import { ActivePeriodBadge } from '@/Components/app/ActivePeriodBadge';
 import { NotificationBell } from '@/Components/app/NotificationBell';
 import { RoleSwitcher } from '@/Components/app/RoleSwitcher';
 import { UserMenu } from '@/Components/app/UserMenu';
@@ -32,6 +33,7 @@ export function AppTopbar({
                         className="h-9 w-64 rounded-full border border-slate-200 bg-slate-50 pr-3 pl-9 text-sm placeholder:text-slate-400 disabled:cursor-not-allowed"
                     />
                 </label>
+                <ActivePeriodBadge className="hidden md:inline-flex" />
                 <RoleSwitcher />
                 <NotificationBell />
                 <UserMenu />

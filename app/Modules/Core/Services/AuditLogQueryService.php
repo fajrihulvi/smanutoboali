@@ -21,6 +21,7 @@ class AuditLogQueryService
         'auth' => 'Autentikasi',
         'access' => 'Akses & Pengguna',
         'settings' => 'Pengaturan',
+        'school' => 'Sekolah & Periode',
     ];
 
     /**

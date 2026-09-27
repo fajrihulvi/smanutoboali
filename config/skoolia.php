@@ -14,7 +14,8 @@ return [
     |
     */
 
-    'version' => env('APP_VERSION', is_file(base_path('VERSION')) ? trim((string) file_get_contents(base_path('VERSION'))) : '0.1.0-dev'),
+    // APP_VERSION (bila diisi) > file VERSION dari skrip rilis > penanda dev.
+    'version' => env('APP_VERSION') ?: (is_file(base_path('VERSION')) ? trim((string) file_get_contents(base_path('VERSION'))) : '0.1.0-dev'),
     'force_https' => (bool) env('APP_FORCE_HTTPS', false),
     'health_token' => env('HEALTH_TOKEN'),
     // '*' atau daftar IP dipisah koma (cPanel/Cloudflare di depan aplikasi).

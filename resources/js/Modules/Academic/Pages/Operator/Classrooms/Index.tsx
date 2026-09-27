@@ -11,8 +11,10 @@ import { DataTable } from '@/Components/shared/DataTable';
 import type { DataTableColumn } from '@/Components/shared/DataTable';
 import { EmptyState } from '@/Components/shared/EmptyState';
 import { PageHeader } from '@/Components/shared/PageHeader';
+import { RowActions } from '@/Components/shared/RowActions';
 import { StatusBadge } from '@/Components/shared/StatusBadge';
 import { Button } from '@/Components/ui/button';
+import { useConfirmDelete } from '@/hooks/use-confirm-delete';
 import AppLayout from '@/Layouts/AppLayout';
 import { ClassroomFormDialog } from '@/Modules/Academic/Components/ClassroomFormDialog';
 import { NativeSelect } from '@/Modules/Academic/Components/NativeSelect';
@@ -36,7 +38,9 @@ type Props = {
 
 const BASE = '/operator/master-data/kelas';
 
-const columns: DataTableColumn<ClassroomRow>[] = [
+const classroomColumns = (
+    onDelete: (classroom: ClassroomRow) => void,
+): DataTableColumn<ClassroomRow>[] => [
     {
         id: 'name',
         header: 'Rombel',
@@ -82,12 +86,18 @@ const columns: DataTableColumn<ClassroomRow>[] = [
         header: () => <span className="sr-only">Aksi</span>,
         meta: { className: 'text-right' },
         cell: ({ row }) => (
-            <Button variant="ghost" size="sm" asChild>
-                <Link href={`${BASE}/${row.original.public_id}`}>
-                    Kelola
-                    <ChevronRight />
-                </Link>
-            </Button>
+            <div className="flex items-center justify-end gap-1">
+                <Button variant="ghost" size="sm" asChild>
+                    <Link href={`${BASE}/${row.original.public_id}`}>
+                        Kelola
+                        <ChevronRight />
+                    </Link>
+                </Button>
+                <RowActions
+                    label={`rombel ${row.original.name}`}
+                    onDelete={() => onDelete(row.original)}
+                />
+            </div>
         ),
     },
 ];
@@ -101,6 +111,15 @@ export default function ClassroomsIndex({
     teachers,
 }: Props) {
     const [creating, setCreating] = useState(false);
+    const { confirmDelete, dialog } = useConfirmDelete();
+    const columns = classroomColumns((classroom) =>
+        confirmDelete({
+            url: `${BASE}/${classroom.public_id}`,
+            title: `Hapus rombel ${classroom.name}?`,
+            description:
+                'Rombel yang sudah memiliki riwayat siswa tidak dapat dihapus.',
+        }),
+    );
 
     if (!year) {
         return (
@@ -210,6 +229,7 @@ export default function ClassroomsIndex({
                 grades={grades}
                 teachers={teachers}
             />
+            {dialog}
         </AppLayout>
     );
 }

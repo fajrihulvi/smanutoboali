@@ -14,6 +14,7 @@ import { PageHeader } from '@/Components/shared/PageHeader';
 import { StatusBadge } from '@/Components/shared/StatusBadge';
 import { Button } from '@/Components/ui/button';
 import AppLayout from '@/Layouts/AppLayout';
+import { toastFirstError } from '@/lib/toast-errors';
 import { ClassroomFormDialog } from '@/Modules/Academic/Components/ClassroomFormDialog';
 import { EnrollStudentsDialog } from '@/Modules/Academic/Components/EnrollStudentsDialog';
 import type {
@@ -70,6 +71,7 @@ export default function ClassroomShow({
             {
                 preserveScroll: true,
                 onStart: () => setProcessing(true),
+                onError: (errors) => toastFirstError(errors),
                 onFinish: () => {
                     setProcessing(false);
                     setRemoving(null);
@@ -81,6 +83,7 @@ export default function ClassroomShow({
     const destroy = () => {
         router.delete(`${BASE}/${classroom.public_id}`, {
             onStart: () => setProcessing(true),
+            onError: (errors) => toastFirstError(errors),
             onFinish: () => {
                 setProcessing(false);
                 setDeleting(false);

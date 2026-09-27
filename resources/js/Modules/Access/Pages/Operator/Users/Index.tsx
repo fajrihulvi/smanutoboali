@@ -1,10 +1,11 @@
 import { Head, Link } from '@inertiajs/react';
-import { Pencil, Plus, UserRoundSearch } from 'lucide-react';
+import { Plus, UserRoundSearch } from 'lucide-react';
 import { Can } from '@/Components/shared/Can';
 import { DataTable } from '@/Components/shared/DataTable';
 import type { DataTableColumn } from '@/Components/shared/DataTable';
 import { FilterBar } from '@/Components/shared/FilterBar';
 import { PageHeader } from '@/Components/shared/PageHeader';
+import { RowActions } from '@/Components/shared/RowActions';
 import { StatusBadge } from '@/Components/shared/StatusBadge';
 import { Button } from '@/Components/ui/button';
 import {
@@ -14,6 +15,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/Components/ui/select';
+import { useConfirmDelete } from '@/hooks/use-confirm-delete';
 import { useFilters } from '@/hooks/use-filters';
 import AppLayout from '@/Layouts/AppLayout';
 import { formatRelative } from '@/lib/format';
@@ -27,7 +29,9 @@ type Props = {
     roles: Role[];
 };
 
-const columns: DataTableColumn<UserRow>[] = [
+const userColumns = (
+    onDelete: (user: UserRow) => void,
+): DataTableColumn<UserRow>[] => [
     {
         id: 'name',
         header: 'Nama',
@@ -80,12 +84,15 @@ const columns: DataTableColumn<UserRow>[] = [
         header: () => <span className="sr-only">Aksi</span>,
         meta: { className: 'text-right' },
         cell: ({ row }) => (
-            <Button variant="ghost" size="sm" asChild>
-                <Link href={`/operator/users/${row.original.public_id}/edit`}>
-                    <Pencil />
-                    Ubah
-                </Link>
-            </Button>
+            <RowActions
+                label={row.original.name}
+                editHref={`/operator/users/${row.original.public_id}/edit`}
+                onDelete={
+                    row.original.is_self
+                        ? undefined
+                        : () => onDelete(row.original)
+                }
+            />
         ),
     },
 ];
@@ -94,6 +101,15 @@ export default function UsersIndex({ users, filters, roles }: Props) {
     const { values, set, reset, isActive } = useFilters(
         { search: filters.search, role: filters.role, status: filters.status },
         { only: ['users', 'filters'] },
+    );
+    const { confirmDelete, dialog } = useConfirmDelete();
+    const columns = userColumns((user) =>
+        confirmDelete({
+            url: `/operator/users/${user.public_id}`,
+            title: `Hapus akun ${user.email}?`,
+            description:
+                'Akun dihapus permanen dan tidak bisa login lagi. Akun yang masih tertaut ke data guru/orang tua harus dilepas dulu dari datanya. Untuk memblokir sementara, cukup nonaktifkan akun.',
+        }),
     );
 
     return (
@@ -193,6 +209,7 @@ export default function UsersIndex({ users, filters, roles }: Props) {
                     </FilterBar>
                 }
             />
+            {dialog}
         </AppLayout>
     );
 }

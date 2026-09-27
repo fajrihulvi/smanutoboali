@@ -5,6 +5,7 @@ import { ConfirmDialog } from '@/Components/shared/ConfirmDialog';
 import { EmptyState } from '@/Components/shared/EmptyState';
 import { StatusBadge } from '@/Components/shared/StatusBadge';
 import { Button } from '@/Components/ui/button';
+import { toastFirstError } from '@/lib/toast-errors';
 import { AttachGuardianDialog } from '@/Modules/People/Components/AttachGuardianDialog';
 import type {
     Option,
@@ -28,7 +29,10 @@ export function StudentGuardiansPanel({ student, relationships }: Props) {
         router.post(
             `${base}/${guardian.public_id}/utama`,
             {},
-            { preserveScroll: true },
+            {
+                preserveScroll: true,
+                onError: (errors) => toastFirstError(errors),
+            },
         );
     };
 
@@ -40,6 +44,7 @@ export function StudentGuardiansPanel({ student, relationships }: Props) {
         router.delete(`${base}/${detaching.public_id}`, {
             preserveScroll: true,
             onStart: () => setProcessing(true),
+            onError: (errors) => toastFirstError(errors),
             onFinish: () => {
                 setProcessing(false);
                 setDetaching(null);

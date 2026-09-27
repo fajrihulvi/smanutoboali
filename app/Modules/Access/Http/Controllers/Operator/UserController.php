@@ -5,6 +5,7 @@ namespace App\Modules\Access\Http\Controllers\Operator;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Modules\Access\Actions\CreateUserAction;
+use App\Modules\Access\Actions\DeleteUserAction;
 use App\Modules\Access\Actions\UpdateUserAction;
 use App\Modules\Access\Http\Requests\StoreUserRequest;
 use App\Modules\Access\Http\Requests\UpdateUserRequest;
@@ -71,6 +72,19 @@ class UserController extends Controller
         $updateUser->handle($user, $request->payload(), $actor);
 
         return to_route('operator.users.edit', $user)->with('success', 'Data user berhasil diperbarui.');
+    }
+
+    public function destroy(Request $request, User $user, DeleteUserAction $deleteUser): RedirectResponse
+    {
+        $this->authorize('delete', $user);
+
+        /** @var User $actor */
+        $actor = $request->user();
+
+        $deleteUser->handle($user, $actor);
+
+        return $this->backToIndex('operator.users.index', to_route('operator.users.index'))
+            ->with('success', "User {$user->email} dihapus.");
     }
 
     /**

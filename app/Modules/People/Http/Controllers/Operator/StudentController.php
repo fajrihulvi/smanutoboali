@@ -88,7 +88,7 @@ class StudentController extends Controller
 
         $delete->handle($student);
 
-        return to_route('operator.students.index')->with('success', "Data siswa {$student->name} dihapus.");
+        return $this->backToIndex('operator.students.index', to_route('operator.students.index'))->with('success', "Data siswa {$student->name} dihapus.");
     }
 
     /**

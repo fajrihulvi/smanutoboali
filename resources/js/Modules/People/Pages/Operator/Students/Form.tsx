@@ -17,6 +17,7 @@ import {
 } from '@/Components/ui/select';
 import { Spinner } from '@/Components/ui/spinner';
 import AppLayout from '@/Layouts/AppLayout';
+import { toastFirstError } from '@/lib/toast-errors';
 import { cn } from '@/lib/utils';
 import { FormCard, FormField } from '@/Modules/People/Components/FormField';
 import { PhotoField } from '@/Modules/People/Components/PhotoField';
@@ -132,6 +133,10 @@ export default function StudentForm({
 
         router.delete(`${BASE}/${student.public_id}`, {
             onStart: () => setDeleting(true),
+            onError: (errors) => {
+                setConfirmDelete(false);
+                toastFirstError(errors);
+            },
             onFinish: () => setDeleting(false),
         });
     };

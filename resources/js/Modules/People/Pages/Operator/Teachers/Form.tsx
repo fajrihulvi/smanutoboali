@@ -17,6 +17,7 @@ import {
 } from '@/Components/ui/select';
 import { Spinner } from '@/Components/ui/spinner';
 import AppLayout from '@/Layouts/AppLayout';
+import { toastFirstError } from '@/lib/toast-errors';
 import { AccountSection } from '@/Modules/People/Components/AccountSection';
 import { FormCard, FormField } from '@/Modules/People/Components/FormField';
 import { PhotoField } from '@/Modules/People/Components/PhotoField';
@@ -69,6 +70,10 @@ export default function TeacherForm({ teacher, options }: Props) {
 
         router.delete(`${BASE}/${teacher.public_id}`, {
             onStart: () => setDeleting(true),
+            onError: (errors) => {
+                setConfirmDelete(false);
+                toastFirstError(errors);
+            },
             onFinish: () => setDeleting(false),
         });
     };

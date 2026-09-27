@@ -43,4 +43,12 @@ class UserPolicy
     {
         return $actor->can(Permission::UserManage->value) && ! $actor->is($user);
     }
+
+    /**
+     * Hapus permanen; akun sendiri tidak boleh (penjaga lain di DeleteUserAction).
+     */
+    public function delete(User $actor, User $user): bool
+    {
+        return $actor->can(Permission::UserManage->value) && ! $actor->is($user);
+    }
 }

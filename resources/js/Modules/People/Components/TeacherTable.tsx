@@ -1,11 +1,11 @@
-import { Link } from '@inertiajs/react';
-import { Pencil, UserRoundSearch } from 'lucide-react';
+import { UserRoundSearch } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { DataTable } from '@/Components/shared/DataTable';
 import type { DataTableColumn } from '@/Components/shared/DataTable';
 import { PersonAvatar } from '@/Components/shared/PersonAvatar';
+import { RowActions } from '@/Components/shared/RowActions';
 import { StatusBadge } from '@/Components/shared/StatusBadge';
-import { Button } from '@/Components/ui/button';
+import { useConfirmDelete } from '@/hooks/use-confirm-delete';
 import type { TeacherRow } from '@/Modules/People/types';
 import type { Paginated } from '@/types';
 
@@ -23,6 +23,8 @@ export function TeacherTable({
     filtered,
     readOnly = false,
 }: Props) {
+    const { confirmDelete, dialog } = useConfirmDelete();
+
     const columns: DataTableColumn<TeacherRow>[] = [
         {
             id: 'name',
@@ -101,35 +103,42 @@ export function TeacherTable({
                 header: () => <span className="sr-only">Aksi</span>,
                 meta: { className: 'text-right' },
                 cell: ({ row }) => (
-                    <Button variant="ghost" size="sm" asChild>
-                        <Link
-                            href={`/operator/master-data/guru/${row.original.public_id}/ubah`}
-                        >
-                            <Pencil />
-                            Ubah
-                        </Link>
-                    </Button>
+                    <RowActions
+                        label={row.original.name}
+                        editHref={`/operator/master-data/guru/${row.original.public_id}/ubah`}
+                        onDelete={() =>
+                            confirmDelete({
+                                url: `/operator/master-data/guru/${row.original.public_id}`,
+                                title: `Hapus data ${row.original.name}?`,
+                                description:
+                                    'Data guru dipindahkan ke tempat sampah. Akun login tidak ikut dihapus. Guru yang masih mengajar atau menjadi wali kelas tidak dapat dihapus.',
+                            })
+                        }
+                    />
                 ),
             },
         );
     }
 
     return (
-        <DataTable
-            columns={columns}
-            data={teachers}
-            getRowId={(row) => row.public_id}
-            only={['teachers', 'filters']}
-            toolbar={toolbar}
-            empty={{
-                title: filtered
-                    ? 'Guru tidak ditemukan'
-                    : 'Belum ada data guru',
-                description: filtered
-                    ? 'Coba ubah kata kunci atau filter.'
-                    : 'Tambahkan data guru untuk mulai.',
-                icon: UserRoundSearch,
-            }}
-        />
+        <>
+            <DataTable
+                columns={columns}
+                data={teachers}
+                getRowId={(row) => row.public_id}
+                only={['teachers', 'filters']}
+                toolbar={toolbar}
+                empty={{
+                    title: filtered
+                        ? 'Guru tidak ditemukan'
+                        : 'Belum ada data guru',
+                    description: filtered
+                        ? 'Coba ubah kata kunci atau filter.'
+                        : 'Tambahkan data guru untuk mulai.',
+                    icon: UserRoundSearch,
+                }}
+            />
+            {dialog}
+        </>
     );
 }

@@ -109,6 +109,6 @@ class ClassroomController extends Controller
         $year = $classroom->academicYear()->value('public_id');
         $delete->handle($classroom);
 
-        return to_route('operator.classrooms.index', ['tahun' => $year])->with('success', "Rombel {$classroom->name} dihapus.");
+        return $this->backToIndex('operator.classrooms.index', to_route('operator.classrooms.index', ['tahun' => $year]))->with('success', "Rombel {$classroom->name} dihapus.");
     }
 }

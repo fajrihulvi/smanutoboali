@@ -1,25 +1,27 @@
 import { Link, useForm } from '@inertiajs/react';
-import { ExternalLink, UserPlus } from 'lucide-react';
+import { ExternalLink, Unlink, UserPlus } from 'lucide-react';
 import type { FormEvent } from 'react';
 import { StatusBadge } from '@/Components/shared/StatusBadge';
 import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';
 import { Spinner } from '@/Components/ui/spinner';
+import { useConfirmDelete } from '@/hooks/use-confirm-delete';
 import { FormCard, FormField } from '@/Modules/People/Components/FormField';
 import type { LinkedAccount } from '@/Modules/People/types';
 
 type Props = {
     account: LinkedAccount;
-    /** POST endpoint untuk menautkan akun, mis. /operator/master-data/guru/{id}/akun */
+    /** Endpoint akun: POST menautkan, DELETE melepas. Mis. /operator/master-data/guru/{id}/akun */
     linkUrl: string;
     defaultEmail?: string | null;
 };
 
 /**
- * Status akun login data guru/orang tua; bila belum ada, form membuat/menautkan akun.
+ * Status akun login data guru/orang tua (bisa dilepas); bila belum ada, form membuat/menautkan akun.
  */
 export function AccountSection({ account, linkUrl, defaultEmail }: Props) {
     const form = useForm({ account_email: defaultEmail ?? '' });
+    const { confirmDelete, dialog } = useConfirmDelete();
 
     const submit = (event: FormEvent) => {
         event.preventDefault();
@@ -49,15 +51,35 @@ export function AccountSection({ account, linkUrl, defaultEmail }: Props) {
                             )}
                         </div>
                     </div>
-                    <Button variant="outline" size="sm" asChild>
-                        <Link
-                            href={`/operator/users?search=${encodeURIComponent(account.email)}`}
+                    <div className="flex flex-wrap gap-2">
+                        <Button variant="outline" size="sm" asChild>
+                            <Link
+                                href={`/operator/users?search=${encodeURIComponent(account.email)}`}
+                            >
+                                <ExternalLink />
+                                Kelola akun
+                            </Link>
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-rose-600 hover:bg-rose-50 hover:text-rose-700"
+                            onClick={() =>
+                                confirmDelete({
+                                    url: linkUrl,
+                                    title: `Lepas akun ${account.email}?`,
+                                    description:
+                                        'Akun tidak dihapus: akun tetap ada di User Management dan bisa ditautkan lagi, dinonaktifkan, atau dihapus.',
+                                    confirmLabel: 'Ya, lepas akun',
+                                })
+                            }
                         >
-                            <ExternalLink />
-                            Kelola akun
-                        </Link>
-                    </Button>
+                            <Unlink />
+                            Lepas akun
+                        </Button>
+                    </div>
                 </div>
+                {dialog}
             </FormCard>
         );
     }

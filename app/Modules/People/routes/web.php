@@ -28,6 +28,7 @@ Route::middleware(['auth', 'active.role:operator', 'permission:master_data.manag
         Route::post('guru/{teacher}', [TeacherController::class, 'update'])->name('teachers.update');
         Route::delete('guru/{teacher}', [TeacherController::class, 'destroy'])->name('teachers.destroy');
         Route::post('guru/{teacher}/akun', [TeacherController::class, 'linkAccount'])->name('teachers.account');
+        Route::delete('guru/{teacher}/akun', [TeacherController::class, 'unlinkAccount'])->name('teachers.account.unlink');
 
         Route::get('orang-tua', [GuardianController::class, 'index'])->name('guardians.index');
         Route::get('orang-tua/tambah', [GuardianController::class, 'create'])->name('guardians.create');
@@ -36,6 +37,7 @@ Route::middleware(['auth', 'active.role:operator', 'permission:master_data.manag
         Route::put('orang-tua/{guardian}', [GuardianController::class, 'update'])->name('guardians.update');
         Route::delete('orang-tua/{guardian}', [GuardianController::class, 'destroy'])->name('guardians.destroy');
         Route::post('orang-tua/{guardian}/akun', [GuardianController::class, 'linkAccount'])->name('guardians.account');
+        Route::delete('orang-tua/{guardian}/akun', [GuardianController::class, 'unlinkAccount'])->name('guardians.account.unlink');
         Route::get('orang-tua-cari', [StudentGuardianController::class, 'search'])->name('guardians.search');
 
         Route::get('siswa', [StudentController::class, 'index'])->name('students.index');

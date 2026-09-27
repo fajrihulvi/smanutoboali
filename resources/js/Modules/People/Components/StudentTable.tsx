@@ -1,10 +1,10 @@
-import { Link } from '@inertiajs/react';
-import { Pencil, UserRoundSearch } from 'lucide-react';
+import { UserRoundSearch } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { DataTable } from '@/Components/shared/DataTable';
 import type { DataTableColumn } from '@/Components/shared/DataTable';
 import { PersonAvatar } from '@/Components/shared/PersonAvatar';
-import { Button } from '@/Components/ui/button';
+import { RowActions } from '@/Components/shared/RowActions';
+import { useConfirmDelete } from '@/hooks/use-confirm-delete';
 import { StudentStatusBadge } from '@/Modules/People/Components/StudentStatusBadge';
 import type { StudentRow } from '@/Modules/People/types';
 import type { Paginated } from '@/types';
@@ -23,6 +23,8 @@ export function StudentTable({
     filtered,
     readOnly = false,
 }: Props) {
+    const { confirmDelete, dialog } = useConfirmDelete();
+
     const columns: DataTableColumn<StudentRow>[] = [
         {
             id: 'name',
@@ -89,34 +91,41 @@ export function StudentTable({
             header: () => <span className="sr-only">Aksi</span>,
             meta: { className: 'text-right' },
             cell: ({ row }) => (
-                <Button variant="ghost" size="sm" asChild>
-                    <Link
-                        href={`/operator/master-data/siswa/${row.original.public_id}/ubah`}
-                    >
-                        <Pencil />
-                        Ubah
-                    </Link>
-                </Button>
+                <RowActions
+                    label={row.original.name}
+                    editHref={`/operator/master-data/siswa/${row.original.public_id}/ubah`}
+                    onDelete={() =>
+                        confirmDelete({
+                            url: `/operator/master-data/siswa/${row.original.public_id}`,
+                            title: `Hapus data ${row.original.name}?`,
+                            description:
+                                'Gunakan hapus hanya untuk salah input. Siswa yang pindah/keluar sebaiknya diubah statusnya agar riwayat tetap tersimpan.',
+                        })
+                    }
+                />
             ),
         });
     }
 
     return (
-        <DataTable
-            columns={columns}
-            data={students}
-            getRowId={(row) => row.public_id}
-            only={['students', 'filters']}
-            toolbar={toolbar}
-            empty={{
-                title: filtered
-                    ? 'Siswa tidak ditemukan'
-                    : 'Belum ada data siswa',
-                description: filtered
-                    ? 'Coba ubah kata kunci atau filter.'
-                    : 'Tambahkan siswa satu per satu atau impor dari Excel.',
-                icon: UserRoundSearch,
-            }}
-        />
+        <>
+            <DataTable
+                columns={columns}
+                data={students}
+                getRowId={(row) => row.public_id}
+                only={['students', 'filters']}
+                toolbar={toolbar}
+                empty={{
+                    title: filtered
+                        ? 'Siswa tidak ditemukan'
+                        : 'Belum ada data siswa',
+                    description: filtered
+                        ? 'Coba ubah kata kunci atau filter.'
+                        : 'Tambahkan siswa satu per satu atau impor dari Excel.',
+                    icon: UserRoundSearch,
+                }}
+            />
+            {dialog}
+        </>
     );
 }

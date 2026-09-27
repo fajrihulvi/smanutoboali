@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\People\Actions\CreateGuardianAction;
 use App\Modules\People\Actions\DeletePersonAction;
 use App\Modules\People\Actions\LinkPersonAccountAction;
+use App\Modules\People\Actions\UnlinkPersonAccountAction;
 use App\Modules\People\Actions\UpdateGuardianAction;
 use App\Modules\People\Http\Requests\GuardianRequest;
 use App\Modules\People\Http\Requests\LinkAccountRequest;
@@ -71,7 +72,7 @@ class GuardianController extends Controller
 
         $delete->handle($guardian);
 
-        return to_route('operator.guardians.index')->with('success', "Data orang tua {$guardian->name} dihapus.");
+        return $this->backToIndex('operator.guardians.index', to_route('operator.guardians.index'))->with('success', "Data orang tua {$guardian->name} dihapus.");
     }
 
     public function linkAccount(LinkAccountRequest $request, Guardian $guardian, LinkPersonAccountAction $link): RedirectResponse
@@ -81,6 +82,15 @@ class GuardianController extends Controller
         return back()
             ->with('success', 'Akun login berhasil ditautkan.')
             ->with('credentials', $this->credentials($guardian->refresh(), $password));
+    }
+
+    public function unlinkAccount(Guardian $guardian, UnlinkPersonAccountAction $unlink): RedirectResponse
+    {
+        $this->authorize('update', $guardian);
+
+        $unlink->handle($guardian);
+
+        return back()->with('success', 'Akun login dilepas dari data ini.');
     }
 
     /**

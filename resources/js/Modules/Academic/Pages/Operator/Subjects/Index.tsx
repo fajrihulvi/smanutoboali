@@ -1,13 +1,14 @@
-import { Head, router } from '@inertiajs/react';
-import { BookOpen, Pencil, Plus, Trash2 } from 'lucide-react';
+import { Head } from '@inertiajs/react';
+import { BookOpen, Plus } from 'lucide-react';
 import { useState } from 'react';
-import { ConfirmDialog } from '@/Components/shared/ConfirmDialog';
 import { DataTable } from '@/Components/shared/DataTable';
 import type { DataTableColumn } from '@/Components/shared/DataTable';
 import { FilterBar } from '@/Components/shared/FilterBar';
 import { PageHeader } from '@/Components/shared/PageHeader';
+import { RowActions } from '@/Components/shared/RowActions';
 import { StatusBadge } from '@/Components/shared/StatusBadge';
 import { Button } from '@/Components/ui/button';
+import { useConfirmDelete } from '@/hooks/use-confirm-delete';
 import { useFilters } from '@/hooks/use-filters';
 import AppLayout from '@/Layouts/AppLayout';
 import { SubjectFormDialog } from '@/Modules/Academic/Components/SubjectFormDialog';
@@ -31,8 +32,7 @@ export default function SubjectsIndex({ subjects, filters, groups }: Props) {
         open: boolean;
         subject: SubjectRow | null;
     }>({ open: false, subject: null });
-    const [deleting, setDeleting] = useState<SubjectRow | null>(null);
-    const [processing, setProcessing] = useState(false);
+    const { confirmDelete, dialog: deleteDialog } = useConfirmDelete();
 
     const columns: DataTableColumn<SubjectRow>[] = [
         {
@@ -80,46 +80,23 @@ export default function SubjectsIndex({ subjects, filters, groups }: Props) {
             header: () => <span className="sr-only">Aksi</span>,
             meta: { className: 'text-right' },
             cell: ({ row }) => (
-                <div className="flex justify-end gap-1">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="size-8"
-                        aria-label={`Ubah ${row.original.name}`}
-                        onClick={() =>
-                            setDialog({ open: true, subject: row.original })
-                        }
-                    >
-                        <Pencil className="size-4" />
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="size-8 text-slate-400 hover:bg-rose-50 hover:text-rose-600"
-                        aria-label={`Hapus ${row.original.name}`}
-                        onClick={() => setDeleting(row.original)}
-                    >
-                        <Trash2 className="size-4" />
-                    </Button>
-                </div>
+                <RowActions
+                    label={row.original.name}
+                    onEdit={() =>
+                        setDialog({ open: true, subject: row.original })
+                    }
+                    onDelete={() =>
+                        confirmDelete({
+                            url: `${BASE}/${row.original.public_id}`,
+                            title: `Hapus ${row.original.name}?`,
+                            description:
+                                'Mapel yang masih dipakai di penugasan mengajar tidak dapat dihapus; nonaktifkan saja.',
+                        })
+                    }
+                />
             ),
         },
     ];
-
-    const destroy = () => {
-        if (!deleting) {
-            return;
-        }
-
-        router.delete(`${BASE}/${deleting.public_id}`, {
-            preserveScroll: true,
-            onStart: () => setProcessing(true),
-            onFinish: () => {
-                setProcessing(false);
-                setDeleting(null);
-            },
-        });
-    };
 
     return (
         <AppLayout
@@ -179,16 +156,7 @@ export default function SubjectsIndex({ subjects, filters, groups }: Props) {
                 subject={dialog.subject}
                 groups={groups}
             />
-            <ConfirmDialog
-                open={deleting !== null}
-                onOpenChange={(open) => !open && setDeleting(null)}
-                variant="danger"
-                title={`Hapus ${deleting?.name ?? ''}?`}
-                description="Mapel yang masih dipakai di penugasan mengajar tidak dapat dihapus; nonaktifkan saja."
-                confirmLabel="Ya, hapus"
-                processing={processing}
-                onConfirm={destroy}
-            />
+            {deleteDialog}
         </AppLayout>
     );
 }

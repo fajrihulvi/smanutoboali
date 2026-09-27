@@ -21,6 +21,7 @@ Route::middleware(['auth', 'active.role:operator'])
             Route::post('users', [UserController::class, 'store'])->name('users.store');
             Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
             Route::put('users/{user}', [UserController::class, 'update'])->name('users.update');
+            Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
             Route::put('users/{user}/password', [UserPasswordController::class, 'update'])->name('users.password.update');
             Route::patch('users/{user}/status', [UserStatusController::class, 'update'])->name('users.status.update');
         });

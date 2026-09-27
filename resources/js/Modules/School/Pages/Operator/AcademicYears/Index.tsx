@@ -15,6 +15,7 @@ import { StatusBadge } from '@/Components/shared/StatusBadge';
 import { Button } from '@/Components/ui/button';
 import AppLayout from '@/Layouts/AppLayout';
 import { formatDate } from '@/lib/format';
+import { toastFirstError } from '@/lib/toast-errors';
 import { PeriodFormDialog } from '@/Modules/School/Components/PeriodFormDialog';
 import type { AcademicYearRow, SemesterRow } from '@/Modules/School/types';
 import type { Paginated } from '@/types';
@@ -70,6 +71,8 @@ export default function AcademicYearsIndex({ academicYears }: Props) {
         const options = {
             preserveScroll: true,
             onStart: () => setProcessing(true),
+            onError: (errors: Record<string, string>) =>
+                toastFirstError(errors),
             onFinish: () => {
                 setProcessing(false);
                 setConfirm(null);

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\People\Actions\CreateTeacherAction;
 use App\Modules\People\Actions\DeletePersonAction;
 use App\Modules\People\Actions\LinkPersonAccountAction;
+use App\Modules\People\Actions\UnlinkPersonAccountAction;
 use App\Modules\People\Actions\UpdateTeacherAction;
 use App\Modules\People\Enums\EmploymentStatus;
 use App\Modules\People\Enums\Gender;
@@ -78,7 +79,7 @@ class TeacherController extends Controller
 
         $delete->handle($teacher);
 
-        return to_route('operator.teachers.index')->with('success', "Data guru {$teacher->name} dihapus.");
+        return $this->backToIndex('operator.teachers.index', to_route('operator.teachers.index'))->with('success', "Data guru {$teacher->name} dihapus.");
     }
 
     public function linkAccount(LinkAccountRequest $request, Teacher $teacher, LinkPersonAccountAction $link): RedirectResponse
@@ -88,6 +89,15 @@ class TeacherController extends Controller
         return back()
             ->with('success', 'Akun login berhasil ditautkan.')
             ->with('credentials', $this->credentials($teacher->refresh(), $password));
+    }
+
+    public function unlinkAccount(Teacher $teacher, UnlinkPersonAccountAction $unlink): RedirectResponse
+    {
+        $this->authorize('update', $teacher);
+
+        $unlink->handle($teacher);
+
+        return back()->with('success', 'Akun login dilepas dari data ini.');
     }
 
     /**

@@ -1,11 +1,13 @@
 import { Head, Link } from '@inertiajs/react';
-import { Pencil, Plus, UserRoundSearch } from 'lucide-react';
+import { Plus, UserRoundSearch } from 'lucide-react';
 import { DataTable } from '@/Components/shared/DataTable';
 import type { DataTableColumn } from '@/Components/shared/DataTable';
 import { FilterBar } from '@/Components/shared/FilterBar';
 import { PageHeader } from '@/Components/shared/PageHeader';
+import { RowActions } from '@/Components/shared/RowActions';
 import { StatusBadge } from '@/Components/shared/StatusBadge';
 import { Button } from '@/Components/ui/button';
+import { useConfirmDelete } from '@/hooks/use-confirm-delete';
 import { useFilters } from '@/hooks/use-filters';
 import AppLayout from '@/Layouts/AppLayout';
 import { SelectFilter } from '@/Modules/People/Components/SelectFilter';
@@ -19,7 +21,9 @@ type Props = {
 
 const BASE = '/operator/master-data/orang-tua';
 
-const columns: DataTableColumn<GuardianRow>[] = [
+const guardianColumns = (
+    onDelete: (guardian: GuardianRow) => void,
+): DataTableColumn<GuardianRow>[] => [
     {
         id: 'name',
         header: 'Nama',
@@ -68,12 +72,11 @@ const columns: DataTableColumn<GuardianRow>[] = [
         header: () => <span className="sr-only">Aksi</span>,
         meta: { className: 'text-right' },
         cell: ({ row }) => (
-            <Button variant="ghost" size="sm" asChild>
-                <Link href={`${BASE}/${row.original.public_id}/ubah`}>
-                    <Pencil />
-                    Ubah
-                </Link>
-            </Button>
+            <RowActions
+                label={row.original.name}
+                editHref={`${BASE}/${row.original.public_id}/ubah`}
+                onDelete={() => onDelete(row.original)}
+            />
         ),
     },
 ];
@@ -82,6 +85,15 @@ export default function GuardiansIndex({ guardians, filters }: Props) {
     const { values, set, reset, isActive } = useFilters(
         { search: filters.search, account: filters.account },
         { only: ['guardians', 'filters'] },
+    );
+    const { confirmDelete, dialog } = useConfirmDelete();
+    const columns = guardianColumns((guardian) =>
+        confirmDelete({
+            url: `${BASE}/${guardian.public_id}`,
+            title: `Hapus data ${guardian.name}?`,
+            description:
+                'Data orang tua dipindahkan ke tempat sampah. Akun login tidak ikut dihapus. Orang tua yang masih tertaut ke siswa tidak dapat dihapus.',
+        }),
     );
 
     return (
@@ -141,6 +153,7 @@ export default function GuardiansIndex({ guardians, filters }: Props) {
                     </FilterBar>
                 }
             />
+            {dialog}
         </AppLayout>
     );
 }

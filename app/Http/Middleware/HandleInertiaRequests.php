@@ -50,6 +50,8 @@ class HandleInertiaRequests extends Middleware
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
+                // Kredensial akun baru (password sementara) — tampil sekali.
+                'credentials' => fn () => $request->session()->get('credentials'),
             ],
             'notifications' => fn () => [
                 'unread' => $user instanceof User ? $user->unreadNotifications()->count() : 0,

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Modules\Access\Database\Seeders\RolesAndPermissionsSeeder;
 use App\Modules\Auth\Database\Seeders\DemoUserSeeder;
+use App\Modules\People\Database\Seeders\PeopleDemoSeeder;
 use App\Modules\School\Database\Seeders\AcademicYearSeeder;
 use Illuminate\Database\Seeder;
 
@@ -18,6 +19,7 @@ class DatabaseSeeder extends Seeder
             RolesAndPermissionsSeeder::class,
             DemoUserSeeder::class,
             AcademicYearSeeder::class,
+            PeopleDemoSeeder::class,
         ]);
     }
 }

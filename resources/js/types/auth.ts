@@ -28,6 +28,8 @@ export type Auth = {
 export type Flash = {
     success: string | null;
     error: string | null;
+    /** Kredensial akun baru (password sementara) — tampil sekali. */
+    credentials: { email: string; password: string } | null;
 };
 
 export type TwoFactorSetupData = {

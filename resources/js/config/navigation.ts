@@ -176,7 +176,7 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             icon: MessagesSquare,
             permission: 'chat.use',
         },
-        { label: 'Profil', href: '/settings/profile', icon: UserRound },
+        { label: 'Profil', href: '/guru/profil', icon: UserRound },
     ],
     operator: [
         {
@@ -337,7 +337,7 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             permission: 'child_condition.submit',
         },
         { label: 'Pengumuman', href: '/orang-tua/pengumuman', icon: Megaphone },
-        { label: 'Profil', href: '/settings/profile', icon: UserRound },
+        { label: 'Profil', href: '/orang-tua/profil', icon: UserRound },
     ],
     applicant: [
         {
@@ -354,7 +354,7 @@ export const guardianBottomNav: string[] = [
     '/orang-tua/anak',
     '/orang-tua/chat',
     '/orang-tua/keuangan',
-    '/settings/profile',
+    '/orang-tua/profil',
 ];
 
 /**

@@ -1,95 +1,75 @@
 <?php
 
-namespace Tests\Feature\Auth;
-
 use App\Models\User;
-use Illuminate\Auth\Notifications\ResetPassword;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Modules\Auth\Notifications\ResetPasswordNotification;
+use App\Modules\Core\Enums\Role;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
-use Laravel\Fortify\Features;
-use Tests\TestCase;
+use Inertia\Testing\AssertableInertia as Assert;
 
-class PasswordResetTest extends TestCase
-{
-    use RefreshDatabase;
+it('menampilkan halaman lupa password', function () {
+    $this->get('/forgot-password')
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page->component('Auth::ForgotPassword'));
+});
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+it('mengirim email reset berbahasa Indonesia', function () {
+    Notification::fake();
+    $user = User::factory()->withRole(Role::Teacher)->create();
 
-        $this->skipUnlessFortifyFeature(Features::resetPasswords());
-    }
+    $this->post('/forgot-password', ['email' => $user->email])
+        ->assertSessionHas('success');
 
-    public function test_reset_password_link_screen_can_be_rendered()
-    {
-        $response = $this->get(route('password.request'));
+    Notification::assertSentTo($user, ResetPasswordNotification::class, function (ResetPasswordNotification $notification) use ($user) {
+        $mail = $notification->toMail($user);
 
-        $response->assertOk();
-    }
+        return $mail->subject === 'Atur Ulang Password Akun Skoolia'
+            && str_contains((string) $mail->actionUrl, '/reset-password/');
+    });
+});
 
-    public function test_reset_password_link_can_be_requested()
-    {
-        Notification::fake();
+it('memberi respons sama untuk email yang tidak terdaftar', function () {
+    Notification::fake();
 
-        $user = User::factory()->create();
+    $this->post('/forgot-password', ['email' => 'tidak-ada@skoolia.test'])
+        ->assertSessionHasNoErrors()
+        ->assertSessionHas('success');
 
-        $this->post(route('password.email'), ['email' => $user->email]);
+    Notification::assertNothingSent();
+});
 
-        Notification::assertSentTo($user, ResetPassword::class);
-    }
+it('mengatur ulang password dengan token yang valid', function () {
+    Notification::fake();
+    $user = User::factory()->withRole(Role::Teacher)->create();
 
-    public function test_reset_password_screen_can_be_rendered()
-    {
-        Notification::fake();
+    $this->post('/forgot-password', ['email' => $user->email]);
 
-        $user = User::factory()->create();
+    Notification::assertSentTo($user, ResetPasswordNotification::class, function (ResetPasswordNotification $notification) use ($user) {
+        $this->get("/reset-password/{$notification->token}?email={$user->email}")
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Auth::ResetPassword')
+                ->where('email', $user->email));
 
-        $this->post(route('password.email'), ['email' => $user->email]);
-
-        Notification::assertSentTo($user, ResetPassword::class, function ($notification) {
-            $response = $this->get(route('password.reset', $notification->token));
-
-            $response->assertOk();
-
-            return true;
-        });
-    }
-
-    public function test_password_can_be_reset_with_valid_token()
-    {
-        Notification::fake();
-
-        $user = User::factory()->create();
-
-        $this->post(route('password.email'), ['email' => $user->email]);
-
-        Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
-            $response = $this->post(route('password.update'), [
-                'token' => $notification->token,
-                'email' => $user->email,
-                'password' => 'password',
-                'password_confirmation' => 'password',
-            ]);
-
-            $response
-                ->assertSessionHasNoErrors()
-                ->assertRedirect(route('login'));
-
-            return true;
-        });
-    }
-
-    public function test_password_cannot_be_reset_with_invalid_token(): void
-    {
-        $user = User::factory()->create();
-
-        $response = $this->post(route('password.update'), [
-            'token' => 'invalid-token',
+        $this->post('/reset-password', [
+            'token' => $notification->token,
             'email' => $user->email,
-            'password' => 'newpassword123',
-            'password_confirmation' => 'newpassword123',
-        ]);
+            'password' => 'password-baru-123',
+            'password_confirmation' => 'password-baru-123',
+        ])->assertSessionHasNoErrors()->assertRedirect('/login');
 
-        $response->assertSessionHasErrors('email');
-    }
-}
+        return true;
+    });
+
+    expect(Hash::check('password-baru-123', $user->fresh()->password))->toBeTrue();
+});
+
+it('menolak token reset yang salah', function () {
+    $user = User::factory()->create();
+
+    $this->post('/reset-password', [
+        'token' => 'token-palsu',
+        'email' => $user->email,
+        'password' => 'password-baru-123',
+        'password_confirmation' => 'password-baru-123',
+    ])->assertSessionHasErrors('email');
+});

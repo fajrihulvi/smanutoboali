@@ -2,6 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
+use App\Modules\Auth\Http\Resources\AuthUserResource;
+use App\Modules\Auth\Services\ActiveRoleService;
+use App\Modules\Core\Enums\Role;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -40,19 +44,7 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
-            'auth' => [
-                'user' => $user ? [
-                    'public_id' => (string) ($user->getAttribute('public_id') ?? ''),
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'avatar' => null,
-                    'email_verified_at' => $user->email_verified_at?->toIso8601String(),
-                ] : null,
-                // Diisi dari spatie/permission + session active_role di S04.
-                'roles' => [],
-                'activeRole' => null,
-                'permissions' => [],
-            ],
+            'auth' => fn () => $this->authProps($request, $user instanceof User ? $user : null),
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
@@ -60,6 +52,26 @@ class HandleInertiaRequests extends Middleware
             // Jumlah notifikasi belum dibaca (S07).
             'notifications' => ['unread' => 0],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+        ];
+    }
+
+    /**
+     * @return array{user: array<string, mixed>|null, roles: list<array{code: string, label: string, prefix: string}>, activeRole: string|null, permissions: list<string>}
+     */
+    private function authProps(Request $request, ?User $user): array
+    {
+        if (! $user) {
+            return ['user' => null, 'roles' => [], 'activeRole' => null, 'permissions' => []];
+        }
+
+        $service = app(ActiveRoleService::class);
+        $active = $service->resolve($request->session(), $user);
+
+        return [
+            'user' => (new AuthUserResource($user))->resolve($request),
+            'roles' => array_map(fn (Role $role) => $role->toArray(), $user->coreRoles()),
+            'activeRole' => $active?->value,
+            'permissions' => $service->permissionsFor($user, $active),
         ];
     }
 }

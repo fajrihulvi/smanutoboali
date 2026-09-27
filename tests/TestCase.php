@@ -2,8 +2,10 @@
 
 namespace Tests;
 
+use App\Models\User;
+use App\Modules\Auth\Services\ActiveRoleService;
+use App\Modules\Core\Enums\Role;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Laravel\Fortify\Features;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -14,10 +16,15 @@ abstract class TestCase extends BaseTestCase
         $this->withoutVite();
     }
 
-    protected function skipUnlessFortifyFeature(string $feature, ?string $message = null): void
+    /**
+     * Login sebagai user dengan role tertentu (role aktif ikut diset di session).
+     */
+    protected function actingAsRole(Role $role, ?User $user = null): User
     {
-        if (! Features::enabled($feature)) {
-            $this->markTestSkipped($message ?? "Fortify feature [{$feature}] is not enabled.");
-        }
+        $user ??= User::factory()->withRole($role)->create();
+
+        $this->actingAs($user)->withSession([ActiveRoleService::SESSION_KEY => $role->value]);
+
+        return $user;
     }
 }

@@ -1,76 +1,50 @@
 import { Link } from '@inertiajs/react';
+import { KeyRound, UserRound } from 'lucide-react';
 import type { PropsWithChildren } from 'react';
-import Heading from '@/Components/heading';
-import { Button } from '@/Components/ui/button';
-import { Separator } from '@/Components/ui/separator';
+import { PageHeader } from '@/Components/shared/PageHeader';
 import { useCurrentUrl } from '@/hooks/use-current-url';
-import { cn, toUrl } from '@/lib/utils';
-import { edit } from '@/routes/profile';
-import { edit as editSecurity } from '@/routes/security';
-import type { NavItem } from '@/types';
+import { cn } from '@/lib/utils';
 
-const sidebarNavItems: NavItem[] = [
-    {
-        title: 'Profil',
-        href: edit(),
-        icon: null,
-    },
-    {
-        title: 'Keamanan',
-        href: editSecurity(),
-        icon: null,
-    },
+const items = [
+    { title: 'Profil', href: '/settings/profile', icon: UserRound },
+    { title: 'Keamanan', href: '/settings/security', icon: KeyRound },
 ];
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
     const { isCurrentOrParentUrl } = useCurrentUrl();
 
-    // When server-side rendering, we only render the layout on the client...
-    if (typeof window === 'undefined') {
-        return null;
-    }
-
     return (
-        <div className="px-4 py-6">
-            <Heading
+        <div className="space-y-6">
+            <PageHeader
                 title="Pengaturan Akun"
-                description="Kelola profil dan keamanan akun Anda"
+                description="Kelola profil dan keamanan akun Anda."
             />
 
-            <div className="flex flex-col lg:flex-row lg:space-x-12">
-                <aside className="w-full max-w-xl lg:w-48">
-                    <nav
-                        className="flex flex-col space-y-1 space-x-0"
-                        aria-label="Settings"
-                    >
-                        {sidebarNavItems.map((item, index) => (
-                            <Button
-                                key={`${toUrl(item.href)}-${index}`}
-                                size="sm"
-                                variant="ghost"
-                                asChild
-                                className={cn('w-full justify-start', {
-                                    'bg-muted': isCurrentOrParentUrl(item.href),
-                                })}
-                            >
-                                <Link href={item.href}>
-                                    {item.icon && (
-                                        <item.icon className="h-4 w-4" />
-                                    )}
-                                    {item.title}
-                                </Link>
-                            </Button>
-                        ))}
-                    </nav>
-                </aside>
+            <div className="flex flex-col gap-6 lg:flex-row">
+                <nav
+                    className="flex gap-1 lg:w-52 lg:flex-col"
+                    aria-label="Pengaturan akun"
+                >
+                    {items.map((item) => (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={cn(
+                                'flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-colors duration-150',
+                                isCurrentOrParentUrl(item.href)
+                                    ? 'bg-brand-50 text-brand-700'
+                                    : 'text-slate-600 hover:bg-white hover:text-slate-900',
+                            )}
+                        >
+                            <item.icon className="size-4" />
+                            {item.title}
+                        </Link>
+                    ))}
+                </nav>
 
-                <Separator className="my-6 lg:hidden" />
-
-                <div className="flex-1 md:max-w-2xl">
-                    <section className="max-w-xl space-y-12">
-                        {children}
-                    </section>
-                </div>
+                <section className="flex-1 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:max-w-2xl">
+                    {children}
+                </section>
             </div>
         </div>
     );

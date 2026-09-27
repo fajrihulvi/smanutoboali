@@ -1,10 +1,13 @@
 <?php
 
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Modules\Auth\Http\Middleware\EnsureActiveRole;
+use App\Modules\Auth\Services\ActiveRoleService;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -19,6 +22,22 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
         ]);
+
+        $middleware->alias([
+            'active.role' => EnsureActiveRole::class,
+        ]);
+
+        $middleware->redirectGuestsTo(fn () => route('login'));
+
+        // User yang sudah login dan membuka halaman tamu (login, lupa password)
+        // diarahkan ke dashboard role aktifnya.
+        $middleware->redirectUsersTo(function (Request $request) {
+            $service = app(ActiveRoleService::class);
+            $user = $request->user();
+            $role = $user ? $service->resolve($request->session(), $user) : null;
+
+            return $role ? $service->homeUrl($role) : '/';
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

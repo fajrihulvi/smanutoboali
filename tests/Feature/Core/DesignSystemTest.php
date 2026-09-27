@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use App\Modules\Core\Enums\Role;
 use Inertia\Testing\AssertableInertia as Assert;
 
 it('tidak mendaftarkan style guide di luar lingkungan lokal', function () {
@@ -18,10 +18,9 @@ it('membagikan shared props dasar ke Inertia', function () {
 });
 
 it('tidak membocorkan id numerik user di shared props', function () {
-    $user = User::factory()->create();
+    $user = $this->actingAsRole(Role::Teacher);
 
-    $this->actingAs($user)
-        ->get(route('profile.edit'))
+    $this->get(route('profile.edit'))
         ->assertInertia(fn (Assert $page) => $page
             ->where('auth.user.email', $user->email)
             ->missing('auth.user.id')
@@ -29,10 +28,9 @@ it('tidak membocorkan id numerik user di shared props', function () {
 });
 
 it('meneruskan flash message sukses ke props', function () {
-    $user = User::factory()->create();
+    $this->actingAsRole(Role::Teacher);
 
-    $this->actingAs($user)
-        ->withSession(['success' => 'Data berhasil disimpan.'])
+    $this->withSession(['success' => 'Data berhasil disimpan.'])
         ->get(route('profile.edit'))
         ->assertInertia(fn (Assert $page) => $page->where('flash.success', 'Data berhasil disimpan.'));
 });

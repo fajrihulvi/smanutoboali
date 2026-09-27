@@ -22,7 +22,8 @@ composer dev          # server + queue + log + vite
 ```
 
 Buka http://localhost:8000/login. Akun demo (password `password`):
-`kepsek@skoolia.test`, `guru@skoolia.test`, `operator@skoolia.test`, `ortu@skoolia.test`.
+`kepsek@skoolia.test`, `guru@skoolia.test`, `operator@skoolia.test`, `ortu@skoolia.test`,
+serta `guru.ortu@skoolia.test` (guru sekaligus orang tua, untuk mencoba role switcher).
 
 ## Pemeriksaan kualitas
 

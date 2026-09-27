@@ -2,55 +2,89 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Modules\Auth\Notifications\ResetPasswordNotification;
+use App\Modules\Core\Enums\Role;
+use App\Support\Concerns\HasPublicId;
+use Carbon\CarbonImmutable;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Fortify\TwoFactorAuthenticatable;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
- * @property \Carbon\CarbonImmutable|null $email_verified_at
+ * @property int $id
+ * @property string $public_id
+ * @property string $name
+ * @property string $email
+ * @property bool $is_active
+ * @property CarbonImmutable|null $email_verified_at
+ * @property CarbonImmutable|null $last_login_at
  */
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, TwoFactorAuthenticatable;
+    use HasFactory, HasPublicId, HasRoles, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
-     *
      * @var list<string>
      */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'is_active',
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
      * @var list<string>
      */
     protected $hidden = [
+        'id',
         'password',
-        'two_factor_secret',
-        'two_factor_recovery_codes',
         'remember_token',
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
      * @return array<string, string>
      */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
             'password' => 'hashed',
-            'two_factor_confirmed_at' => 'datetime',
+            'is_active' => 'boolean',
         ];
+    }
+
+    public function hasRoleEnum(Role $role): bool
+    {
+        return $this->hasRole($role->value);
+    }
+
+    /**
+     * Role inti yang dimiliki user, urut sesuai deklarasi enum.
+     *
+     * @return list<Role>
+     */
+    public function coreRoles(): array
+    {
+        $names = $this->getRoleNames();
+
+        return array_values(array_filter(
+            Role::cases(),
+            fn (Role $role) => $names->contains($role->value),
+        ));
+    }
+
+    /**
+     * Kirim email reset password berbahasa Indonesia.
+     *
+     * @param  string  $token
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 }

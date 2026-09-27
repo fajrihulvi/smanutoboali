@@ -4,8 +4,8 @@ namespace App\Modules\Core\Services;
 
 use App\Modules\Core\Enums\SettingKey;
 use App\Modules\Core\Models\Setting;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Cache;
+use Throwable;
 
 /**
  * Pengaturan sekolah (key–value) dengan cache. Semua modul membaca lewat sini.
@@ -37,8 +37,9 @@ class SettingsService
         try {
             /** @var array<string, mixed> $stored */
             $stored = Cache::rememberForever(self::CACHE_KEY, fn () => Setting::query()->pluck('value', 'key')->all());
-        } catch (QueryException) {
-            // Tabel belum dimigrasi (instalasi awal): pakai default, jangan di-cache.
+        } catch (Throwable) {
+            // Database/tabel belum siap (instalasi awal, build rilis tanpa .env):
+            // pakai default, jangan di-cache.
             return $defaults;
         }
 

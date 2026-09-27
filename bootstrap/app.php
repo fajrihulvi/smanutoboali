@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleMiddleware;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
+use Symfony\Component\HttpFoundation\Response;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -46,5 +47,13 @@ return Application::configure(basePath: dirname(__DIR__))
         });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // Token CSRF kedaluwarsa pada kunjungan Inertia: kembali ke halaman
+        // sebelumnya dengan toast, bukan modal halaman error.
+        $exceptions->respond(function (Response $response, Throwable $e, Request $request) {
+            if ($response->getStatusCode() === 419 && $request->header('X-Inertia')) {
+                return back()->with('error', 'Sesi Anda telah berakhir. Silakan coba lagi.');
+            }
+
+            return $response;
+        });
     })->create();

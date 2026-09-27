@@ -27,6 +27,15 @@ class DemoUserSeeder extends Seeder
 
     public function run(): void
     {
+        if (app()->isProduction()) {
+            // Kosong bila seeder dipanggil langsung (bukan lewat artisan db:seed).
+            if (isset($this->command)) { // @phpstan-ignore isset.property
+                $this->command->warn('DemoUserSeeder dilewati: APP_ENV=production. Gunakan php artisan skoolia:make-operator.');
+            }
+
+            return;
+        }
+
         foreach (Role::cases() as $role) {
             RoleModel::findOrCreate($role->value, 'web');
         }

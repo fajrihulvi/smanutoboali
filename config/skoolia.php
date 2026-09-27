@@ -4,6 +4,24 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Rilis & operasional
+    |--------------------------------------------------------------------------
+    |
+    | version      : ditampilkan di /health (diisi skrip rilis).
+    | force_https  : paksa URL https (hosting di balik proxy/SSL terminator).
+    | health_token : token untuk GET /health; kosong = endpoint dimatikan (404).
+    | trusted_proxies : proxy yang dipercaya agar https & IP klien terdeteksi.
+    |
+    */
+
+    'version' => env('APP_VERSION', is_file(base_path('VERSION')) ? trim((string) file_get_contents(base_path('VERSION'))) : '0.1.0-dev'),
+    'force_https' => (bool) env('APP_FORCE_HTTPS', false),
+    'health_token' => env('HEALTH_TOKEN'),
+    // '*' atau daftar IP dipisah koma (cPanel/Cloudflare di depan aplikasi).
+    'trusted_proxies' => env('TRUSTED_PROXIES'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Upload
     |--------------------------------------------------------------------------
     |

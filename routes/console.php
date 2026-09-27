@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Core\Models\File;
+use App\Modules\Core\Services\HealthCheckService;
 use Illuminate\Support\Facades\Schedule;
 
 /*
@@ -14,6 +15,11 @@ use Illuminate\Support\Facades\Schedule;
 | Tidak ada worker permanen: queue diproses tiap menit lalu berhenti saat kosong.
 |
 */
+
+// Detak scheduler untuk GET /health (cron benar-benar berjalan).
+Schedule::call(fn () => HealthCheckService::markSchedulerRan())
+    ->everyMinute()
+    ->name('scheduler-heartbeat');
 
 Schedule::command('queue:work --stop-when-empty --max-time=50 --tries=3')
     ->everyMinute()

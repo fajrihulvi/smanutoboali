@@ -3,6 +3,7 @@
 namespace App\Modules\Access;
 
 use App\Models\User;
+use App\Modules\Access\Console\MakeOperatorCommand;
 use App\Modules\Access\Policies\RolePolicy;
 use App\Modules\Access\Policies\UserPolicy;
 use App\Providers\ModuleServiceProvider;
@@ -22,4 +23,13 @@ class AccessServiceProvider extends ModuleServiceProvider
      * @var array<class-string, list<class-string>>
      */
     protected array $listen = [];
+
+    public function boot(): void
+    {
+        parent::boot();
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([MakeOperatorCommand::class]);
+        }
+    }
 }

@@ -1,11 +1,18 @@
 <?php
 
+use App\Http\Middleware\HandleInertiaRequests;
 use App\Modules\Core\Http\Controllers\AuditLogController;
 use App\Modules\Core\Http\Controllers\FileController;
+use App\Modules\Core\Http\Controllers\HealthController;
 use App\Modules\Core\Http\Controllers\NotificationController;
 use App\Modules\Core\Http\Controllers\Operator\SettingsController;
 use App\Modules\Core\Http\Controllers\StyleGuideController;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +25,19 @@ use Illuminate\Support\Facades\Route;
 
 // Sementara: halaman sambutan. Diganti website publik Blade di S29.
 Route::inertia('/', 'Core::Welcome')->name('home');
+
+// Status operasional berbasis token — tanpa sesi agar ping monitor tidak membuat baris sessions.
+Route::get('health', HealthController::class)
+    ->withoutMiddleware([
+        EncryptCookies::class,
+        AddQueuedCookiesToResponse::class,
+        StartSession::class,
+        ShareErrorsFromSession::class,
+        ValidateCsrfToken::class,
+        HandleInertiaRequests::class,
+    ])
+    ->middleware('throttle:30,1')
+    ->name('health');
 
 // File: privat lewat otorisasi, publik lewat fallback bila storage:link tidak ada.
 Route::get('files/{file}', [FileController::class, 'show'])

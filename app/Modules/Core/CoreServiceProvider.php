@@ -6,8 +6,11 @@ use App\Modules\Core\Contracts\StudentOwnershipGate;
 use App\Modules\Core\Models\File;
 use App\Modules\Core\Policies\FilePolicy;
 use App\Modules\Core\Services\DefaultStudentOwnershipGate;
+use App\Modules\Core\Services\HealthCheckService;
 use App\Modules\Core\Services\SettingsService;
 use App\Providers\ModuleServiceProvider;
+use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\Models\Activity;
 
@@ -40,6 +43,8 @@ class CoreServiceProvider extends ModuleServiceProvider
         parent::boot();
 
         $this->recordRequestContextOnActivities();
+
+        Event::listen(JobProcessed::class, fn () => HealthCheckService::markQueueProcessed());
 
         $this->app->make(SettingsService::class)->applyRuntimeConfig();
     }

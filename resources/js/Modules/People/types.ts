@@ -25,3 +25,43 @@ export type GuardianRow = {
     nik_masked: string | null;
     account?: LinkedAccount;
 };
+
+export type StudentGuardian = {
+    public_id: string;
+    name: string;
+    relationship: Option;
+    is_primary: boolean;
+    phone: string | null;
+    email: string | null;
+    has_account: boolean;
+};
+
+export type StudentRow = {
+    public_id: string;
+    nis: string;
+    nisn: string | null;
+    name: string;
+    gender: Option;
+    birth_place: string | null;
+    birth_date: string | null;
+    religion: Option | null;
+    address: string | null;
+    status: Option;
+    entry_date: string | null;
+    photo_url?: string | null;
+    guardians?: StudentGuardian[];
+};
+
+export type StudentImportRow = {
+    public_id: string;
+    original_name: string;
+    status: Option;
+    finished: boolean;
+    total_rows: number;
+    success_rows: number;
+    failed_rows: number;
+    errors: { row: number; messages: string[] }[];
+    failure_message: string | null;
+    created_by?: string | null;
+    created_at: string;
+};

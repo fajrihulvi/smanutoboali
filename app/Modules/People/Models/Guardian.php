@@ -6,9 +6,11 @@ use App\Models\User;
 use App\Modules\People\Database\Factories\GuardianFactory;
 use App\Support\Concerns\HasPublicId;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -22,6 +24,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $occupation
  * @property string|null $address
  * @property-read User|null $user
+ * @property-read Collection<int, Student> $students
  */
 class Guardian extends Model
 {
@@ -46,6 +49,16 @@ class Guardian extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @return BelongsToMany<Student, $this>
+     */
+    public function students(): BelongsToMany
+    {
+        return $this->belongsToMany(Student::class)
+            ->withPivot(['relationship', 'is_primary'])
+            ->withTimestamps();
     }
 
     /**

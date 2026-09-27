@@ -6,3 +6,7 @@ parameters:
     paths:
         - app/
     tmpDir: storage/framework/cache/phpstan
+    ignoreErrors:
+        # Trait infrastruktur (mis. ChecksStudentOwnership) boleh ada sebelum dipakai Policy modul.
+        - identifier: trait.unused
+          reportUnmatched: false

@@ -1,0 +1,50 @@
+{
+    "principal": [
+        "audit_log.view",
+        "chat.use",
+        "finance.view",
+        "ppdb.decide",
+        "report.export",
+        "report_card.approve",
+        "student.view"
+    ],
+    "teacher": [
+        "academic.manage",
+        "activity.manage",
+        "attendance.manage",
+        "chat.use",
+        "child_condition.respond",
+        "grade.manage",
+        "portfolio.manage",
+        "report.export",
+        "report_card.review",
+        "student.view"
+    ],
+    "operator": [
+        "academic.manage",
+        "activity.manage",
+        "attendance.manage",
+        "audit_log.view",
+        "chat.use",
+        "cms.manage",
+        "finance.manage",
+        "finance.view",
+        "grade.view",
+        "master_data.manage",
+        "portfolio.manage",
+        "ppdb.manage",
+        "report.export",
+        "report_card.validate",
+        "role.manage",
+        "setting.manage",
+        "student.view",
+        "user.manage"
+    ],
+    "guardian": [
+        "chat.use",
+        "child_condition.submit",
+        "finance.view",
+        "student.view"
+    ],
+    "applicant": []
+}

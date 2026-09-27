@@ -4,7 +4,7 @@ import PasswordInput from '@/Components/password-input';
 import { Button } from '@/Components/ui/button';
 import { Label } from '@/Components/ui/label';
 import { Spinner } from '@/Components/ui/spinner';
-import AuthLayout from '@/Layouts/auth-layout';
+import AuthLayout from '@/Layouts/AuthLayout';
 import { store } from '@/routes/password/confirm';
 
 export default function ConfirmPassword() {

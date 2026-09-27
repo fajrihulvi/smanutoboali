@@ -11,7 +11,7 @@ import TwoFactorSetupModal from '@/Components/two-factor-setup-modal';
 import { Button } from '@/Components/ui/button';
 import { Label } from '@/Components/ui/label';
 import { useTwoFactorAuth } from '@/hooks/use-two-factor-auth';
-import AppLayout from '@/Layouts/app-layout';
+import AppLayout from '@/Layouts/AppLayout';
 import SettingsLayout from '@/Layouts/settings/layout';
 import { edit } from '@/routes/security';
 import { disable, enable } from '@/routes/two-factor';

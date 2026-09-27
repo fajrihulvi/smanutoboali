@@ -1,17 +1,33 @@
+export type RoleCode =
+    'principal' | 'teacher' | 'operator' | 'guardian' | 'applicant';
+
+export type Role = {
+    code: RoleCode;
+    label: string;
+    prefix: string;
+};
+
+/**
+ * User yang sedang login (dibentuk oleh AuthUserResource, tanpa id numerik).
+ */
 export type User = {
-    id: number;
+    public_id: string;
     name: string;
     email: string;
-    avatar?: string;
+    avatar: string | null;
     email_verified_at: string | null;
-    two_factor_enabled?: boolean;
-    created_at: string;
-    updated_at: string;
-    [key: string]: unknown;
 };
 
 export type Auth = {
-    user: User;
+    user: User | null;
+    roles: Role[];
+    activeRole: RoleCode | null;
+    permissions: string[];
+};
+
+export type Flash = {
+    success: string | null;
+    error: string | null;
 };
 
 export type TwoFactorSetupData = {

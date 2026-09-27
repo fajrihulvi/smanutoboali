@@ -5,13 +5,32 @@
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
-@custom-variant dark (&:is(.dark *));
+/*
+|--------------------------------------------------------------------------
+| Design system "Elegant Blue" — VIBE_PLANNING §6
+|--------------------------------------------------------------------------
+| Satu-satunya tempat nilai hex. Komponen memakai kelas token
+| (brand-*, brand-accent, slate-*, emerald/amber/rose/sky untuk status).
+*/
 
 @theme {
     --font-sans:
-        'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+        'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
+
+    --color-brand-50: #eff6ff;
+    --color-brand-100: #dbeafe;
+    --color-brand-200: #bfdbfe;
+    --color-brand-300: #93c5fd;
+    --color-brand-400: #60a5fa;
+    --color-brand-500: #3b82f6;
+    --color-brand-600: #2563eb;
+    --color-brand-700: #1d4ed8;
+    --color-brand-800: #163a80;
+    --color-brand-900: #0f2a5f;
+    --color-brand-950: #0a1a3f;
+    --color-brand-accent: #38bdf8;
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -62,74 +81,46 @@
 }
 
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --destructive-foreground: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.87 0 0);
-    --chart-1: oklch(0.646 0.222 41.116);
-    --chart-2: oklch(0.6 0.118 184.704);
-    --chart-3: oklch(0.398 0.07 227.392);
-    --chart-4: oklch(0.828 0.189 84.429);
-    --chart-5: oklch(0.769 0.188 70.08);
-    --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.87 0 0);
-}
+    --radius: 0.75rem;
 
-.dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.145 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.145 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.985 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.396 0.141 25.723);
-    --destructive-foreground: oklch(0.637 0.237 25.331);
-    --border: oklch(0.269 0 0);
-    --input: oklch(0.269 0 0);
-    --ring: oklch(0.439 0 0);
-    --chart-1: oklch(0.488 0.243 264.376);
-    --chart-2: oklch(0.696 0.17 162.48);
-    --chart-3: oklch(0.769 0.188 70.08);
-    --chart-4: oklch(0.627 0.265 303.9);
-    --chart-5: oklch(0.645 0.246 16.439);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.985 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(0.269 0 0);
-    --sidebar-ring: oklch(0.439 0 0);
+    --background: var(--color-slate-50);
+    --foreground: var(--color-slate-900);
+    --card: var(--color-white);
+    --card-foreground: var(--color-slate-900);
+    --popover: var(--color-white);
+    --popover-foreground: var(--color-slate-900);
+    --primary: var(--color-brand-600);
+    --primary-foreground: var(--color-white);
+    --secondary: var(--color-brand-50);
+    --secondary-foreground: var(--color-brand-900);
+    --muted: var(--color-slate-100);
+    --muted-foreground: var(--color-slate-500);
+    --accent: var(--color-brand-50);
+    --accent-foreground: var(--color-brand-900);
+    --destructive: var(--color-rose-600);
+    --destructive-foreground: var(--color-white);
+    --border: var(--color-slate-200);
+    --input: var(--color-slate-200);
+    --ring: var(--color-brand-500);
+
+    --chart-1: var(--color-brand-500);
+    --chart-2: var(--color-brand-300);
+    --chart-3: var(--color-emerald-600);
+    --chart-4: var(--color-amber-500);
+    --chart-5: var(--color-rose-600);
+
+    --sidebar: var(--color-brand-950);
+    --sidebar-foreground: color-mix(
+        in oklab,
+        var(--color-white) 80%,
+        transparent
+    );
+    --sidebar-primary: var(--color-brand-500);
+    --sidebar-primary-foreground: var(--color-white);
+    --sidebar-accent: color-mix(in oklab, var(--color-white) 10%, transparent);
+    --sidebar-accent-foreground: var(--color-white);
+    --sidebar-border: color-mix(in oklab, var(--color-white) 10%, transparent);
+    --sidebar-ring: var(--color-brand-500);
 }
 
 @layer base {
@@ -138,6 +129,19 @@
     }
 
     body {
-        @apply bg-background text-foreground;
+        @apply bg-background text-sm text-foreground;
     }
+
+    :focus-visible {
+        @apply ring-2 ring-brand-500/40 outline-none;
+    }
+}
+
+/* Sidebar navy: gradient brand-950 → brand-900 (§6.3) */
+[data-sidebar='sidebar'] {
+    background-image: linear-gradient(
+        180deg,
+        var(--color-brand-950) 0%,
+        var(--color-brand-900) 100%
+    );
 }

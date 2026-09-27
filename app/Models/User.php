@@ -9,6 +9,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
+/**
+ * @property \Carbon\CarbonImmutable|null $email_verified_at
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */

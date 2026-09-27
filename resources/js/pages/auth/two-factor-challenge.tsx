@@ -10,7 +10,7 @@ import {
     InputOTPSlot,
 } from '@/Components/ui/input-otp';
 import { OTP_MAX_LENGTH } from '@/hooks/use-two-factor-auth';
-import AuthLayout from '@/Layouts/auth-layout';
+import AuthLayout from '@/Layouts/AuthLayout';
 import { store } from '@/routes/two-factor/login';
 
 export default function TwoFactorChallenge() {

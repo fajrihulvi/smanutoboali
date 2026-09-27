@@ -7,7 +7,7 @@ import { Checkbox } from '@/Components/ui/checkbox';
 import { Input } from '@/Components/ui/input';
 import { Label } from '@/Components/ui/label';
 import { Spinner } from '@/Components/ui/spinner';
-import AuthLayout from '@/Layouts/auth-layout';
+import AuthLayout from '@/Layouts/AuthLayout';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';

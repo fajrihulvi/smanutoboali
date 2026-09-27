@@ -1,6 +1,6 @@
 import { Head } from '@inertiajs/react';
 import { PlaceholderPattern } from '@/Components/ui/placeholder-pattern';
-import AppLayout from '@/Layouts/app-layout';
+import AppLayout from '@/Layouts/AppLayout';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem } from '@/types';
 

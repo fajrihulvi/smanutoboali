@@ -6,9 +6,25 @@ export type BreadcrumbItem = {
     href: NonNullable<InertiaLinkProps['href']>;
 };
 
+/**
+ * Item navigasi generik (dipakai halaman pengaturan akun bawaan starter kit).
+ */
 export type NavItem = {
     title: string;
     href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon | null;
     isActive?: boolean;
+};
+
+/**
+ * Item menu aplikasi per role (resources/js/config/navigation.ts).
+ */
+export type MenuItem = {
+    label: string;
+    /** Path URL tujuan, contoh '/guru/presensi'. */
+    href: string;
+    icon: LucideIcon;
+    /** Permission spatie yang dibutuhkan; tanpa nilai = semua user role ini. */
+    permission?: string;
+    children?: MenuItem[];
 };

@@ -3,7 +3,7 @@ import { Form, Head } from '@inertiajs/react';
 import TextLink from '@/Components/text-link';
 import { Button } from '@/Components/ui/button';
 import { Spinner } from '@/Components/ui/spinner';
-import AuthLayout from '@/Layouts/auth-layout';
+import AuthLayout from '@/Layouts/AuthLayout';
 import { logout } from '@/routes';
 import { send } from '@/routes/verification';
 

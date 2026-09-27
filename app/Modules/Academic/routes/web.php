@@ -1,17 +1,22 @@
 <?php
 
+use App\Modules\Academic\Http\Controllers\Guardian\AcademicController as GuardianAcademicController;
 use App\Modules\Academic\Http\Controllers\Operator\ClassroomController;
 use App\Modules\Academic\Http\Controllers\Operator\ClassroomEnrollmentController;
 use App\Modules\Academic\Http\Controllers\Operator\PromotionController;
+use App\Modules\Academic\Http\Controllers\Operator\ScheduleController;
 use App\Modules\Academic\Http\Controllers\Operator\SubjectController;
 use App\Modules\Academic\Http\Controllers\Operator\TeachingAssignmentController;
+use App\Modules\Academic\Http\Controllers\Principal\AcademicController as PrincipalAcademicController;
 use App\Modules\Academic\Http\Controllers\Teacher\ClassController;
+use App\Modules\Academic\Http\Controllers\Teacher\MaterialController as TeacherMaterialController;
+use App\Modules\Academic\Http\Controllers\Teacher\ScheduleController as TeacherScheduleController;
 use App\Modules\Academic\Http\Controllers\Teacher\StudentController as TeacherStudentController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Academic routes — rombel, mapel, penugasan, naik kelas (S11)
+| Academic routes — rombel, mapel, penugasan, naik kelas (S11), jadwal & materi (S12)
 |--------------------------------------------------------------------------
 */
 
@@ -40,12 +45,41 @@ Route::middleware(['auth', 'active.role:operator', 'permission:master_data.manag
         Route::put('akademik/penugasan', [TeachingAssignmentController::class, 'update'])->name('assignments.update');
     });
 
+Route::middleware(['auth', 'active.role:operator', 'permission:academic.manage'])
+    ->prefix('operator/akademik')->name('operator.')
+    ->group(function () {
+        Route::get('jadwal', [ScheduleController::class, 'index'])->name('schedules.index');
+        Route::post('jadwal', [ScheduleController::class, 'store'])->name('schedules.store');
+        Route::put('jadwal/{schedule}', [ScheduleController::class, 'update'])->name('schedules.update');
+        Route::delete('jadwal/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
+    });
+
 Route::middleware(['auth', 'active.role:teacher'])
     ->prefix('guru')->name('teacher.')
     ->group(function () {
+        Route::middleware('permission:academic.manage')->prefix('akademik')->group(function () {
+            Route::get('jadwal', [TeacherScheduleController::class, 'index'])->name('schedules.index');
+            Route::get('materi', [TeacherMaterialController::class, 'index'])->name('materials.index');
+            Route::post('materi', [TeacherMaterialController::class, 'store'])->name('materials.store');
+            Route::put('materi/{material}', [TeacherMaterialController::class, 'update'])->name('materials.update');
+            Route::delete('materi/{material}', [TeacherMaterialController::class, 'destroy'])->name('materials.destroy');
+        });
+
         Route::get('kelas', [ClassController::class, 'index'])->name('classes.index');
         Route::get('kelas/{classroom}', [ClassController::class, 'show'])->name('classes.show');
         Route::get('siswa', [TeacherStudentController::class, 'index'])
             ->middleware('permission:student.view')
             ->name('students.index');
+    });
+
+Route::middleware(['auth', 'active.role:guardian'])
+    ->prefix('orang-tua')->name('guardian.')
+    ->group(function () {
+        Route::get('akademik', [GuardianAcademicController::class, 'index'])->name('academic.index');
+    });
+
+Route::middleware(['auth', 'active.role:principal'])
+    ->prefix('kepala-sekolah')->name('principal.')
+    ->group(function () {
+        Route::get('akademik', [PrincipalAcademicController::class, 'index'])->name('academic.index');
     });

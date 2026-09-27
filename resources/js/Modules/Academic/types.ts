@@ -29,3 +29,36 @@ export type SubjectRow = SubjectOption & {
     is_active: boolean;
     assignments_count?: number;
 };
+
+export type DayOption = { value: number; label: string };
+
+export type ScheduleEntry = {
+    public_id: string;
+    day: number;
+    day_label: string;
+    start_time: string;
+    end_time: string;
+    room: string | null;
+    assignment: string;
+    subject: { public_id: string; code: string; name: string };
+    teacher: { public_id: string; name: string };
+    classroom: { public_id: string; name: string };
+};
+
+export type MaterialRow = {
+    public_id: string;
+    title: string;
+    description: string | null;
+    type: Option;
+    url: string | null;
+    file: {
+        name: string;
+        size: number;
+        mime_type: string;
+        url: string;
+    } | null;
+    assignment: string;
+    subject: string;
+    classroom: string;
+    created_at: string | null;
+};

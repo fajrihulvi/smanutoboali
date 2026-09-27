@@ -5,6 +5,7 @@ import { EmptyState } from '@/Components/shared/EmptyState';
 import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';
 import { Spinner } from '@/Components/ui/spinner';
+import { Textarea } from '@/Components/ui/textarea';
 import ParentLayout from '@/Layouts/ParentLayout';
 import { FormCard, FormField } from '@/Modules/People/Components/FormField';
 import type { GuardianRow } from '@/Modules/People/types';
@@ -86,14 +87,13 @@ export default function GuardianProfile({ guardian }: Props) {
                             label="Alamat"
                             error={form.errors.address}
                         >
-                            <textarea
+                            <Textarea
                                 id="address"
                                 rows={3}
                                 value={form.data.address}
                                 onChange={(event) =>
                                     form.setData('address', event.target.value)
                                 }
-                                className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                             />
                         </FormField>
                         <Button

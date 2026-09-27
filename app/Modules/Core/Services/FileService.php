@@ -30,6 +30,16 @@ class FileService
     /** @var list<string> */
     public const DOCUMENT_MIMES = ['application/pdf'];
 
+    /** Dokumen Office (OOXML + format lama) untuk materi pembelajaran. @var list<string> */
+    public const OFFICE_MIMES = [
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/msword',
+        'application/vnd.ms-powerpoint',
+        'application/vnd.ms-excel',
+    ];
+
     /** Gambar yang bisa diproses ulang (GIF/SVG tidak). */
     private const RESIZABLE_MIMES = ['image/jpeg', 'image/png', 'image/webp'];
 

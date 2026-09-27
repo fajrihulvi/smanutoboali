@@ -16,6 +16,7 @@ import {
     SelectValue,
 } from '@/Components/ui/select';
 import { Spinner } from '@/Components/ui/spinner';
+import { Textarea } from '@/Components/ui/textarea';
 import AppLayout from '@/Layouts/AppLayout';
 import { toastFirstError } from '@/lib/toast-errors';
 import { cn } from '@/lib/utils';
@@ -360,14 +361,13 @@ export default function StudentForm({
                             label="Alamat"
                             error={form.errors.address}
                         >
-                            <textarea
+                            <Textarea
                                 id="address"
                                 rows={3}
                                 value={form.data.address}
                                 onChange={(event) =>
                                     form.setData('address', event.target.value)
                                 }
-                                className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                             />
                         </FormField>
 

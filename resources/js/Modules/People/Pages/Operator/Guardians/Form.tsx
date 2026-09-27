@@ -9,6 +9,7 @@ import { Button } from '@/Components/ui/button';
 import { Checkbox } from '@/Components/ui/checkbox';
 import { Input } from '@/Components/ui/input';
 import { Spinner } from '@/Components/ui/spinner';
+import { Textarea } from '@/Components/ui/textarea';
 import AppLayout from '@/Layouts/AppLayout';
 import { toastFirstError } from '@/lib/toast-errors';
 import { AccountSection } from '@/Modules/People/Components/AccountSection';
@@ -20,9 +21,6 @@ type Props = {
 };
 
 const BASE = '/operator/master-data/orang-tua';
-
-const textareaClass =
-    'w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50';
 
 export default function GuardianForm({ guardian }: Props) {
     const isEdit = guardian !== null;
@@ -208,14 +206,13 @@ export default function GuardianForm({ guardian }: Props) {
                             label="Alamat"
                             error={form.errors.address}
                         >
-                            <textarea
+                            <Textarea
                                 id="address"
                                 rows={3}
                                 value={form.data.address}
                                 onChange={(event) =>
                                     form.setData('address', event.target.value)
                                 }
-                                className={textareaClass}
                             />
                         </FormField>
 

@@ -24,7 +24,7 @@ class ClassroomPolicy
             return true;
         }
 
-        $teacher = Teacher::query()->where('user_id', $user->getKey())->where('is_active', true)->first();
+        $teacher = Teacher::activeForUser($user);
 
         return $teacher !== null && $classroom->isTaughtBy($teacher);
     }

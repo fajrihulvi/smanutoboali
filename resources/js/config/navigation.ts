@@ -234,6 +234,11 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
                     icon: Users,
                     permission: 'master_data.manage',
                 },
+                {
+                    label: 'Jadwal Pelajaran',
+                    href: '/operator/akademik/jadwal',
+                    icon: CalendarDays,
+                },
             ],
         },
         {

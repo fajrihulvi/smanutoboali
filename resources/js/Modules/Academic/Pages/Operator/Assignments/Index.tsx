@@ -6,6 +6,7 @@ import { PageHeader } from '@/Components/shared/PageHeader';
 import { StatusBadge } from '@/Components/shared/StatusBadge';
 import { Button } from '@/Components/ui/button';
 import AppLayout from '@/Layouts/AppLayout';
+import { toastFirstError } from '@/lib/toast-errors';
 import { cn } from '@/lib/utils';
 import { NativeSelect } from '@/Modules/Academic/Components/NativeSelect';
 import { YearSelect } from '@/Modules/Academic/Components/YearSelect';
@@ -48,6 +49,7 @@ export default function AssignmentsIndex({
                 preserveState: true,
                 only: ['assignments', 'flash'],
                 onStart: () => setSaving(key),
+                onError: (errors) => toastFirstError(errors),
                 onFinish: () => setSaving(null),
             },
         );

@@ -3,9 +3,13 @@
 namespace App\Modules\Academic\Database\Seeders;
 
 use App\Modules\Academic\Enums\EnrollmentStatus;
+use App\Modules\Academic\Enums\MaterialType;
 use App\Modules\Academic\Enums\SubjectGroup;
+use App\Modules\Academic\Enums\Weekday;
 use App\Modules\Academic\Models\ClassEnrollment;
 use App\Modules\Academic\Models\Classroom;
+use App\Modules\Academic\Models\LearningMaterial;
+use App\Modules\Academic\Models\Schedule;
 use App\Modules\Academic\Models\Subject;
 use App\Modules\Academic\Models\TeachingAssignment;
 use App\Modules\People\Models\Student;
@@ -20,6 +24,12 @@ use Illuminate\Database\Seeder;
  */
 class AcademicDemoSeeder extends Seeder
 {
+    /** Jam pelajaran demo (40 menit) Senin–Jumat; istirahat 09:30–09:45 & 11:45–12:30. */
+    private const PERIODS = [
+        ['07:30', '08:10'], ['08:10', '08:50'], ['08:50', '09:30'],
+        ['09:45', '10:25'], ['10:25', '11:05'], ['11:05', '11:45'], ['12:30', '13:10'],
+    ];
+
     private const SUBJECTS = [
         ['PAI', 'Pendidikan Agama Islam', SubjectGroup::General],
         ['PPKN', 'Pendidikan Pancasila', SubjectGroup::General],
@@ -84,6 +94,9 @@ class AcademicDemoSeeder extends Seeder
             }
         }
 
+        $this->seedSchedules($year);
+        $this->seedMaterials($guru);
+
         // Siswa demo dibagi merata; kakak (Aisyah) di VII-A, adik (Rafi) di VIII-A.
         $students = Student::query()->orderBy('id')->get();
         $byName = ['Aisyah Putri Hidayat' => 'VII-A', 'Rafi Pratama Hidayat' => 'VIII-A', 'Nayla Lestari' => 'VIII-A'];
@@ -98,6 +111,80 @@ class AcademicDemoSeeder extends Seeder
                 'classroom_id' => $classroom->id,
                 'academic_year_id' => $year->id,
                 'status' => EnrollmentStatus::Active,
+            ]);
+        }
+    }
+
+    /**
+     * Setiap mapel 2 JP/minggu di hari berbeda; slot dipilih greedy tanpa bentrok guru/rombel.
+     */
+    private function seedSchedules(AcademicYear $year): void
+    {
+        $slots = [];
+
+        foreach (range(1, 5) as $day) {
+            foreach (array_keys(self::PERIODS) as $period) {
+                $slots[] = [$day, $period];
+            }
+        }
+
+        $busy = [];
+        $assignments = TeachingAssignment::query()->where('academic_year_id', $year->id)->orderBy('classroom_id')->orderBy('subject_id')->get();
+
+        foreach ($assignments as $n => $assignment) {
+            $usedDays = [];
+
+            foreach ([0, 1] as $occurrence) {
+                $count = count($slots);
+
+                for ($i = 0; $i < $count; $i++) {
+                    [$day, $period] = $slots[($n * 5 + $occurrence * 13 + $i) % $count];
+                    $classKey = "c{$assignment->classroom_id}-{$day}-{$period}";
+                    $teacherKey = "t{$assignment->teacher_id}-{$day}-{$period}";
+
+                    if (isset($busy[$classKey]) || isset($busy[$teacherKey]) || in_array($day, $usedDays, true)) {
+                        continue;
+                    }
+
+                    Schedule::query()->create([
+                        'academic_year_id' => $year->id,
+                        'teaching_assignment_id' => $assignment->id,
+                        'day_of_week' => Weekday::from($day),
+                        'start_time' => self::PERIODS[$period][0].':00',
+                        'end_time' => self::PERIODS[$period][1].':00',
+                    ]);
+
+                    $busy[$classKey] = $busy[$teacherKey] = true;
+                    $usedDays[] = $day;
+
+                    break;
+                }
+            }
+        }
+    }
+
+    private function seedMaterials(?Teacher $guru): void
+    {
+        $assignment = $guru
+            ? TeachingAssignment::query()->where('teacher_id', $guru->id)->whereHas('subject', fn ($q) => $q->where('code', 'MTK'))->first()
+            : null;
+
+        if (! $assignment) {
+            return;
+        }
+
+        foreach ([
+            ['Bilangan Bulat — ringkasan & latihan', 'https://www.youtube.com/watch?v=Kl5B6MBAntI'],
+            ['Pecahan dan operasinya', 'https://id.wikipedia.org/wiki/Pecahan'],
+        ] as [$title, $url]) {
+            LearningMaterial::query()->create([
+                'academic_year_id' => $assignment->academic_year_id,
+                'teaching_assignment_id' => $assignment->id,
+                'title' => $title,
+                'description' => 'Pelajari sebelum pertemuan berikutnya.',
+                'type' => MaterialType::Link,
+                'url' => $url,
+                'created_by' => $guru->user_id,
             ]);
         }
     }

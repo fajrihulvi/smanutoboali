@@ -91,6 +91,6 @@ class ClassController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        return Teacher::query()->where('user_id', $user->getKey())->where('is_active', true)->first();
+        return Teacher::activeForUser($user);
     }
 }

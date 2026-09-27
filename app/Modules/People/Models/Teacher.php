@@ -82,4 +82,12 @@ class Teacher extends Model
             ->orWhere('nuptk', 'like', "%{$term}%")
             ->orWhere('phone', 'like', "%{$term}%"));
     }
+
+    /**
+     * Profil guru AKTIF yang tertaut ke akun ini (null bila tidak ada/nonaktif).
+     */
+    public static function activeForUser(User $user): ?self
+    {
+        return self::query()->where('user_id', $user->getKey())->where('is_active', true)->first();
+    }
 }

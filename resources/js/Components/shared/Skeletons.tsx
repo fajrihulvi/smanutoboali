@@ -44,3 +44,24 @@ export function CardSkeleton() {
         </div>
     );
 }
+
+/** Daftar item dengan ikon + dua baris teks (mis. materi, kegiatan). */
+export function ListSkeleton({ rows = 4 }: { rows?: number }) {
+    return (
+        <div
+            className="divide-y divide-slate-100"
+            aria-busy="true"
+            aria-label="Memuat data"
+        >
+            {Array.from({ length: rows }).map((_, row) => (
+                <div key={row} className="flex items-start gap-3 p-4 sm:px-5">
+                    <Skeleton className="size-10 shrink-0 rounded-xl" />
+                    <div className="flex-1 space-y-2">
+                        <Skeleton className="h-4 w-2/3" />
+                        <Skeleton className="h-3 w-1/3" />
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+}

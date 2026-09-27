@@ -72,6 +72,7 @@ describe('navigasi per role sesuai matriks permission', () => {
             'Master Data › Tahun Ajaran',
             'Akademik',
             'Akademik › Penugasan Mengajar',
+            'Akademik › Jadwal Pelajaran',
             'Presensi',
             'Raport',
             'Portofolio',

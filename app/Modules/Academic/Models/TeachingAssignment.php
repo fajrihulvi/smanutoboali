@@ -7,6 +7,7 @@ use App\Modules\School\Models\AcademicYear;
 use App\Support\Concerns\HasPublicId;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * "Siapa mengajar apa di rombel mana tahun ini" (VIBE_PLANNING §5).
@@ -57,5 +58,21 @@ class TeachingAssignment extends Model
     public function academicYear(): BelongsTo
     {
         return $this->belongsTo(AcademicYear::class);
+    }
+
+    /**
+     * @return HasMany<Schedule, $this>
+     */
+    public function schedules(): HasMany
+    {
+        return $this->hasMany(Schedule::class);
+    }
+
+    /**
+     * @return HasMany<LearningMaterial, $this>
+     */
+    public function materials(): HasMany
+    {
+        return $this->hasMany(LearningMaterial::class);
     }
 }

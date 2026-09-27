@@ -211,6 +211,11 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
                     icon: Shapes,
                 },
                 {
+                    label: 'Mata Pelajaran',
+                    href: '/operator/master-data/mapel',
+                    icon: BookOpen,
+                },
+                {
                     label: 'Tahun Ajaran',
                     href: '/operator/master-data/tahun-ajaran',
                     icon: CalendarDays,
@@ -222,6 +227,14 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             href: '/operator/akademik',
             icon: Library,
             permission: 'academic.manage',
+            children: [
+                {
+                    label: 'Penugasan Mengajar',
+                    href: '/operator/akademik/penugasan',
+                    icon: Users,
+                    permission: 'master_data.manage',
+                },
+            ],
         },
         {
             label: 'Presensi',

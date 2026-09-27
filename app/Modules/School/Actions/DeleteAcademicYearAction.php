@@ -2,6 +2,7 @@
 
 namespace App\Modules\School\Actions;
 
+use App\Modules\Academic\Models\Classroom;
 use App\Modules\Core\Services\AuditLogger;
 use App\Modules\School\Models\AcademicYear;
 use Illuminate\Validation\ValidationException;
@@ -21,7 +22,11 @@ class DeleteAcademicYearAction
             ]);
         }
 
-        // TODO(S11): tolak juga bila sudah dipakai rombel/penugasan (class_enrollments, teaching_assignments).
+        if (Classroom::query()->where('academic_year_id', $year->getKey())->exists()) {
+            throw ValidationException::withMessages([
+                'academic_year' => 'Tahun ajaran yang sudah memiliki rombel tidak dapat dihapus.',
+            ]);
+        }
 
         $name = $year->name;
         $year->delete();

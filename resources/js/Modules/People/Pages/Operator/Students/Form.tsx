@@ -5,6 +5,7 @@ import type { FormEvent } from 'react';
 import { ConfirmDialog } from '@/Components/shared/ConfirmDialog';
 import { EmptyState } from '@/Components/shared/EmptyState';
 import { PageHeader } from '@/Components/shared/PageHeader';
+import { StatusBadge } from '@/Components/shared/StatusBadge';
 import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';
 import {
@@ -22,11 +23,26 @@ import { PhotoField } from '@/Modules/People/Components/PhotoField';
 import { StudentGuardiansPanel } from '@/Modules/People/Components/StudentGuardiansPanel';
 import { StudentStatusBadge } from '@/Modules/People/Components/StudentStatusBadge';
 import type { Option, StudentRow } from '@/Modules/People/types';
+import type { StatusVariant } from '@/types';
 
 type Tab = 'identitas' | 'orang-tua' | 'riwayat';
 
+type Enrollment = {
+    academic_year: string;
+    classroom: string;
+    status: Option;
+};
+
+const ENROLLMENT_VARIANT: Record<string, StatusVariant> = {
+    AKTIF: 'success',
+    PINDAH: 'info',
+    SELESAI: 'neutral',
+    KELUAR: 'danger',
+};
+
 type Props = {
     student: StudentRow | null;
+    enrollments?: Enrollment[];
     options: {
         genders: Option[];
         religions: Option[];
@@ -71,6 +87,7 @@ function EnumSelect({
 
 export default function StudentForm({
     student,
+    enrollments = [],
     options,
     tab = 'identitas',
 }: Props) {
@@ -412,11 +429,40 @@ export default function StudentForm({
 
             {isEdit && activeTab === 'riwayat' && (
                 <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
-                    <EmptyState
-                        icon={History}
-                        title="Riwayat kelas belum tersedia"
-                        description="Riwayat rombel per tahun ajaran tampil setelah modul Rombel & Kelas aktif."
-                    />
+                    {enrollments.length === 0 ? (
+                        <EmptyState
+                            icon={History}
+                            title="Belum pernah masuk rombel"
+                            description="Tambahkan siswa ke rombel melalui menu Kelas."
+                        />
+                    ) : (
+                        <ul className="divide-y divide-slate-100">
+                            {enrollments.map((enrollment, index) => (
+                                <li
+                                    key={index}
+                                    className="flex items-center justify-between gap-3 px-5 py-3"
+                                >
+                                    <div>
+                                        <p className="text-sm font-medium text-slate-900">
+                                            {enrollment.classroom}
+                                        </p>
+                                        <p className="text-xs text-slate-500">
+                                            TA {enrollment.academic_year}
+                                        </p>
+                                    </div>
+                                    <StatusBadge
+                                        variant={
+                                            ENROLLMENT_VARIANT[
+                                                enrollment.status.value
+                                            ] ?? 'neutral'
+                                        }
+                                    >
+                                        {enrollment.status.label}
+                                    </StatusBadge>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
             )}
 

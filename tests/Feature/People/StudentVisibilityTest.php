@@ -1,10 +1,14 @@
 <?php
 
 use App\Models\User;
+use App\Modules\Academic\Enums\EnrollmentStatus;
+use App\Modules\Academic\Models\Classroom;
 use App\Modules\Core\Contracts\StudentOwnershipGate;
 use App\Modules\Core\Enums\Role;
 use App\Modules\People\Models\Guardian;
 use App\Modules\People\Models\Student;
+use App\Modules\People\Models\Teacher;
+use App\Modules\School\Models\AcademicYear;
 use Inertia\Testing\AssertableInertia as Assert;
 
 /**
@@ -60,11 +64,41 @@ describe('Student::visibleTo', function () {
         $this->get('/orang-tua/anak')->assertInertia(fn (Assert $page) => $page->has('students.data', 1));
     });
 
-    it('guru melihat siswa di rombel yang diajarnya', function () {
-        // Aktif setelah teaching_assignments & class_enrollments tersedia di S11.
-    })->skip('Bagian guru pada visibleTo dilengkapi di S11 (butuh teaching_assignments).');
+    it('guru melihat siswa di rombel yang diajar atau diwalikan pada tahun aktif', function () {
+        $year = activeAcademicYear();
+        $user = User::factory()->withRole(Role::Teacher)->create();
+        $teacher = Teacher::factory()->withAccount($user)->create();
 
-    it('guru sementara tidak melihat siswa mana pun (deny-by-default sampai S11)', function () {
+        $homeroom = Classroom::factory()->for($year)->create(['homeroom_teacher_id' => $teacher->id]);
+        $taught = Classroom::factory()->for($year)->create();
+        assignTeaching($taught, $teacher);
+        $other = Classroom::factory()->for($year)->create();
+
+        $inHomeroom = Student::factory()->create();
+        $inTaught = Student::factory()->create();
+        enrollIn($homeroom, $inHomeroom);
+        enrollIn($taught, $inTaught);
+        enrollIn($taught, Student::factory()->create(), EnrollmentStatus::Moved);
+        enrollIn($other, Student::factory()->create());
+        Student::factory()->create();
+
+        expect(Student::query()->visibleTo($user, Role::Teacher)->pluck('id')->sort()->values()->all())
+            ->toBe([$inHomeroom->id, $inTaught->id]);
+    });
+
+    it('guru tidak melihat siswa rombel tahun ajaran nonaktif', function () {
+        activeAcademicYear();
+        $user = User::factory()->withRole(Role::Teacher)->create();
+        $teacher = Teacher::factory()->withAccount($user)->create();
+        $old = Classroom::factory()->for(AcademicYear::factory()->startingIn(2020)->create())->create();
+        assignTeaching($old, $teacher);
+        enrollIn($old, Student::factory()->create());
+
+        expect(Student::query()->visibleTo($user, Role::Teacher)->count())->toBe(0);
+    });
+
+    it('guru tanpa penugasan tidak melihat siswa mana pun', function () {
+        activeAcademicYear();
         Student::factory()->count(2)->create();
         $teacher = User::factory()->withRole(Role::Teacher)->create();
 

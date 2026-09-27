@@ -3,6 +3,7 @@
 namespace App\Modules\School\Services;
 
 use App\Modules\Core\Services\FileUrlGenerator;
+use App\Modules\School\Enums\SchoolLevel;
 use App\Modules\School\Models\School;
 use Illuminate\Support\Facades\Cache;
 use Throwable;
@@ -40,6 +41,14 @@ class SchoolProfile
     public function name(): string
     {
         return $this->toArray()['name'];
+    }
+
+    /**
+     * Jenjang sekolah (dari cache profil; aman dipanggil per baris resource).
+     */
+    public function level(): SchoolLevel
+    {
+        return SchoolLevel::tryFrom($this->toArray()['level']) ?? SchoolLevel::Smp;
     }
 
     public function flush(): void

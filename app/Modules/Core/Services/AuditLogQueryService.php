@@ -23,6 +23,7 @@ class AuditLogQueryService
         'settings' => 'Pengaturan',
         'school' => 'Sekolah & Periode',
         'people' => 'Guru, Orang Tua & Siswa',
+        'academic' => 'Akademik',
     ];
 
     /**

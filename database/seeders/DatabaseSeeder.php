@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Modules\Academic\Database\Seeders\AcademicDemoSeeder;
 use App\Modules\Access\Database\Seeders\RolesAndPermissionsSeeder;
 use App\Modules\Auth\Database\Seeders\DemoUserSeeder;
 use App\Modules\People\Database\Seeders\PeopleDemoSeeder;
@@ -20,6 +21,7 @@ class DatabaseSeeder extends Seeder
             DemoUserSeeder::class,
             AcademicYearSeeder::class,
             PeopleDemoSeeder::class,
+            AcademicDemoSeeder::class,
         ]);
     }
 }

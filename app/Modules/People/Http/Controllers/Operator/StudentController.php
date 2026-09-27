@@ -59,10 +59,17 @@ class StudentController extends Controller
     {
         $this->authorize('update', $student);
 
-        $student->load(['photo', 'guardians']);
+        $student->load(['photo', 'guardians', 'enrollments' => fn ($q) => $q->with(['classroom:id,name', 'academicYear:id,name,start_date'])->latest('id')]);
 
         return Inertia::render('People::Operator/Students/Form', [
             'student' => (new StudentResource($student))->withGuardianContact()->resolve($request),
+            'enrollments' => $student->enrollments
+                ->sortByDesc(fn ($e) => $e->academicYear->start_date)
+                ->map(fn ($e) => [
+                    'academic_year' => $e->academicYear->name,
+                    'classroom' => $e->classroom->name,
+                    'status' => ['value' => $e->status->value, 'label' => $e->status->label()],
+                ])->values(),
             'options' => $this->options(),
             'tab' => in_array($request->query('tab'), ['identitas', 'orang-tua', 'riwayat'], true) ? $request->query('tab') : 'identitas',
         ]);

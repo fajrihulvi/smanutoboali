@@ -324,7 +324,7 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             permission: 'child_condition.submit',
         },
         { label: 'Pengumuman', href: '/orang-tua/pengumuman', icon: Megaphone },
-        { label: 'Profil', href: '/orang-tua/profil', icon: UserRound },
+        { label: 'Profil', href: '/settings/profile', icon: UserRound },
     ],
     applicant: [
         {
@@ -341,7 +341,7 @@ export const guardianBottomNav: string[] = [
     '/orang-tua/anak',
     '/orang-tua/chat',
     '/orang-tua/keuangan',
-    '/orang-tua/profil',
+    '/settings/profile',
 ];
 
 /**

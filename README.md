@@ -32,6 +32,7 @@ php artisan test
 ./vendor/bin/pint
 ./vendor/bin/phpstan analyse
 npm run types
+npm test              # Vitest (logika frontend, mis. filter menu)
 npm run build
 ```
 

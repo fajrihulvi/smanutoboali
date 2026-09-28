@@ -9,6 +9,7 @@ use App\Providers\AppServiceProvider;
 use Carbon\CarbonImmutable;
 use Illuminate\Broadcasting\Broadcasters\Broadcaster;
 use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -159,4 +160,14 @@ it('broadcast notifikasi yang gagal tidak membatalkan notifikasi database', func
     $user->notify(new WelcomeNotification);
 
     expect($user->notifications()->count())->toBe(1);
+});
+
+it('broadcast notifikasi dikirim langsung, tidak menunggu antrean database', function () {
+    config(['queue.default' => 'database', 'broadcasting.default' => 'log']);
+    $user = User::factory()->create();
+
+    $user->notify(new WelcomeNotification);
+
+    expect(DB::table('jobs')->count())->toBe(0)
+        ->and($user->notifications()->count())->toBe(1);
 });

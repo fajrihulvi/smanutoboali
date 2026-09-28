@@ -7,6 +7,7 @@ use App\Modules\Auth\Http\Resources\AuthUserResource;
 use App\Modules\Auth\Services\ActiveRoleService;
 use App\Modules\Chat\Services\ChatInbox;
 use App\Modules\Core\Enums\Role;
+use App\Modules\People\Services\GuardianChildren;
 use App\Modules\School\Services\SchoolProfile;
 use App\Support\ActivePeriod;
 use Illuminate\Http\Request;
@@ -61,6 +62,8 @@ class HandleInertiaRequests extends Middleware
             'chat' => fn () => [
                 'unread' => $user instanceof User && $user->can('chat.use') ? app(ChatInbox::class)->unreadTotal($user) : 0,
             ],
+            // StudentSwitcher global portal orang tua (S23): anak aktif dari session.
+            'guardian' => fn () => $this->guardianProps($request, $user instanceof User ? $user : null),
             'school' => fn () => app(SchoolProfile::class)->toArray(),
             'activePeriod' => fn () => $user ? app(ActivePeriod::class)->toArray() : null,
             // Konfigurasi Echo dari server (kunci publik Pusher) agar satu build bisa dipakai di semua lingkungan.
@@ -71,6 +74,21 @@ class HandleInertiaRequests extends Middleware
             ] : null,
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
+    }
+
+    /**
+     * @return array{childOptions: list<array{public_id: string, name: string, photo_url: string|null}>, activeChild: string|null}|null
+     */
+    private function guardianProps(Request $request, ?User $user): ?array
+    {
+        if ($user === null || app(ActiveRoleService::class)->resolve($request->session(), $user) !== Role::Guardian) {
+            return null;
+        }
+
+        $service = app(GuardianChildren::class);
+        $children = $service->of($user);
+
+        return $service->switcherProps($children, $service->selected($children, null));
     }
 
     /**

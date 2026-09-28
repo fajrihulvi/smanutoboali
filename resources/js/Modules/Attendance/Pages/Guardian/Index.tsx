@@ -3,7 +3,6 @@ import { Baby, CalendarCheck } from 'lucide-react';
 import { EmptyState } from '@/Components/shared/EmptyState';
 import { MonthPicker } from '@/Components/shared/MonthPicker';
 import { StatusBadge } from '@/Components/shared/StatusBadge';
-import { StudentSwitcher } from '@/Components/shared/StudentSwitcher';
 import type { SwitcherChild } from '@/Components/shared/StudentSwitcher';
 import ParentLayout from '@/Layouts/ParentLayout';
 import { formatDate } from '@/lib/format';
@@ -28,7 +27,6 @@ type Props = {
 };
 
 export default function GuardianAttendanceIndex({
-    childOptions,
     activeChild,
     child,
     today,
@@ -40,11 +38,7 @@ export default function GuardianAttendanceIndex({
         statuses.find((status) => status.value === value)?.label ?? value;
 
     return (
-        <ParentLayout
-            header={
-                <StudentSwitcher items={childOptions} active={activeChild} />
-            }
-        >
+        <ParentLayout>
             <Head title="Presensi" />
 
             <div>

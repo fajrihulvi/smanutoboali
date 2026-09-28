@@ -29,6 +29,7 @@ enum Permission: string
     case ChatUse = 'chat.use';
     case ChildConditionRespond = 'child_condition.respond';
     case ChildConditionSubmit = 'child_condition.submit';
+    case AnnouncementManage = 'announcement.manage';
     case UserManage = 'user.manage';
     case RoleManage = 'role.manage';
     case ReportExport = 'report.export';
@@ -57,6 +58,7 @@ enum Permission: string
             self::ChatUse => 'Gunakan chat',
             self::ChildConditionRespond => 'Tanggapi kondisi anak',
             self::ChildConditionSubmit => 'Laporkan kondisi anak',
+            self::AnnouncementManage => 'Kelola pengumuman',
             self::UserManage => 'Kelola pengguna',
             self::RoleManage => 'Kelola role & permission',
             self::ReportExport => 'Ekspor laporan',
@@ -78,7 +80,7 @@ enum Permission: string
             self::FinanceManage, self::FinanceView => 'Keuangan',
             self::PpdbManage, self::PpdbDecide => 'PPDB',
             self::CmsManage => 'Website',
-            self::ChatUse, self::ChildConditionRespond, self::ChildConditionSubmit => 'Komunikasi',
+            self::ChatUse, self::ChildConditionRespond, self::ChildConditionSubmit, self::AnnouncementManage => 'Komunikasi',
             self::UserManage, self::RoleManage, self::SettingManage, self::AuditLogView => 'Sistem',
             self::ReportExport => 'Laporan',
         };
@@ -119,7 +121,8 @@ enum Permission: string
 
             self::FinanceView => [Role::Principal, Role::Operator, Role::Guardian],
             self::ReportExport => [Role::Principal, Role::Teacher, Role::Operator],
-            self::AuditLogView => [Role::Principal, Role::Operator],
+            self::AuditLogView,
+            self::AnnouncementManage => [Role::Principal, Role::Operator],
             self::ChildConditionSubmit => [Role::Guardian],
         };
     }

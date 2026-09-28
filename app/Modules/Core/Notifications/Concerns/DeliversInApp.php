@@ -2,6 +2,8 @@
 
 namespace App\Modules\Core\Notifications\Concerns;
 
+use Illuminate\Notifications\Messages\BroadcastMessage;
+
 /**
  * Notifikasi in-app: disimpan (database) dan dikirim realtime (broadcast) segera saat
  * notifikasi diproses, sementara email (bila ada) tetap lewat antrean.
@@ -24,6 +26,16 @@ trait DeliversInApp
     public function viaConnections(): array
     {
         return ['database' => 'sync', 'broadcast' => 'sync'];
+    }
+
+    /**
+     * Payload realtime = payload database. Event broadcast-nya dipaksa lewat koneksi `sync`;
+     * tanpa ini BroadcastNotificationCreated masuk antrean default (database) dan baru terkirim
+     * saat scheduler memproses queue (hingga 1 menit).
+     */
+    public function toBroadcast(object $notifiable): BroadcastMessage
+    {
+        return (new BroadcastMessage($this->toArray($notifiable)))->onConnection('sync');
     }
 
     /**

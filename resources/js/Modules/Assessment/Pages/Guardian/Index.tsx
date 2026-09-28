@@ -1,7 +1,6 @@
 import { Head } from '@inertiajs/react';
 import { Baby, BookOpen } from 'lucide-react';
 import { EmptyState } from '@/Components/shared/EmptyState';
-import { StudentSwitcher } from '@/Components/shared/StudentSwitcher';
 import type { SwitcherChild } from '@/Components/shared/StudentSwitcher';
 import ParentLayout from '@/Layouts/ParentLayout';
 import { formatDate } from '@/lib/format';
@@ -34,7 +33,6 @@ type Props = {
 };
 
 export default function GuardianGrades({
-    childOptions,
     activeChild,
     child,
     semester,
@@ -43,11 +41,7 @@ export default function GuardianGrades({
     kkm,
 }: Props) {
     return (
-        <ParentLayout
-            header={
-                <StudentSwitcher items={childOptions} active={activeChild} />
-            }
-        >
+        <ParentLayout>
             <Head title="Nilai" />
 
             <div className="flex flex-wrap items-end justify-between gap-3">

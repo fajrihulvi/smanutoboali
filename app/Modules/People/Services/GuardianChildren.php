@@ -6,15 +6,19 @@ use App\Models\User;
 use App\Modules\Core\Enums\Role;
 use App\Modules\Core\Services\FileUrlGenerator;
 use App\Modules\People\Models\Student;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
- * Anak milik orang tua yang login + anak terpilih untuk StudentSwitcher (`?anak=<public_id>`).
- * Dipakai semua halaman portal orang tua yang menampilkan data per anak.
+ * Anak milik orang tua yang login + anak aktif untuk StudentSwitcher global.
+ * Anak aktif disimpan di session (S23); `?anak=<public_id>` tetap didukung dan ikut
+ * memperbarui session. Dipakai semua halaman portal orang tua yang menampilkan data per anak.
  */
 class GuardianChildren
 {
     public const QUERY_KEY = 'anak';
+
+    public const SESSION_KEY = 'guardian.active_child';
 
     public function __construct(private FileUrlGenerator $urls) {}
 
@@ -31,21 +35,37 @@ class GuardianChildren
     }
 
     /**
-     * Anak terpilih; default anak pertama. public_id milik anak orang lain → 403.
+     * Anak terpilih: `?anak=` (disimpan ke session) → anak aktif di session → anak pertama.
+     * public_id milik anak orang lain → 403.
      *
      * @param  Collection<int, Student>  $children
      */
     public function selected(Collection $children, ?string $publicId): ?Student
     {
-        if ($publicId === null || $publicId === '') {
-            return $children->first();
+        if ($publicId !== null && $publicId !== '') {
+            $child = $children->firstWhere('public_id', $publicId);
+
+            abort_if($child === null, 403);
+            $this->remember($child);
+
+            return $child;
         }
 
-        $child = $children->firstWhere('public_id', $publicId);
+        $remembered = $this->session()?->get(self::SESSION_KEY);
 
-        abort_if($child === null, 403);
+        return ($remembered ? $children->firstWhere('public_id', $remembered) : null) ?? $children->first();
+    }
 
-        return $child;
+    public function remember(Student $child): void
+    {
+        $this->session()?->put(self::SESSION_KEY, $child->public_id);
+    }
+
+    private function session(): ?Session
+    {
+        $request = request();
+
+        return $request->hasSession() ? $request->session() : null;
     }
 
     /**

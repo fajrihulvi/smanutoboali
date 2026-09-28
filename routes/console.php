@@ -26,6 +26,9 @@ Schedule::command('queue:work --stop-when-empty --max-time=50 --tries=3')
     ->everyMinute()
     ->withoutOverlapping();
 
+// Pengumuman terjadwal yang sudah tiba waktunya → notifikasi audiens (S23).
+Schedule::command('announcements:publish-due')->everyMinute()->withoutOverlapping();
+
 // Hapus permanen file > 30 hari di tempat sampah (File::prunable()) dan ZIP cetak raport > 7 hari.
 Schedule::command('model:prune', ['--model' => [File::class, ReportCardExport::class]])->dailyAt('01:30');
 

@@ -124,6 +124,12 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             permission: 'audit_log.view',
         },
         {
+            label: 'Pengumuman',
+            href: '/kepala-sekolah/pengumuman',
+            icon: Megaphone,
+            permission: 'announcement.manage',
+        },
+        {
             label: 'Kondisi Anak',
             href: '/kepala-sekolah/kondisi-anak',
             icon: HeartPulse,
@@ -199,6 +205,11 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             href: '/guru/kondisi-anak',
             icon: HeartPulse,
             permission: 'child_condition.respond',
+        },
+        {
+            label: 'Pengumuman',
+            href: '/guru/pengumuman',
+            icon: Megaphone,
         },
         {
             label: 'Chat',
@@ -322,6 +333,12 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             badge: 'chat',
         },
         {
+            label: 'Pengumuman',
+            href: '/operator/pengumuman',
+            icon: Megaphone,
+            permission: 'announcement.manage',
+        },
+        {
             label: 'Keuangan',
             href: '/operator/keuangan',
             icon: Wallet,
@@ -379,6 +396,7 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             icon: Baby,
             permission: 'student.view',
         },
+        { label: 'Timeline Anak', href: '/orang-tua/timeline', icon: History },
         { label: 'Akademik', href: '/orang-tua/akademik', icon: Library },
         { label: 'Nilai', href: '/orang-tua/nilai', icon: NotebookPen },
         {

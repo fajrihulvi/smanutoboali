@@ -2,7 +2,6 @@ import { Head, router } from '@inertiajs/react';
 import { Baby, FolderKanban } from 'lucide-react';
 import { EmptyState } from '@/Components/shared/EmptyState';
 import { Pagination } from '@/Components/shared/Pagination';
-import { StudentSwitcher } from '@/Components/shared/StudentSwitcher';
 import type { SwitcherChild } from '@/Components/shared/StudentSwitcher';
 import ParentLayout from '@/Layouts/ParentLayout';
 import { cn } from '@/lib/utils';
@@ -21,7 +20,6 @@ type Props = {
 };
 
 export default function GuardianPortfolios({
-    childOptions,
     activeChild,
     child,
     portfolios,
@@ -36,11 +34,7 @@ export default function GuardianPortfolios({
         );
 
     return (
-        <ParentLayout
-            header={
-                <StudentSwitcher items={childOptions} active={activeChild} />
-            }
-        >
+        <ParentLayout>
             <Head title="Portofolio" />
 
             <div>

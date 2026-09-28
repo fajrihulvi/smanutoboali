@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Dashboard\Http\Controllers\Guardian\DashboardController as GuardianDashboard;
+use App\Modules\Dashboard\Http\Controllers\Guardian\TimelineController as GuardianTimeline;
 use App\Modules\Dashboard\Http\Controllers\Operator\DashboardController as OperatorDashboard;
 use App\Modules\Dashboard\Http\Controllers\Principal\DashboardController as PrincipalDashboard;
 use App\Modules\Dashboard\Http\Controllers\RedirectToRoleDashboardController;
@@ -40,4 +41,5 @@ Route::middleware(['auth', 'active.role:guardian'])
     ->prefix('orang-tua')->name('guardian.')
     ->group(function () {
         Route::get('dashboard', GuardianDashboard::class)->name('dashboard');
+        Route::get('timeline', GuardianTimeline::class)->name('timeline');
     });

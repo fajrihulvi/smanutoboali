@@ -14,8 +14,8 @@ type Props = {
 };
 
 /**
- * Pilih anak di portal orang tua (chip avatar). Mengganti query `?anak=` halaman ini.
- * Tidak tampil bila anak hanya satu.
+ * Pilih anak di portal orang tua (chip avatar). Anak aktif disimpan di session sehingga
+ * berlaku di semua halaman. Tidak tampil bila anak hanya satu.
  */
 export function StudentSwitcher({ items, active }: Props) {
     if (items.length < 2) {
@@ -38,9 +38,15 @@ export function StudentSwitcher({ items, active }: Props) {
                         role="tab"
                         aria-selected={selected}
                         onClick={() =>
-                            router.get(
-                                window.location.pathname,
-                                { anak: child.public_id },
+                            !selected &&
+                            router.post(
+                                '/orang-tua/anak-aktif',
+                                {
+                                    anak: child.public_id,
+                                    kembali:
+                                        window.location.pathname +
+                                        window.location.search,
+                                },
                                 { preserveScroll: true },
                             )
                         }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\People\Http\Controllers\Guardian\ActiveChildController;
 use App\Modules\People\Http\Controllers\Guardian\ChildController;
 use App\Modules\People\Http\Controllers\Guardian\ProfileController as GuardianProfileController;
 use App\Modules\People\Http\Controllers\Operator\GuardianController;
@@ -77,6 +78,7 @@ Route::middleware(['auth', 'active.role:guardian'])
     ->group(function () {
         Route::get('profil', [GuardianProfileController::class, 'edit'])->name('profile.edit');
         Route::put('profil', [GuardianProfileController::class, 'update'])->name('profile.update');
+        Route::post('anak-aktif', ActiveChildController::class)->name('active_child');
 
         Route::middleware('permission:student.view')->group(function () {
             Route::get('anak', [ChildController::class, 'index'])->name('children.index');

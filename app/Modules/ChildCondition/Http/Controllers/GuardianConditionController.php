@@ -31,8 +31,7 @@ class GuardianConditionController extends Controller
         /** @var User $user */
         $user = $request->user();
         $children = $this->children->of($user);
-        $childKey = $request->string(GuardianChildren::QUERY_KEY)->value();
-        $child = $childKey !== '' ? $this->children->selected($children, $childKey) : null;
+        $child = $this->children->selected($children, $request->string(GuardianChildren::QUERY_KEY)->value());
 
         return Inertia::render('ChildCondition::Guardian/Index', [
             ...$this->children->switcherProps($children, $child),
@@ -61,7 +60,7 @@ class GuardianConditionController extends Controller
                     'homeroom' => $row['homeroom'],
                 ], $teachers->forStudent($child)),
             ])->values(),
-            'selected' => $request->string(GuardianChildren::QUERY_KEY)->value() ?: null,
+            'selected' => $this->children->selected($children, $request->string(GuardianChildren::QUERY_KEY)->value())?->public_id,
             'types' => ConditionType::options(),
             'today' => now()->toDateString(),
         ]);

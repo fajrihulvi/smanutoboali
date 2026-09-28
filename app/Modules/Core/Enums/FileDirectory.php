@@ -19,5 +19,6 @@ enum FileDirectory: string
     case Materials = 'materials';
     case ReportCards = 'report-cards';
     case Settings = 'settings';
+    case Announcements = 'announcements';
     case Misc = 'misc';
 }

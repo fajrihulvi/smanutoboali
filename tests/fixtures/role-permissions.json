@@ -1,5 +1,6 @@
 {
     "principal": [
+        "announcement.manage",
         "audit_log.view",
         "chat.use",
         "finance.view",
@@ -23,6 +24,7 @@
     "operator": [
         "academic.manage",
         "activity.manage",
+        "announcement.manage",
         "attendance.manage",
         "audit_log.view",
         "chat.use",

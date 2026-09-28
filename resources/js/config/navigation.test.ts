@@ -40,6 +40,7 @@ describe('navigasi per role sesuai matriks permission', () => {
             'PPDB',
             'Laporan',
             'Audit Log',
+            'Pengumuman',
             'Kondisi Anak',
             'Chat',
             'Profil',
@@ -60,6 +61,7 @@ describe('navigasi per role sesuai matriks permission', () => {
             'Portofolio',
             'Kegiatan',
             'Kondisi Anak',
+            'Pengumuman',
             'Chat',
             'Profil',
         ]);
@@ -86,6 +88,7 @@ describe('navigasi per role sesuai matriks permission', () => {
             'Portofolio',
             'Kegiatan',
             'Chat',
+            'Pengumuman',
             'Keuangan',
             'PPDB',
             'CMS Website',
@@ -102,6 +105,7 @@ describe('navigasi per role sesuai matriks permission', () => {
         expect(menuFor('guardian')).toEqual([
             'Beranda',
             'Anak Saya',
+            'Timeline Anak',
             'Akademik',
             'Nilai',
             'Presensi',

@@ -2,7 +2,6 @@ import { Head, Link } from '@inertiajs/react';
 import { HeartPulse, Plus } from 'lucide-react';
 import { EmptyState } from '@/Components/shared/EmptyState';
 import { Pagination } from '@/Components/shared/Pagination';
-import { StudentSwitcher } from '@/Components/shared/StudentSwitcher';
 import type { SwitcherChild } from '@/Components/shared/StudentSwitcher';
 import { Button } from '@/Components/ui/button';
 import ParentLayout from '@/Layouts/ParentLayout';
@@ -26,11 +25,7 @@ export default function GuardianConditionIndex({
         : '/orang-tua/kondisi-anak/lapor';
 
     return (
-        <ParentLayout
-            header={
-                <StudentSwitcher items={childOptions} active={activeChild} />
-            }
-        >
+        <ParentLayout>
             <Head title="Kondisi Anak" />
 
             <div className="flex flex-wrap items-end justify-between gap-3">

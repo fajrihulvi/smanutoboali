@@ -1,7 +1,6 @@
 import { Head } from '@inertiajs/react';
 import { Baby, BookOpen, CalendarX2, ChevronDown, Shapes } from 'lucide-react';
 import { EmptyState } from '@/Components/shared/EmptyState';
-import { StudentSwitcher } from '@/Components/shared/StudentSwitcher';
 import type { SwitcherChild } from '@/Components/shared/StudentSwitcher';
 import ParentLayout from '@/Layouts/ParentLayout';
 import { MaterialItem } from '@/Modules/Academic/Components/MaterialItem';
@@ -30,8 +29,6 @@ type Props = {
 };
 
 export default function GuardianAcademicIndex({
-    childOptions,
-    activeChild,
     child,
     classroom,
     schedules,
@@ -41,11 +38,7 @@ export default function GuardianAcademicIndex({
     const today = new Date().getDay();
 
     return (
-        <ParentLayout
-            header={
-                <StudentSwitcher items={childOptions} active={activeChild} />
-            }
-        >
+        <ParentLayout>
             <Head title="Akademik" />
 
             <div>

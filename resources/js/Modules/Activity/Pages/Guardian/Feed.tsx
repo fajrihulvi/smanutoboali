@@ -2,7 +2,6 @@ import { Head, Link } from '@inertiajs/react';
 import { Baby, CalendarDays, PartyPopper } from 'lucide-react';
 import { EmptyState } from '@/Components/shared/EmptyState';
 import { Pagination } from '@/Components/shared/Pagination';
-import { StudentSwitcher } from '@/Components/shared/StudentSwitcher';
 import type { SwitcherChild } from '@/Components/shared/StudentSwitcher';
 import { Button } from '@/Components/ui/button';
 import ParentLayout from '@/Layouts/ParentLayout';
@@ -19,18 +18,9 @@ type Props = {
     activities: Paginated<ActivityRow> | null;
 };
 
-export default function GuardianActivityFeed({
-    childOptions,
-    activeChild,
-    child,
-    activities,
-}: Props) {
+export default function GuardianActivityFeed({ child, activities }: Props) {
     return (
-        <ParentLayout
-            header={
-                <StudentSwitcher items={childOptions} active={activeChild} />
-            }
-        >
+        <ParentLayout>
             <Head title="Kegiatan" />
 
             <div className="flex flex-wrap items-end justify-between gap-3">

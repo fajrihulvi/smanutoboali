@@ -8,6 +8,7 @@ import { RealtimeBridge } from '@/Components/app/RealtimeBridge';
 import { RoleSwitcher } from '@/Components/app/RoleSwitcher';
 import { UserMenu } from '@/Components/app/UserMenu';
 import { FlashToaster } from '@/Components/shared/FlashToaster';
+import { StudentSwitcher } from '@/Components/shared/StudentSwitcher';
 import {
     Sheet,
     SheetContent,
@@ -23,7 +24,7 @@ import type { MenuItem } from '@/types';
 
 type Props = {
     children: ReactNode;
-    /** Slot di bawah header, mis. StudentSwitcher (chip avatar anak). */
+    /** Slot tambahan di bawah header (StudentSwitcher global sudah otomatis). */
     header?: ReactNode;
 };
 
@@ -32,7 +33,14 @@ type Props = {
  * Di layar ≥ md, navigasi pindah ke header.
  */
 export default function ParentLayout({ children, header }: Props) {
-    const { auth } = usePage().props;
+    const { auth, guardian } = usePage().props;
+    const switcher =
+        guardian && guardian.childOptions.length > 1 ? (
+            <StudentSwitcher
+                items={guardian.childOptions}
+                active={guardian.activeChild}
+            />
+        ) : null;
     const { isCurrentUrl, isCurrentOrParentUrl } = useCurrentUrl();
     const items = navigationFor('guardian', auth.permissions);
     const bottomItems = guardianBottomNav
@@ -133,9 +141,12 @@ export default function ParentLayout({ children, header }: Props) {
                 </div>
             </header>
 
-            {header && (
+            {(switcher || header) && (
                 <div className="border-b border-slate-200 bg-white">
-                    <div className="mx-auto max-w-5xl px-4 py-3">{header}</div>
+                    <div className="mx-auto max-w-5xl space-y-3 px-4 py-3">
+                        {switcher}
+                        {header}
+                    </div>
                 </div>
             )}
 

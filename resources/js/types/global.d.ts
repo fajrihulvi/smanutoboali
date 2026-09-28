@@ -10,6 +10,15 @@ declare module '@inertiajs/core' {
             flash: Flash;
             notifications: { unread: number };
             chat: { unread: number };
+            /** Portal orang tua: daftar anak + anak aktif (session); null untuk role lain. */
+            guardian: {
+                childOptions: {
+                    public_id: string;
+                    name: string;
+                    photo_url: string | null;
+                }[];
+                activeChild: string | null;
+            } | null;
             school: { name: string; level: string; logo_url: string | null };
             activePeriod: ActivePeriod | null;
             sidebarOpen: boolean;

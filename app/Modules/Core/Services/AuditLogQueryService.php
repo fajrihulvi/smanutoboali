@@ -30,6 +30,7 @@ class AuditLogQueryService
         'portfolio' => 'Portofolio',
         'activity' => 'Kegiatan',
         'child_condition' => 'Kondisi Anak',
+        'announcement' => 'Pengumuman',
     ];
 
     /**

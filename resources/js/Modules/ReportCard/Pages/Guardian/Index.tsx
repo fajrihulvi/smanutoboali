@@ -1,7 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import { Baby, ChevronRight, Download, FileText } from 'lucide-react';
 import { EmptyState } from '@/Components/shared/EmptyState';
-import { StudentSwitcher } from '@/Components/shared/StudentSwitcher';
 import type { SwitcherChild } from '@/Components/shared/StudentSwitcher';
 import { Button } from '@/Components/ui/button';
 import ParentLayout from '@/Layouts/ParentLayout';
@@ -21,18 +20,9 @@ type Props = {
 
 const BASE = '/orang-tua/raport';
 
-export default function GuardianReportCards({
-    childOptions,
-    activeChild,
-    child,
-    cards,
-}: Props) {
+export default function GuardianReportCards({ child, cards }: Props) {
     return (
-        <ParentLayout
-            header={
-                <StudentSwitcher items={childOptions} active={activeChild} />
-            }
-        >
+        <ParentLayout>
             <Head title="Raport" />
 
             <div>

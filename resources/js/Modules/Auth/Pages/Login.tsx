@@ -16,14 +16,22 @@ import type { RoleCode } from '@/types';
 type Props = {
     portal: RoleCode;
     portalSlug: string;
+    /** Portal PPDB memakai /ppdb/masuk dan punya tautan daftar akun. */
+    loginUrl?: string;
+    registerUrl?: string;
 };
 
-export default function Login({ portal, portalSlug }: Props) {
+export default function Login({
+    portal,
+    portalSlug,
+    loginUrl,
+    registerUrl,
+}: Props) {
     const form = useForm({ email: '', password: '', remember: false });
 
     const submit = (event: FormEvent) => {
         event.preventDefault();
-        form.post(`/login/${portalSlug}`, {
+        form.post(loginUrl ?? `/login/${portalSlug}`, {
             onFinish: () => form.reset('password'),
         });
     };
@@ -32,7 +40,11 @@ export default function Login({ portal, portalSlug }: Props) {
         <AuthLayout
             portal={portal}
             title={`Masuk ke ${portals[portal].title}`}
-            description="Gunakan email dan password yang diberikan sekolah."
+            description={
+                registerUrl
+                    ? 'Masuk dengan akun PPDB yang sudah Anda daftarkan.'
+                    : 'Gunakan email dan password yang diberikan sekolah.'
+            }
         >
             <form onSubmit={submit} className="space-y-5" noValidate>
                 <div className="grid gap-2">
@@ -99,6 +111,13 @@ export default function Login({ portal, portalSlug }: Props) {
                     Masuk
                 </Button>
             </form>
+
+            {registerUrl && (
+                <p className="mt-6 text-center text-sm text-slate-600">
+                    Belum punya akun?{' '}
+                    <TextLink href={registerUrl}>Daftar akun PPDB</TextLink>
+                </p>
+            )}
 
             <Link
                 href="/login"

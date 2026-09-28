@@ -13,9 +13,26 @@ export class HttpError extends Error {
     constructor(
         message: string,
         public readonly status: number,
+        /** Error validasi per field (pesan pertama), bila respons 422. */
+        public readonly errors: Record<string, string> = {},
     ) {
         super(message);
     }
+}
+
+/** Ambil pesan pertama per field dari respons validasi Laravel. */
+export function fieldErrors(body: unknown): Record<string, string> {
+    const errors = (body as { errors?: Record<string, string[]> } | null)
+        ?.errors;
+
+    return errors
+        ? Object.fromEntries(
+              Object.entries(errors).map(([key, messages]) => [
+                  key,
+                  messages[0] ?? '',
+              ]),
+          )
+        : {};
 }
 
 /** Pesan pertama dari respons error Laravel ({ message, errors }). */
@@ -69,6 +86,7 @@ export async function sendJson<T>(
         throw new HttpError(
             errorMessage(response.status, data),
             response.status,
+            fieldErrors(data),
         );
     }
 

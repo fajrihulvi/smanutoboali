@@ -14,6 +14,7 @@ use App\Modules\ChildCondition\Database\Seeders\ChildConditionDemoSeeder;
 use App\Modules\Finance\Database\Seeders\FinanceDemoSeeder;
 use App\Modules\People\Database\Seeders\PeopleDemoSeeder;
 use App\Modules\Portfolio\Database\Seeders\PortfolioDemoSeeder;
+use App\Modules\Ppdb\Database\Seeders\PpdbDemoSeeder;
 use App\Modules\ReportCard\Database\Seeders\ReportCardDemoSeeder;
 use App\Modules\School\Database\Seeders\AcademicYearSeeder;
 use Illuminate\Database\Seeder;
@@ -40,6 +41,7 @@ class DatabaseSeeder extends Seeder
             ChildConditionDemoSeeder::class,
             AnnouncementDemoSeeder::class,
             FinanceDemoSeeder::class,
+            PpdbDemoSeeder::class,
         ]);
     }
 }

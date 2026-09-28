@@ -97,6 +97,7 @@ describe('navigasi per role sesuai matriks permission', () => {
             'Keuangan › Potongan',
             'Keuangan › Rekap',
             'PPDB',
+            'PPDB › Periode & Jalur',
             'CMS Website',
             'User Management',
             'Role & Permission',

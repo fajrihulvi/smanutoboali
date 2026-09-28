@@ -32,6 +32,7 @@ class AuditLogQueryService
         'child_condition' => 'Kondisi Anak',
         'announcement' => 'Pengumuman',
         'finance' => 'Keuangan',
+        'ppdb' => 'PPDB',
     ];
 
     /**

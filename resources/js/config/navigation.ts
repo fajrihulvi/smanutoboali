@@ -381,6 +381,13 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             href: '/operator/ppdb',
             icon: UserRoundPlus,
             permission: 'ppdb.manage',
+            children: [
+                {
+                    label: 'Periode & Jalur',
+                    href: '/operator/ppdb/periode',
+                    icon: UserRoundPlus,
+                },
+            ],
         },
         {
             label: 'CMS Website',

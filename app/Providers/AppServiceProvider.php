@@ -58,6 +58,12 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
+        // Pusher tanpa kunci (lokal/instalasi baru) → broadcast ke log agar event ShouldBroadcastNow
+        // tidak menggagalkan request; UI memakai fallback muat ulang saat fokus.
+        if (config('broadcasting.default') === 'pusher' && blank(config('broadcasting.connections.pusher.key'))) {
+            config(['broadcasting.default' => 'log']);
+        }
+
         DB::prohibitDestructiveCommands(
             app()->isProduction(),
         );

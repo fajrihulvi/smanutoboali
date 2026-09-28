@@ -3,6 +3,7 @@
 namespace App\Modules\Attendance\Notifications;
 
 use App\Modules\Attendance\Enums\AttendanceStatus;
+use App\Modules\Core\Notifications\Concerns\DeliversInApp;
 use Carbon\CarbonImmutable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,7 +15,7 @@ use Illuminate\Notifications\Notification;
  */
 class StudentAbsenceNotification extends Notification implements ShouldQueue
 {
-    use Queueable;
+    use DeliversInApp, Queueable;
 
     public function __construct(
         public string $studentName,
@@ -30,7 +31,7 @@ class StudentAbsenceNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['database', 'mail'];
+        return $this->inAppChannels(withMail: true);
     }
 
     public function toMail(object $notifiable): MailMessage

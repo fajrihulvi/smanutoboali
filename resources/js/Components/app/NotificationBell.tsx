@@ -1,6 +1,8 @@
-import { router, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { Bell, BellOff, CheckCheck } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { NOTIFICATION_EVENT } from '@/Components/app/RealtimeBridge';
+import type { RealtimeNotification } from '@/Components/app/RealtimeBridge';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -26,8 +28,8 @@ type NotificationItem = {
 type RecentResponse = { data: NotificationItem[] };
 
 /**
- * Lonceng notifikasi. Badge dari shared prop notifications.unread; daftar
- * diambil saat dropdown dibuka. Realtime (Pusher) menyusul di S19.
+ * Lonceng notifikasi. Badge dari shared prop notifications.unread (dimuat ulang oleh
+ * RealtimeBridge); daftar diambil saat dropdown dibuka dan ditambah otomatis saat notifikasi realtime tiba.
  */
 export function NotificationBell({ className }: { className?: string }) {
     const { notifications } = usePage().props;
@@ -35,6 +37,32 @@ export function NotificationBell({ className }: { className?: string }) {
     const [failed, setFailed] = useState(false);
 
     const count = notifications?.unread ?? 0;
+
+    useEffect(() => {
+        const onRealtime = (event: Event) => {
+            const detail = (event as CustomEvent<RealtimeNotification>).detail;
+
+            setItems((current) =>
+                current === null
+                    ? null
+                    : [
+                          {
+                              id: detail.id,
+                              title: detail.title ?? 'Notifikasi',
+                              body: detail.body ?? null,
+                              url: detail.url ?? null,
+                              read_at: null,
+                              created_at: new Date().toISOString(),
+                          },
+                          ...current,
+                      ],
+            );
+        };
+
+        window.addEventListener(NOTIFICATION_EVENT, onRealtime);
+
+        return () => window.removeEventListener(NOTIFICATION_EVENT, onRealtime);
+    }, []);
 
     const load = async () => {
         setFailed(false);
@@ -187,6 +215,13 @@ export function NotificationBell({ className }: { className?: string }) {
                         ))}
                     </div>
                 )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                    asChild
+                    className="justify-center text-sm font-medium text-brand-700"
+                >
+                    <Link href="/notifikasi">Lihat semua notifikasi</Link>
+                </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     );

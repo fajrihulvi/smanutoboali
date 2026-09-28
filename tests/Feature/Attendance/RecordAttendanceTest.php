@@ -213,7 +213,7 @@ describe('notifikasi orang tua', function () {
         Notification::assertSentTo($parent, StudentAbsenceNotification::class, function (StudentAbsenceNotification $n, array $channels) use ($parent, $students) {
             $data = $n->toArray($parent);
 
-            return $channels === ['database', 'mail']
+            return $channels === ['database', 'broadcast', 'mail']
                 && $data['title'] === 'Ani tercatat Alpa'
                 && $data['url'] === "/orang-tua/presensi?anak={$students[0]->public_id}";
         });

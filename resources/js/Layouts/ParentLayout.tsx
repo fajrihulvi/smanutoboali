@@ -3,6 +3,7 @@ import { Menu } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { AppLogo } from '@/Components/app/AppLogo';
 import { NotificationBell } from '@/Components/app/NotificationBell';
+import { RealtimeBridge } from '@/Components/app/RealtimeBridge';
 import { RoleSwitcher } from '@/Components/app/RoleSwitcher';
 import { UserMenu } from '@/Components/app/UserMenu';
 import { FlashToaster } from '@/Components/shared/FlashToaster';
@@ -161,6 +162,7 @@ export default function ParentLayout({ children, header }: Props) {
             </nav>
 
             <FlashToaster />
+            <RealtimeBridge />
         </div>
     );
 }

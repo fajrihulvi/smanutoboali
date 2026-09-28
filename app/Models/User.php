@@ -87,4 +87,12 @@ class User extends Authenticatable
     {
         $this->notify(new ResetPasswordNotification($token));
     }
+
+    /**
+     * Channel privat notifikasi realtime memakai public_id (tidak mengekspos id numerik).
+     */
+    public function receivesBroadcastNotificationsOn(): string
+    {
+        return 'App.Models.User.'.$this->public_id;
+    }
 }

@@ -19,7 +19,8 @@ File ini dibaca otomatis oleh Claude Code di setiap sesi. Patuhi seluruh aturan 
 
 ## Batasan shared hosting (WAJIB diingat)
 
-1. Jangan menambah dependensi yang butuh proses berjalan terus (Reverb, Horizon, Octane, Swoole, Redis wajib, Node SSR).
+1. Jangan menambah dependensi yang butuh proses berjalan terus (Reverb, Horiz
+on, Octane, Swoole, Redis wajib, Node SSR).
 2. Queue memakai driver `database` dan diproses lewat scheduler (`queue:work --stop-when-empty`), bukan worker permanen.
 3. Aset frontend di-build lokal (`npm run build`); server hanya menerima hasil `public/build`.
 4. Proses berat (import/export besar, generate tagihan massal, PDF massal) harus lewat job + chunk.

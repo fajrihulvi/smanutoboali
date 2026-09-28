@@ -2,6 +2,7 @@
 
 namespace App\Modules\Core\Notifications;
 
+use App\Modules\Core\Notifications\Concerns\DeliversInApp;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
@@ -10,14 +11,14 @@ use Illuminate\Notifications\Notification;
  */
 class WelcomeNotification extends Notification
 {
-    use Queueable;
+    use DeliversInApp, Queueable;
 
     /**
      * @return list<string>
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return $this->inAppChannels();
     }
 
     /**

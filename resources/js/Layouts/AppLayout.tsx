@@ -1,6 +1,7 @@
 import { usePage } from '@inertiajs/react';
 import { AppSidebar } from '@/Components/app/AppSidebar';
 import { AppTopbar } from '@/Components/app/AppTopbar';
+import { RealtimeBridge } from '@/Components/app/RealtimeBridge';
 import { FlashToaster } from '@/Components/shared/FlashToaster';
 import { SidebarInset, SidebarProvider } from '@/Components/ui/sidebar';
 import type { AppLayoutProps } from '@/types';
@@ -26,6 +27,7 @@ export default function AppLayout({
                 </main>
             </SidebarInset>
             <FlashToaster />
+            <RealtimeBridge />
         </SidebarProvider>
     );
 }

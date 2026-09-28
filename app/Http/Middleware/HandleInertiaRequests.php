@@ -58,6 +58,12 @@ class HandleInertiaRequests extends Middleware
             ],
             'school' => fn () => app(SchoolProfile::class)->toArray(),
             'activePeriod' => fn () => $user ? app(ActivePeriod::class)->toArray() : null,
+            // Konfigurasi Echo dari server (kunci publik Pusher) agar satu build bisa dipakai di semua lingkungan.
+            'realtime' => fn () => $user instanceof User && config('broadcasting.default') === 'pusher' ? [
+                'key' => config('broadcasting.connections.pusher.key'),
+                'cluster' => config('broadcasting.connections.pusher.options.cluster'),
+                'userChannel' => $user->receivesBroadcastNotificationsOn(),
+            ] : null,
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }

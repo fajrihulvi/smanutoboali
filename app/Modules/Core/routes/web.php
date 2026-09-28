@@ -46,6 +46,7 @@ Route::get('media/{file}', [FileController::class, 'media'])->name('media.show')
 
 // Notifikasi milik user yang login (semua role).
 Route::middleware(['auth', 'active.role'])->prefix('notifikasi')->name('notifications.')->group(function () {
+    Route::get('/', [NotificationController::class, 'index'])->name('index');
     Route::get('terbaru', [NotificationController::class, 'recent'])->name('recent');
     Route::post('dibaca-semua', [NotificationController::class, 'markAllAsRead'])->name('read-all');
     Route::post('{id}/dibaca', [NotificationController::class, 'markAsRead'])->whereUuid('id')->name('read');

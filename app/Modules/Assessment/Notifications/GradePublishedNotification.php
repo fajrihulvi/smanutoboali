@@ -2,6 +2,7 @@
 
 namespace App\Modules\Assessment\Notifications;
 
+use App\Modules\Core\Notifications\Concerns\DeliversInApp;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -12,7 +13,7 @@ use Illuminate\Notifications\Notification;
  */
 class GradePublishedNotification extends Notification implements ShouldQueue
 {
-    use Queueable;
+    use DeliversInApp, Queueable;
 
     public function __construct(
         public string $studentName,
@@ -27,7 +28,7 @@ class GradePublishedNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['database', 'mail'];
+        return $this->inAppChannels(withMail: true);
     }
 
     public function toMail(object $notifiable): MailMessage

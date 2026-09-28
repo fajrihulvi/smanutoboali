@@ -2,7 +2,7 @@ import { router } from '@inertiajs/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/Components/ui/button';
 import { formatDate } from '@/lib/format';
-import { shiftMonth } from '@/Modules/Attendance/lib/status';
+import { shiftMonth } from '@/lib/month';
 
 type Props = {
     month: string;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { monthGrid, shiftMonth } from '@/Modules/Attendance/lib/status';
+import { monthGrid, shiftMonth } from '@/lib/month';
 
 describe('helper bulan presensi', () => {
     it('menggeser bulan melewati batas tahun', () => {

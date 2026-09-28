@@ -135,6 +135,15 @@
     :focus-visible {
         @apply ring-2 ring-brand-500/40 outline-none;
     }
+
+    /*
+     * Item grid default-nya min-width:auto sehingga konten lebar (tabel, input tanggal,
+     * daftar panjang) mendorong kolom melebar dan halaman meluber di 360px. Spesifisitas 0
+     * (:where) agar utilitas seperti min-w-* tetap bisa menimpa.
+     */
+    :where(.grid) > * {
+        min-width: 0;
+    }
 }
 
 /* Sidebar navy: gradient brand-950 → brand-900 (§6.3) */

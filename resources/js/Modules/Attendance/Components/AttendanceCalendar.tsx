@@ -1,9 +1,6 @@
+import { monthGrid } from '@/lib/month';
 import { cn } from '@/lib/utils';
-import {
-    STATUS_CELL,
-    STATUS_SHORT,
-    monthGrid,
-} from '@/Modules/Attendance/lib/status';
+import { STATUS_CELL, STATUS_SHORT } from '@/Modules/Attendance/lib/status';
 import type { CalendarData, StatusOption } from '@/Modules/Attendance/types';
 
 type Props = {

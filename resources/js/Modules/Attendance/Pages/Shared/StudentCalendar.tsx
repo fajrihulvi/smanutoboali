@@ -1,10 +1,10 @@
 import { Head } from '@inertiajs/react';
+import { MonthPicker } from '@/Components/shared/MonthPicker';
 import { PageHeader } from '@/Components/shared/PageHeader';
 import AppLayout from '@/Layouts/AppLayout';
 import { AttendanceCalendar } from '@/Modules/Attendance/Components/AttendanceCalendar';
 import { AttendanceDayList } from '@/Modules/Attendance/Components/AttendanceDayList';
 import { AttendanceSummary } from '@/Modules/Attendance/Components/AttendanceSummary';
-import { MonthPicker } from '@/Modules/Attendance/Components/MonthPicker';
 import type {
     CalendarData,
     StatusOption,

@@ -4,6 +4,8 @@ import type { FormEvent } from 'react';
 import InputError from '@/Components/input-error';
 import { FileUploader } from '@/Components/shared/FileUploader';
 import { PageHeader } from '@/Components/shared/PageHeader';
+import { StudentPicker } from '@/Components/shared/StudentPicker';
+import type { PickedStudent } from '@/Components/shared/StudentPicker';
 import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';
 import { Label } from '@/Components/ui/label';
@@ -14,8 +16,6 @@ import AppLayout from '@/Layouts/AppLayout';
 import { cn } from '@/lib/utils';
 import { NativeSelect } from '@/Modules/Academic/Components/NativeSelect';
 import type { Option } from '@/Modules/Academic/types';
-import { StudentPicker } from '@/Modules/Portfolio/Components/StudentPicker';
-import type { PickedStudent } from '@/Modules/Portfolio/Components/StudentPicker';
 import type { PortfolioRow } from '@/Modules/Portfolio/types';
 
 type Props = {

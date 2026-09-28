@@ -27,6 +27,8 @@ class AuditLogQueryService
         'attendance' => 'Presensi',
         'assessment' => 'Penilaian',
         'report_card' => 'Raport',
+        'portfolio' => 'Portofolio',
+        'activity' => 'Kegiatan',
     ];
 
     /**

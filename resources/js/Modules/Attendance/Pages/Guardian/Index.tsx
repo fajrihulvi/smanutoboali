@@ -1,6 +1,7 @@
 import { Head } from '@inertiajs/react';
 import { Baby, CalendarCheck } from 'lucide-react';
 import { EmptyState } from '@/Components/shared/EmptyState';
+import { MonthPicker } from '@/Components/shared/MonthPicker';
 import { StatusBadge } from '@/Components/shared/StatusBadge';
 import { StudentSwitcher } from '@/Components/shared/StudentSwitcher';
 import type { SwitcherChild } from '@/Components/shared/StudentSwitcher';
@@ -9,7 +10,6 @@ import { formatDate } from '@/lib/format';
 import { AttendanceCalendar } from '@/Modules/Attendance/Components/AttendanceCalendar';
 import { AttendanceDayList } from '@/Modules/Attendance/Components/AttendanceDayList';
 import { AttendanceSummary } from '@/Modules/Attendance/Components/AttendanceSummary';
-import { MonthPicker } from '@/Modules/Attendance/Components/MonthPicker';
 import { STATUS_VARIANT } from '@/Modules/Attendance/lib/status';
 import type {
     AttendanceStatusValue,

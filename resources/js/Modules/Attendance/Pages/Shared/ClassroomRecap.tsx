@@ -1,11 +1,11 @@
 import { Head, Link } from '@inertiajs/react';
 import { CalendarX2 } from 'lucide-react';
 import { EmptyState } from '@/Components/shared/EmptyState';
+import { MonthPicker } from '@/Components/shared/MonthPicker';
 import { PageHeader } from '@/Components/shared/PageHeader';
 import AppLayout from '@/Layouts/AppLayout';
 import { cn } from '@/lib/utils';
 import { AttendanceSummary } from '@/Modules/Attendance/Components/AttendanceSummary';
-import { MonthPicker } from '@/Modules/Attendance/Components/MonthPicker';
 import {
     STATUS_CELL,
     STATUS_ORDER,

@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\User;
 use App\Modules\Auth\Http\Resources\AuthUserResource;
 use App\Modules\Auth\Services\ActiveRoleService;
+use App\Modules\Chat\Services\ChatInbox;
 use App\Modules\Core\Enums\Role;
 use App\Modules\School\Services\SchoolProfile;
 use App\Support\ActivePeriod;
@@ -55,6 +56,10 @@ class HandleInertiaRequests extends Middleware
             ],
             'notifications' => fn () => [
                 'unread' => $user instanceof User ? $user->unreadNotifications()->count() : 0,
+            ],
+            // Badge menu Chat (S20).
+            'chat' => fn () => [
+                'unread' => $user instanceof User && $user->can('chat.use') ? app(ChatInbox::class)->unreadTotal($user) : 0,
             ],
             'school' => fn () => app(SchoolProfile::class)->toArray(),
             'activePeriod' => fn () => $user ? app(ActivePeriod::class)->toArray() : null,

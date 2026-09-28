@@ -9,6 +9,7 @@ declare module '@inertiajs/core' {
             auth: Auth;
             flash: Flash;
             notifications: { unread: number };
+            chat: { unread: number };
             school: { name: string; level: string; logo_url: string | null };
             activePeriod: ActivePeriod | null;
             sidebarOpen: boolean;

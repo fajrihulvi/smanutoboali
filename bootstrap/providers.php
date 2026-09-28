@@ -6,6 +6,7 @@ use App\Modules\Activity\ActivityServiceProvider;
 use App\Modules\Assessment\AssessmentServiceProvider;
 use App\Modules\Attendance\AttendanceServiceProvider;
 use App\Modules\Auth\AuthServiceProvider;
+use App\Modules\Chat\ChatServiceProvider;
 use App\Modules\Core\CoreServiceProvider;
 use App\Modules\Dashboard\DashboardServiceProvider;
 use App\Modules\People\PeopleServiceProvider;
@@ -21,6 +22,7 @@ return [
     AssessmentServiceProvider::class,
     AttendanceServiceProvider::class,
     AuthServiceProvider::class,
+    ChatServiceProvider::class,
     CoreServiceProvider::class,
     DashboardServiceProvider::class,
     PeopleServiceProvider::class,

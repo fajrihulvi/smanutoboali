@@ -30,6 +30,8 @@ enum SettingKey: string
     case GradePredicateA = 'grade_predicate_a';
     case GradePredicateB = 'grade_predicate_b';
     case GradePredicateC = 'grade_predicate_c';
+    /** Presence channel status online di chat (opsional, menambah koneksi Pusher). */
+    case ChatPresenceEnabled = 'chat_presence_enabled';
 
     public function default(): mixed
     {
@@ -47,6 +49,7 @@ enum SettingKey: string
             self::GradePredicateA => 90,
             self::GradePredicateB => 80,
             self::GradePredicateC => 70,
+            self::ChatPresenceEnabled => false,
         };
     }
 

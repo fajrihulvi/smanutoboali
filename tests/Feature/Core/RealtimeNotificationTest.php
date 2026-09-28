@@ -7,6 +7,8 @@ use App\Modules\Core\Enums\Role;
 use App\Modules\Core\Notifications\WelcomeNotification;
 use App\Providers\AppServiceProvider;
 use Carbon\CarbonImmutable;
+use Illuminate\Broadcasting\Broadcasters\Broadcaster;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Notification;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -131,4 +133,30 @@ it('Pusher tanpa kunci otomatis turun ke broadcaster log', function () {
     (new AppServiceProvider(app()))->boot();
 
     expect(config('broadcasting.default'))->toBe('log');
+});
+
+it('broadcast notifikasi yang gagal tidak membatalkan notifikasi database', function () {
+    Broadcast::extend('rusak', fn () => new class extends Broadcaster
+    {
+        public function auth($request): mixed
+        {
+            return null;
+        }
+
+        public function validAuthenticationResponse($request, $result): mixed
+        {
+            return null;
+        }
+
+        public function broadcast(array $channels, $event, array $payload = []): void
+        {
+            throw new RuntimeException('Pusher tidak terjangkau');
+        }
+    });
+    config(['broadcasting.connections.rusak' => ['driver' => 'rusak'], 'broadcasting.default' => 'rusak']);
+    $user = User::factory()->create();
+
+    $user->notify(new WelcomeNotification);
+
+    expect($user->notifications()->count())->toBe(1);
 });

@@ -3,12 +3,14 @@
 namespace App\Providers;
 
 use App\Support\ActivePeriod;
+use App\Support\Broadcasting\ResilientBroadcastChannel;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Middleware\TrustProxies;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
@@ -63,6 +65,9 @@ class AppServiceProvider extends ServiceProvider
         if (config('broadcasting.default') === 'pusher' && blank(config('broadcasting.connections.pusher.key'))) {
             config(['broadcasting.default' => 'log']);
         }
+
+        // Pusher gagal → notifikasi database tetap tersimpan, aksi utama tidak batal.
+        Notification::extend('broadcast', fn ($app) => $app->make(ResilientBroadcastChannel::class));
 
         DB::prohibitDestructiveCommands(
             app()->isProduction(),

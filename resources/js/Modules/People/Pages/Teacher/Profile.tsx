@@ -4,6 +4,7 @@ import type { FormEvent } from 'react';
 import { EmptyState } from '@/Components/shared/EmptyState';
 import { PageHeader } from '@/Components/shared/PageHeader';
 import { PersonAvatar } from '@/Components/shared/PersonAvatar';
+import { SignatureField } from '@/Components/shared/SignatureField';
 import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';
 import { Spinner } from '@/Components/ui/spinner';
@@ -14,6 +15,7 @@ import type { TeacherRow } from '@/Modules/People/types';
 
 type Props = {
     teacher: TeacherRow | null;
+    signatureUrl: string | null;
 };
 
 function ReadOnly({ label, value }: { label: string; value: string | null }) {
@@ -27,7 +29,7 @@ function ReadOnly({ label, value }: { label: string; value: string | null }) {
     );
 }
 
-export default function TeacherProfile({ teacher }: Props) {
+export default function TeacherProfile({ teacher, signatureUrl }: Props) {
     const form = useForm({
         phone: teacher?.phone ?? '',
         photo: null as File | null,
@@ -151,6 +153,16 @@ export default function TeacherProfile({ teacher }: Props) {
                             </div>
                         </FormCard>
                     </form>
+
+                    <FormCard
+                        title="Tanda tangan"
+                        description="Dipakai di PDF raport bila Anda menjadi wali kelas. Tanpa gambar, tersedia ruang untuk tanda tangan basah."
+                    >
+                        <SignatureField
+                            url={signatureUrl}
+                            endpoint="/guru/profil/tanda-tangan"
+                        />
+                    </FormCard>
                 </div>
             )}
         </AppLayout>

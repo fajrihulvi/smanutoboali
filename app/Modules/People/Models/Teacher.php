@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Gender $gender
  * @property string|null $phone
  * @property int|null $photo_file_id
+ * @property int|null $signature_file_id
  * @property EmploymentStatus $employment_status
  * @property bool $is_active
  * @property-read User|null $user
@@ -36,7 +37,7 @@ class Teacher extends Model
 
     protected $fillable = [
         'user_id', 'nip', 'nuptk', 'name', 'gender', 'phone',
-        'photo_file_id', 'employment_status', 'is_active',
+        'photo_file_id', 'signature_file_id', 'employment_status', 'is_active',
     ];
 
     /**
@@ -65,6 +66,16 @@ class Teacher extends Model
     public function photo(): BelongsTo
     {
         return $this->belongsTo(File::class, 'photo_file_id');
+    }
+
+    /**
+     * Gambar tanda tangan (dipakai di PDF raport bila guru ini wali kelas).
+     *
+     * @return BelongsTo<File, $this>
+     */
+    public function signature(): BelongsTo
+    {
+        return $this->belongsTo(File::class, 'signature_file_id');
     }
 
     /**

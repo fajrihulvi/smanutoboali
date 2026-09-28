@@ -68,6 +68,8 @@ Route::middleware(['auth', 'active.role:teacher'])
     ->group(function () {
         Route::get('profil', [TeacherProfileController::class, 'edit'])->name('profile.edit');
         Route::post('profil', [TeacherProfileController::class, 'update'])->name('profile.update');
+        Route::post('profil/tanda-tangan', [TeacherProfileController::class, 'uploadSignature'])->name('profile.signature.store');
+        Route::delete('profil/tanda-tangan', [TeacherProfileController::class, 'removeSignature'])->name('profile.signature.destroy');
     });
 
 Route::middleware(['auth', 'active.role:guardian'])

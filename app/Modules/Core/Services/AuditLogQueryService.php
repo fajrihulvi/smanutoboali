@@ -24,6 +24,9 @@ class AuditLogQueryService
         'school' => 'Sekolah & Periode',
         'people' => 'Guru, Orang Tua & Siswa',
         'academic' => 'Akademik',
+        'attendance' => 'Presensi',
+        'assessment' => 'Penilaian',
+        'report_card' => 'Raport',
     ];
 
     /**

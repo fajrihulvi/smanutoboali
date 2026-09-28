@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Illuminate\View\FileViewFinder;
 use ReflectionClass;
 
@@ -39,6 +40,7 @@ abstract class ModuleServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadModuleMigrations();
+        $this->loadModuleViews();
         $this->loadModuleRoutes();
         $this->registerPolicies();
         $this->registerEvents();
@@ -67,6 +69,19 @@ abstract class ModuleServiceProvider extends ServiceProvider
 
         if (is_dir($path)) {
             $this->loadMigrationsFrom($path);
+        }
+    }
+
+    /**
+     * Blade view modul (mis. template PDF) di `resources/views`, dipanggil sebagai
+     * '<module-kebab>::nama', contoh 'report-card::pdf'.
+     */
+    protected function loadModuleViews(): void
+    {
+        $path = $this->modulePath('resources/views');
+
+        if (is_dir($path)) {
+            $this->loadViewsFrom($path, Str::kebab($this->moduleName()));
         }
     }
 

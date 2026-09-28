@@ -5,6 +5,7 @@ namespace App\Modules\School\Http\Controllers\Operator;
 use App\Http\Controllers\Controller;
 use App\Modules\Attendance\Enums\AttendanceMode;
 use App\Modules\Attendance\Enums\TeacherAttendanceValidation;
+use App\Modules\Core\Actions\ReplaceSignatureAction;
 use App\Modules\Core\Actions\UpdateSystemSettingsAction;
 use App\Modules\Core\Enums\SettingKey;
 use App\Modules\Core\Services\FileUrlGenerator;
@@ -14,6 +15,8 @@ use App\Modules\School\Enums\SchoolLevel;
 use App\Modules\School\Http\Requests\UpdateSchoolSettingsRequest;
 use App\Modules\School\Models\School;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -35,6 +38,7 @@ class SchoolSettingsController extends Controller
                 'principal_name' => $school->principal_name,
                 'principal_nip' => $school->principal_nip,
                 'logo_url' => $school->logo ? $urls->url($school->logo) : null,
+                'principal_signature_url' => $school->principalSignature ? $urls->url($school->principalSignature) : null,
             ],
             'system' => [
                 'timezone' => $settings->get(SettingKey::Timezone),
@@ -82,5 +86,23 @@ class SchoolSettingsController extends Controller
         });
 
         return to_route('operator.settings.edit')->with('success', 'Pengaturan sekolah berhasil disimpan.');
+    }
+
+    public function uploadSignature(Request $request, ReplaceSignatureAction $replace): RedirectResponse
+    {
+        $request->validate(['signature' => ['required', 'file', 'max:'.ReplaceSignatureAction::MAX_KB]], [], ['signature' => 'tanda tangan']);
+
+        /** @var UploadedFile $file */
+        $file = $request->file('signature');
+        $replace->handle(School::current(), 'principal_signature_file_id', $file, 'school', 'kepala sekolah');
+
+        return back()->with('success', 'Tanda tangan kepala sekolah disimpan.');
+    }
+
+    public function removeSignature(ReplaceSignatureAction $replace): RedirectResponse
+    {
+        $replace->handle(School::current(), 'principal_signature_file_id', null, 'school', 'kepala sekolah');
+
+        return back()->with('success', 'Tanda tangan kepala sekolah dihapus.');
     }
 }

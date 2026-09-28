@@ -17,6 +17,7 @@ enum FileDirectory: string
     case Chat = 'chat';
     case ChildConditions = 'child-conditions';
     case Materials = 'materials';
+    case ReportCards = 'report-cards';
     case Settings = 'settings';
     case Misc = 'misc';
 }

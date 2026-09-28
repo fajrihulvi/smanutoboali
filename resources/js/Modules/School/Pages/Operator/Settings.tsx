@@ -4,6 +4,7 @@ import type { FormEvent, ReactNode } from 'react';
 import InputError from '@/Components/input-error';
 import { FileUploader } from '@/Components/shared/FileUploader';
 import { PageHeader } from '@/Components/shared/PageHeader';
+import { SignatureField } from '@/Components/shared/SignatureField';
 import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';
 import { Label } from '@/Components/ui/label';
@@ -31,6 +32,7 @@ type Props = {
         principal_name: string | null;
         principal_nip: string | null;
         logo_url: string | null;
+        principal_signature_url: string | null;
     };
     system: {
         timezone: string;
@@ -376,6 +378,13 @@ export default function Settings({
                                 aria-invalid={!!form.errors.principal_nip}
                             />
                         </Field>
+                    </div>
+                    <div className="grid gap-2">
+                        <Label>Tanda tangan (PDF raport)</Label>
+                        <SignatureField
+                            url={school.principal_signature_url}
+                            endpoint="/operator/settings/tanda-tangan"
+                        />
                     </div>
                 </Section>
 

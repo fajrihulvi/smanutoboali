@@ -17,6 +17,8 @@ Route::middleware(['auth', 'active.role:operator'])
         Route::middleware('permission:setting.manage')->group(function () {
             Route::get('settings', [SchoolSettingsController::class, 'edit'])->name('settings.edit');
             Route::post('settings', [SchoolSettingsController::class, 'update'])->name('settings.update');
+            Route::post('settings/tanda-tangan', [SchoolSettingsController::class, 'uploadSignature'])->name('settings.signature.store');
+            Route::delete('settings/tanda-tangan', [SchoolSettingsController::class, 'removeSignature'])->name('settings.signature.destroy');
         });
 
         Route::middleware('permission:master_data.manage')

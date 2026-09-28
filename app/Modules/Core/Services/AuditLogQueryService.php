@@ -29,6 +29,7 @@ class AuditLogQueryService
         'report_card' => 'Raport',
         'portfolio' => 'Portofolio',
         'activity' => 'Kegiatan',
+        'child_condition' => 'Kondisi Anak',
     ];
 
     /**

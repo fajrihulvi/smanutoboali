@@ -40,6 +40,7 @@ describe('navigasi per role sesuai matriks permission', () => {
             'PPDB',
             'Laporan',
             'Audit Log',
+            'Kondisi Anak',
             'Chat',
             'Profil',
         ]);

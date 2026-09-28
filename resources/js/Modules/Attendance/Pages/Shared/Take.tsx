@@ -2,6 +2,7 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import {
     ArrowLeft,
     CheckCheck,
+    HeartPulse,
     Lock,
     MessageSquarePlus,
     Users,
@@ -35,6 +36,12 @@ type RosterStudent = {
     gender: string;
     status: AttendanceStatusValue | null;
     note: string | null;
+    /** Usulan dari laporan orang tua (kondisi anak) — tidak diterapkan otomatis. */
+    suggestion: {
+        status: AttendanceStatusValue;
+        source: string;
+        url: string | null;
+    } | null;
 };
 
 type Props = {
@@ -100,6 +107,25 @@ export default function AttendanceTake({
         form.setData(
             'records',
             form.data.records.map((row) => ({ ...row, status: 'HADIR' })),
+        );
+
+    const suggested = students.filter((student) => student.suggestion);
+
+    // Terapkan usulan laporan orang tua ke baris (belum tersimpan sampai guru menekan Simpan).
+    const applySuggestions = () =>
+        form.setData(
+            'records',
+            form.data.records.map((row, i) => {
+                const suggestion = students[i].suggestion;
+
+                return suggestion
+                    ? {
+                          ...row,
+                          status: suggestion.status,
+                          note: row.note || suggestion.source,
+                      }
+                    : row;
+            }),
         );
 
     const counts = STATUS_ORDER.map((status) => ({
@@ -195,15 +221,29 @@ export default function AttendanceTake({
                                 ))}
                             </p>
                             {editable && (
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={markAllPresent}
-                                >
-                                    <CheckCheck />
-                                    Tandai semua hadir
-                                </Button>
+                                <div className="flex flex-wrap gap-2">
+                                    {suggested.length > 0 && (
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={applySuggestions}
+                                        >
+                                            <HeartPulse />
+                                            Terapkan usulan orang tua (
+                                            {suggested.length})
+                                        </Button>
+                                    )}
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={markAllPresent}
+                                    >
+                                        <CheckCheck />
+                                        Tandai semua hadir
+                                    </Button>
+                                </div>
                             )}
                         </div>
 
@@ -231,6 +271,41 @@ export default function AttendanceTake({
                                                     <p className="text-xs text-slate-500 tabular-nums">
                                                         NIS {student.nis}
                                                     </p>
+                                                    {student.suggestion && (
+                                                        <p className="mt-1 inline-flex flex-wrap items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs text-amber-800">
+                                                            <HeartPulse className="size-3" />
+                                                            Usulan:{' '}
+                                                            {label(
+                                                                student
+                                                                    .suggestion
+                                                                    .status,
+                                                            )}{' '}
+                                                            ·{' '}
+                                                            {
+                                                                student
+                                                                    .suggestion
+                                                                    .source
+                                                            }
+                                                            {row.status ===
+                                                                student
+                                                                    .suggestion
+                                                                    .status &&
+                                                                ' ✓'}
+                                                            {student.suggestion
+                                                                .url && (
+                                                                <Link
+                                                                    href={
+                                                                        student
+                                                                            .suggestion
+                                                                            .url
+                                                                    }
+                                                                    className="font-medium underline underline-offset-2"
+                                                                >
+                                                                    Lihat
+                                                                </Link>
+                                                            )}
+                                                        </p>
+                                                    )}
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-1.5 pl-9 md:pl-0">

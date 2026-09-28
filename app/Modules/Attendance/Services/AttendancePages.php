@@ -9,6 +9,7 @@ use App\Modules\Attendance\Enums\AttendanceMode;
 use App\Modules\Attendance\Enums\AttendanceStatus;
 use App\Modules\Attendance\Models\AttendanceRecord;
 use App\Modules\Attendance\Models\AttendanceSession;
+use App\Modules\Core\Contracts\AttendanceSuggestions;
 use App\Modules\People\Models\Student;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -131,19 +132,22 @@ class AttendancePages
     {
         $session = $this->roster->session($classroom, $date, $schedule)?->load(['records', 'recorder:id,name', 'editor:id,name']);
         $records = $session?->records->keyBy('student_id') ?? collect();
+        $students = $this->roster->students($classroom);
+        $suggestions = $this->suggestions($students->modelKeys(), $date, $user);
 
         return [
             'base' => $base,
             'classroom' => ['public_id' => $classroom->public_id, 'name' => $classroom->name],
             'date' => $date->toDateString(),
             'schedule' => $schedule ? $this->scheduleProps($schedule) : null,
-            'students' => $this->roster->students($classroom)->map(fn (Student $student) => [
+            'students' => $students->map(fn (Student $student) => [
                 'public_id' => $student->public_id,
                 'nis' => $student->nis,
                 'name' => $student->name,
                 'gender' => $student->gender->value,
                 'status' => $records->get($student->id)?->status->value,
                 'note' => $records->get($student->id)?->note,
+                'suggestion' => $suggestions[$student->id] ?? null,
             ])->values(),
             'statuses' => AttendanceStatus::options(),
             'session' => $session ? [
@@ -154,6 +158,25 @@ class AttendancePages
             'editable' => $this->access->withinEditWindow($user, $date),
             'editableUntil' => $this->access->isOperator($user) ? null : $this->settings->editableUntil($date)->toIso8601String(),
         ];
+    }
+
+    /**
+     * Usulan status dari modul lain (mis. laporan kondisi anak) — ditampilkan, tidak diterapkan.
+     *
+     * @param  list<int>  $studentIds
+     * @return array<int, array{status: string, source: string, url: string|null}>
+     */
+    private function suggestions(array $studentIds, CarbonImmutable $date, User $viewer): array
+    {
+        $merged = [];
+
+        foreach (app()->tagged(AttendanceSuggestions::TAG) as $provider) {
+            if ($provider instanceof AttendanceSuggestions) {
+                $merged = $provider->forStudents($studentIds, $date, $viewer) + $merged;
+            }
+        }
+
+        return $merged;
     }
 
     /**

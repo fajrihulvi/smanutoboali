@@ -124,6 +124,11 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             permission: 'audit_log.view',
         },
         {
+            label: 'Kondisi Anak',
+            href: '/kepala-sekolah/kondisi-anak',
+            icon: HeartPulse,
+        },
+        {
             label: 'Chat',
             href: '/kepala-sekolah/chat',
             icon: MessagesSquare,

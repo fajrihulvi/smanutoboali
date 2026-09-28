@@ -9,6 +9,7 @@ use App\Modules\Assessment\Database\Seeders\AssessmentDemoSeeder;
 use App\Modules\Attendance\Database\Seeders\AttendanceDemoSeeder;
 use App\Modules\Auth\Database\Seeders\DemoUserSeeder;
 use App\Modules\Chat\Database\Seeders\ChatDemoSeeder;
+use App\Modules\ChildCondition\Database\Seeders\ChildConditionDemoSeeder;
 use App\Modules\People\Database\Seeders\PeopleDemoSeeder;
 use App\Modules\Portfolio\Database\Seeders\PortfolioDemoSeeder;
 use App\Modules\ReportCard\Database\Seeders\ReportCardDemoSeeder;
@@ -34,6 +35,7 @@ class DatabaseSeeder extends Seeder
             PortfolioDemoSeeder::class,
             ActivityDemoSeeder::class,
             ChatDemoSeeder::class,
+            ChildConditionDemoSeeder::class,
         ]);
     }
 }

@@ -7,6 +7,7 @@ use App\Modules\Assessment\AssessmentServiceProvider;
 use App\Modules\Attendance\AttendanceServiceProvider;
 use App\Modules\Auth\AuthServiceProvider;
 use App\Modules\Chat\ChatServiceProvider;
+use App\Modules\ChildCondition\ChildConditionServiceProvider;
 use App\Modules\Core\CoreServiceProvider;
 use App\Modules\Dashboard\DashboardServiceProvider;
 use App\Modules\People\PeopleServiceProvider;
@@ -23,6 +24,7 @@ return [
     AttendanceServiceProvider::class,
     AuthServiceProvider::class,
     ChatServiceProvider::class,
+    ChildConditionServiceProvider::class,
     CoreServiceProvider::class,
     DashboardServiceProvider::class,
     PeopleServiceProvider::class,

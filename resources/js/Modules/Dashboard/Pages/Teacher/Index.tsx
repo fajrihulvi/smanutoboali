@@ -9,12 +9,16 @@ import { useChatUnread } from '@/hooks/use-chat-unread';
 import AppLayout from '@/Layouts/AppLayout';
 import { TeacherCheckInCard } from '@/Modules/Attendance/Components/TeacherCheckInCard';
 import type { SelfAttendance } from '@/Modules/Attendance/Components/TeacherCheckInCard';
+import { TodayConditionsCard } from '@/Modules/ChildCondition/Components/TodayConditionsCard';
+import type { ConditionRow } from '@/Modules/ChildCondition/types';
 import { DashboardPlaceholder } from '@/Modules/Dashboard/Components/DashboardPlaceholder';
 
 export default function TeacherDashboard({
     selfAttendance,
+    conditions,
 }: {
     selfAttendance: SelfAttendance;
+    conditions: { today: ConditionRow[]; newCount: number };
 }) {
     const chatUnread = useChatUnread();
 
@@ -38,7 +42,7 @@ export default function TeacherDashboard({
                     },
                     {
                         label: 'Kondisi anak baru',
-                        value: '—',
+                        value: String(conditions.newCount),
                         icon: HeartPulse,
                     },
                     {
@@ -49,6 +53,7 @@ export default function TeacherDashboard({
                 ]}
             >
                 <TeacherCheckInCard data={selfAttendance} />
+                <TodayConditionsCard items={conditions.today} />
             </DashboardPlaceholder>
         </AppLayout>
     );

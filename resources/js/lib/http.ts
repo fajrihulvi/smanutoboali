@@ -41,11 +41,16 @@ export function errorMessage(status: number, body: unknown): string {
         : `Permintaan gagal (${status}).`;
 }
 
+/**
+ * Body objek dikirim sebagai JSON; FormData (unggah file) dikirim apa adanya
+ * sehingga browser mengisi boundary multipart sendiri.
+ */
 export async function sendJson<T>(
     url: string,
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET',
-    body?: Record<string, unknown>,
+    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' = 'GET',
+    body?: Record<string, unknown> | FormData,
 ): Promise<T> {
+    const isForm = body instanceof FormData;
     const response = await fetch(url, {
         method,
         credentials: 'same-origin',
@@ -53,9 +58,9 @@ export async function sendJson<T>(
             Accept: 'application/json',
             'X-Requested-With': 'XMLHttpRequest',
             'X-XSRF-TOKEN': xsrfToken(),
-            ...(body ? { 'Content-Type': 'application/json' } : {}),
+            ...(body && !isForm ? { 'Content-Type': 'application/json' } : {}),
         },
-        body: body ? JSON.stringify(body) : undefined,
+        body: isForm ? body : body ? JSON.stringify(body) : undefined,
     });
 
     const data: unknown = await response.json().catch(() => null);

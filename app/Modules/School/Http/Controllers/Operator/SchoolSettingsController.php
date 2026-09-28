@@ -55,6 +55,7 @@ class SchoolSettingsController extends Controller
                 'grade_predicate_a' => (int) $settings->get(SettingKey::GradePredicateA),
                 'grade_predicate_b' => (int) $settings->get(SettingKey::GradePredicateB),
                 'grade_predicate_c' => (int) $settings->get(SettingKey::GradePredicateC),
+                'chat_presence_enabled' => filter_var($settings->get(SettingKey::ChatPresenceEnabled), FILTER_VALIDATE_BOOL),
             ],
             'teacherValidations' => array_map(
                 fn (TeacherAttendanceValidation $v) => ['value' => $v->value, 'label' => $v->label()],

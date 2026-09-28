@@ -84,6 +84,7 @@ describe('navigasi per role sesuai matriks permission', () => {
             'Raport',
             'Portofolio',
             'Kegiatan',
+            'Chat',
             'Keuangan',
             'PPDB',
             'CMS Website',

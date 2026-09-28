@@ -2,6 +2,7 @@ import { Link, usePage } from '@inertiajs/react';
 import { Menu } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { AppLogo } from '@/Components/app/AppLogo';
+import { formatBadge } from '@/Components/app/NavMenu';
 import { NotificationBell } from '@/Components/app/NotificationBell';
 import { RealtimeBridge } from '@/Components/app/RealtimeBridge';
 import { RoleSwitcher } from '@/Components/app/RoleSwitcher';
@@ -15,8 +16,10 @@ import {
     SheetTrigger,
 } from '@/Components/ui/sheet';
 import { guardianBottomNav, navigationFor } from '@/config/navigation';
+import { useChatUnread } from '@/hooks/use-chat-unread';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { cn } from '@/lib/utils';
+import type { MenuItem } from '@/types';
 
 type Props = {
     children: ReactNode;
@@ -35,6 +38,12 @@ export default function ParentLayout({ children, header }: Props) {
     const bottomItems = guardianBottomNav
         .map((href) => items.find((item) => item.href === href))
         .filter((item) => item !== undefined);
+
+    const chatUnread = useChatUnread();
+    const badgeOf = (item: MenuItem) =>
+        item.badge === 'chat' && chatUnread > 0
+            ? formatBadge(chatUnread)
+            : null;
 
     const isActive = (href: string) =>
         href.endsWith('/dashboard')
@@ -75,6 +84,11 @@ export default function ParentLayout({ children, header }: Props) {
                                     >
                                         <item.icon className="size-5" />
                                         {item.label}
+                                        {badgeOf(item) && (
+                                            <span className="ml-auto rounded-full bg-brand-600 px-1.5 text-xs font-semibold text-white">
+                                                {badgeOf(item)}
+                                            </span>
+                                        )}
                                     </Link>
                                 ))}
                             </nav>
@@ -102,6 +116,11 @@ export default function ParentLayout({ children, header }: Props) {
                                 )}
                             >
                                 {item.label}
+                                {badgeOf(item) && (
+                                    <span className="ml-1.5 rounded-full bg-brand-500 px-1.5 text-xs font-semibold text-white">
+                                        {badgeOf(item)}
+                                    </span>
+                                )}
                             </Link>
                         ))}
                     </nav>
@@ -147,11 +166,19 @@ export default function ParentLayout({ children, header }: Props) {
                                 >
                                     <span
                                         className={cn(
-                                            'flex h-7 w-12 items-center justify-center rounded-full transition-colors duration-150',
+                                            'relative flex h-7 w-12 items-center justify-center rounded-full transition-colors duration-150',
                                             active && 'bg-brand-50',
                                         )}
                                     >
                                         <item.icon className="size-5" />
+                                        {badgeOf(item) && (
+                                            <span
+                                                className="absolute -top-1 right-1 min-w-4 rounded-full bg-rose-500 px-1 text-center text-[10px] leading-4 font-semibold text-white"
+                                                aria-label={`${badgeOf(item)} belum dibaca`}
+                                            >
+                                                {badgeOf(item)}
+                                            </span>
+                                        )}
                                     </span>
                                     {item.label}
                                 </Link>

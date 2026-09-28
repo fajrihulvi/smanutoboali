@@ -26,5 +26,7 @@ export type MenuItem = {
     icon: LucideIcon;
     /** Permission spatie yang dibutuhkan; tanpa nilai = semua user role ini. */
     permission?: string;
+    /** Sumber angka badge realtime, mis. 'chat' = chat belum dibaca. */
+    badge?: 'chat';
     children?: MenuItem[];
 };

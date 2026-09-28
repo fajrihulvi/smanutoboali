@@ -9,12 +9,14 @@ import {
     SidebarGroup,
     SidebarGroupLabel,
     SidebarMenu,
+    SidebarMenuBadge,
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarMenuSub,
     SidebarMenuSubButton,
     SidebarMenuSubItem,
 } from '@/Components/ui/sidebar';
+import { useChatUnread } from '@/hooks/use-chat-unread';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import type { MenuItem } from '@/types';
 
@@ -22,8 +24,16 @@ import type { MenuItem } from '@/types';
 const activeClass =
     'data-[active=true]:shadow-[inset_3px_0_0_var(--color-brand-500)] data-[active=true]:font-semibold';
 
+/** 1–99, lalu "99+". */
+export function formatBadge(count: number): string {
+    return count > 99 ? '99+' : String(count);
+}
+
 export function NavMenu({ items }: { items: MenuItem[] }) {
     const { isCurrentUrl, isCurrentOrParentUrl } = useCurrentUrl();
+    const chatUnread = useChatUnread();
+    const badgeOf = (item: MenuItem) =>
+        item.badge === 'chat' && chatUnread > 0 ? chatUnread : null;
 
     const isActive = (item: MenuItem) =>
         item.href.endsWith('/dashboard')
@@ -99,6 +109,14 @@ export function NavMenu({ items }: { items: MenuItem[] }) {
                                     <span>{item.label}</span>
                                 </Link>
                             </SidebarMenuButton>
+                            {badgeOf(item) !== null && (
+                                <SidebarMenuBadge
+                                    className="rounded-full bg-brand-500 px-1.5 text-white peer-hover/menu-button:text-white peer-data-[active=true]/menu-button:text-white"
+                                    aria-label={`${badgeOf(item)} belum dibaca`}
+                                >
+                                    {formatBadge(badgeOf(item) ?? 0)}
+                                </SidebarMenuBadge>
+                            )}
                         </SidebarMenuItem>
                     ),
                 )}

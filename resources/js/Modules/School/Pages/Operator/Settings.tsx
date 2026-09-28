@@ -6,6 +6,7 @@ import { FileUploader } from '@/Components/shared/FileUploader';
 import { PageHeader } from '@/Components/shared/PageHeader';
 import { SignatureField } from '@/Components/shared/SignatureField';
 import { Button } from '@/Components/ui/button';
+import { Checkbox } from '@/Components/ui/checkbox';
 import { Input } from '@/Components/ui/input';
 import { Label } from '@/Components/ui/label';
 import {
@@ -49,6 +50,7 @@ type Props = {
         grade_predicate_a: number;
         grade_predicate_b: number;
         grade_predicate_c: number;
+        chat_presence_enabled: boolean;
     };
     attendanceModes: Option[];
     teacherValidations: Option[];
@@ -136,6 +138,7 @@ export default function Settings({
         grade_predicate_a: String(system.grade_predicate_a),
         grade_predicate_b: String(system.grade_predicate_b),
         grade_predicate_c: String(system.grade_predicate_c),
+        chat_presence_enabled: system.chat_presence_enabled,
     });
 
     const submit = (event: FormEvent) => {
@@ -743,6 +746,35 @@ export default function Settings({
                             />
                         </Field>
                     </div>
+                </Section>
+
+                <Section
+                    title="Chat"
+                    description="Status online menampilkan siapa yang sedang membuka halaman chat. Memakai kuota koneksi realtime (Pusher), jadi nonaktif secara bawaan."
+                >
+                    <label className="flex items-start gap-3 text-sm">
+                        <Checkbox
+                            id="chat_presence_enabled"
+                            checked={form.data.chat_presence_enabled}
+                            onCheckedChange={(checked) =>
+                                form.setData(
+                                    'chat_presence_enabled',
+                                    checked === true,
+                                )
+                            }
+                            className="mt-0.5"
+                        />
+                        <span>
+                            <span className="block font-medium text-slate-900">
+                                Tampilkan status online di chat
+                            </span>
+                            <span className="block text-slate-500">
+                                Titik hijau di samping nama pengguna yang sedang
+                                membuka chat.
+                            </span>
+                        </span>
+                    </label>
+                    <InputError message={form.errors.chat_presence_enabled} />
                 </Section>
 
                 <div className="flex justify-end">

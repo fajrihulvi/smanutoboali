@@ -128,6 +128,7 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             href: '/kepala-sekolah/chat',
             icon: MessagesSquare,
             permission: 'chat.use',
+            badge: 'chat',
         },
         { label: 'Profil', href: '/settings/profile', icon: UserRound },
     ],
@@ -199,6 +200,7 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             href: '/guru/chat',
             icon: MessagesSquare,
             permission: 'chat.use',
+            badge: 'chat',
         },
         { label: 'Profil', href: '/guru/profil', icon: UserRound },
     ],
@@ -308,6 +310,13 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             permission: 'activity.manage',
         },
         {
+            label: 'Chat',
+            href: '/operator/chat',
+            icon: MessagesSquare,
+            permission: 'chat.use',
+            badge: 'chat',
+        },
+        {
             label: 'Keuangan',
             href: '/operator/keuangan',
             icon: Wallet,
@@ -390,6 +399,7 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             href: '/orang-tua/chat',
             icon: MessagesSquare,
             permission: 'chat.use',
+            badge: 'chat',
         },
         {
             label: 'Kondisi Anak',

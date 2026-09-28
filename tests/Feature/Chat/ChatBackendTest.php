@@ -11,9 +11,7 @@ use App\Modules\Chat\Models\Message;
 use App\Modules\Core\Enums\Role;
 use App\Modules\Core\Models\File;
 use App\Modules\Core\Services\SettingsService;
-use App\Modules\People\Models\Guardian;
 use App\Modules\People\Models\Student;
-use App\Modules\People\Models\Teacher;
 use Illuminate\Broadcasting\Broadcasters\Broadcaster;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Broadcast;
@@ -25,57 +23,6 @@ beforeEach(function () {
     Storage::fake('private');
     Storage::fake('public');
 });
-
-/**
- * Wali kelas VII-A (guru) + orang tua Ani (siswa VII-A), guru lain yang tidak mengajar Ani,
- * orang tua lain, dan operator.
- *
- * @return array{teacher: User, parent: User, child: Student, otherTeacher: User, otherParent: User, operator: User}
- */
-function chatScenario(): array
-{
-    $year = activeAcademicYear();
-    $teacher = User::factory()->withRole(Role::Teacher)->create(['name' => 'Bu Rina']);
-    $classroom = Classroom::factory()->for($year)->create([
-        'name' => 'VII-A',
-        'homeroom_teacher_id' => Teacher::factory()->withAccount($teacher)->create()->id,
-    ]);
-
-    $parent = User::factory()->withRole(Role::Guardian)->create(['name' => 'Pak Budi']);
-    $child = Student::factory()->withGuardian(Guardian::factory()->withAccount($parent)->create())->create(['name' => 'Ani']);
-    enrollIn($classroom, $child);
-
-    $otherTeacher = User::factory()->withRole(Role::Teacher)->create(['name' => 'Pak Joko']);
-    Teacher::factory()->withAccount($otherTeacher)->create();
-    assignTeaching(Classroom::factory()->for($year)->create(['name' => 'VIII-B']), Teacher::query()->where('user_id', $otherTeacher->id)->sole());
-
-    $otherParent = User::factory()->withRole(Role::Guardian)->create(['name' => 'Bu Sari']);
-    enrollIn($classroom, Student::factory()->withGuardian(Guardian::factory()->withAccount($otherParent)->create())->create());
-
-    $operator = User::factory()->withRole(Role::Operator)->create(['name' => 'Admin TU']);
-
-    return compact('teacher', 'parent', 'child', 'otherTeacher', 'otherParent', 'operator');
-}
-
-function startChat(User $with, ?Student $student = null): string
-{
-    return test()->postJson('/chat/percakapan', ['user' => $with->public_id, 'student' => $student?->public_id])
-        ->assertSuccessful()
-        ->json('data.public_id');
-}
-
-function usePusherForChat(): void
-{
-    config([
-        'broadcasting.default' => 'pusher',
-        'broadcasting.connections.pusher.key' => 'test-key',
-        'broadcasting.connections.pusher.secret' => 'test-secret',
-        'broadcasting.connections.pusher.app_id' => '1',
-        'broadcasting.connections.pusher.options.cluster' => 'ap1',
-    ]);
-
-    require base_path('routes/channels.php');
-}
 
 describe('eligibility', function () {
     it('orang tua bisa memulai chat dengan wali kelas anaknya (konteks anak)', function () {

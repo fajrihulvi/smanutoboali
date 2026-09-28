@@ -193,3 +193,13 @@ it('batas predikat harus menurun A > B > C', function () {
     $this->post('/operator/settings', schoolPayload(['grade_predicate_a' => 80, 'grade_predicate_b' => 85]))
         ->assertSessionHasErrors('grade_predicate_a');
 });
+
+it('menyimpan pengaturan status online chat', function () {
+    $this->actingAsRole(Role::Operator);
+
+    $this->post('/operator/settings', schoolPayload(['chat_presence_enabled' => '1']))->assertSessionHasNoErrors();
+    expect((new SettingsService)->get(SettingKey::ChatPresenceEnabled))->toBeTrue();
+
+    $this->post('/operator/settings', schoolPayload(['chat_presence_enabled' => '0']))->assertSessionHasNoErrors();
+    expect((new SettingsService)->get(SettingKey::ChatPresenceEnabled))->toBeFalse();
+});

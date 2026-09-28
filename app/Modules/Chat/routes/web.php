@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Chat\Http\Controllers\ChatPageController;
 use App\Modules\Chat\Http\Controllers\ContactController;
 use App\Modules\Chat\Http\Controllers\ConversationController;
 use App\Modules\Chat\Http\Controllers\MessageController;
@@ -27,3 +28,17 @@ Route::middleware(['auth', 'permission:chat.use'])->prefix('chat')->name('chat.'
     Route::patch('pesan/{message}', [MessageController::class, 'update'])->name('messages.update');
     Route::delete('pesan/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
 });
+
+/*
+| Halaman chat per portal (S21): satu page, ruang chat aktif lewat segmen URL.
+*/
+foreach ([['principal', 'kepala-sekolah'], ['teacher', 'guru'], ['operator', 'operator'], ['guardian', 'orang-tua']] as [$role, $prefix]) {
+    $base = "/{$prefix}/chat";
+
+    Route::middleware(['auth', "active.role:{$role}", 'permission:chat.use'])
+        ->prefix("{$prefix}/chat")->name("{$role}.chat.")
+        ->group(function () use ($base) {
+            Route::get('/', [ChatPageController::class, 'index'])->defaults('base', $base)->name('index');
+            Route::get('{conversation}', [ChatPageController::class, 'index'])->defaults('base', $base)->name('show');
+        });
+}

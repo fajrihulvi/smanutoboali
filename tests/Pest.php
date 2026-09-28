@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use App\Modules\Academic\Enums\EnrollmentStatus;
 use App\Modules\Academic\Enums\Weekday;
 use App\Modules\Academic\Models\ClassEnrollment;
@@ -7,6 +8,8 @@ use App\Modules\Academic\Models\Classroom;
 use App\Modules\Academic\Models\Schedule;
 use App\Modules\Academic\Models\Subject;
 use App\Modules\Academic\Models\TeachingAssignment;
+use App\Modules\Core\Enums\Role;
+use App\Modules\People\Models\Guardian;
 use App\Modules\People\Models\Student;
 use App\Modules\People\Models\Teacher;
 use App\Modules\School\Models\AcademicYear;
@@ -82,4 +85,61 @@ function scheduleAt(TeachingAssignment $assignment, int $day = 1, string $start 
         'start_time' => $start.':00',
         'end_time' => $end.':00',
     ]);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Helper chat (S20)
+|--------------------------------------------------------------------------
+*/
+
+/**
+ * Wali kelas VII-A (guru) + orang tua Ani (siswa VII-A), guru lain yang tidak mengajar Ani,
+ * orang tua lain, dan operator.
+ *
+ * @return array{teacher: User, parent: User, child: Student, otherTeacher: User, otherParent: User, operator: User}
+ */
+function chatScenario(): array
+{
+    $year = activeAcademicYear();
+    $teacher = User::factory()->withRole(Role::Teacher)->create(['name' => 'Bu Rina']);
+    $classroom = Classroom::factory()->for($year)->create([
+        'name' => 'VII-A',
+        'homeroom_teacher_id' => Teacher::factory()->withAccount($teacher)->create()->id,
+    ]);
+
+    $parent = User::factory()->withRole(Role::Guardian)->create(['name' => 'Pak Budi']);
+    $child = Student::factory()->withGuardian(Guardian::factory()->withAccount($parent)->create())->create(['name' => 'Ani']);
+    enrollIn($classroom, $child);
+
+    $otherTeacher = User::factory()->withRole(Role::Teacher)->create(['name' => 'Pak Joko']);
+    Teacher::factory()->withAccount($otherTeacher)->create();
+    assignTeaching(Classroom::factory()->for($year)->create(['name' => 'VIII-B']), Teacher::query()->where('user_id', $otherTeacher->id)->sole());
+
+    $otherParent = User::factory()->withRole(Role::Guardian)->create(['name' => 'Bu Sari']);
+    enrollIn($classroom, Student::factory()->withGuardian(Guardian::factory()->withAccount($otherParent)->create())->create());
+
+    $operator = User::factory()->withRole(Role::Operator)->create(['name' => 'Admin TU']);
+
+    return compact('teacher', 'parent', 'child', 'otherTeacher', 'otherParent', 'operator');
+}
+
+function startChat(User $with, ?Student $student = null): string
+{
+    return test()->postJson('/chat/percakapan', ['user' => $with->public_id, 'student' => $student?->public_id])
+        ->assertSuccessful()
+        ->json('data.public_id');
+}
+
+function usePusherForChat(): void
+{
+    config([
+        'broadcasting.default' => 'pusher',
+        'broadcasting.connections.pusher.key' => 'test-key',
+        'broadcasting.connections.pusher.secret' => 'test-secret',
+        'broadcasting.connections.pusher.app_id' => '1',
+        'broadcasting.connections.pusher.options.cluster' => 'ap1',
+    ]);
+
+    require base_path('routes/channels.php');
 }

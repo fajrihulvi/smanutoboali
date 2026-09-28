@@ -4,6 +4,12 @@ import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import { useEchoChannel } from '@/hooks/use-echo-channel';
 import { useRealtimeStatus } from '@/hooks/use-realtime-status';
+import {
+    CHAT_MESSAGE_EVENT,
+    emitChatUnread,
+    isConversationOpen,
+} from '@/lib/chat-events';
+import type { ChatMessageNotice } from '@/lib/chat-events';
 import { createThrottle } from '@/lib/throttle';
 
 export type RealtimeNotification = {
@@ -16,21 +22,45 @@ export type RealtimeNotification = {
 /** Event DOM agar komponen lain (lonceng) bisa menambah item tanpa store global. */
 export const NOTIFICATION_EVENT = 'skoolia:notification';
 
-const refreshBadge = () => router.reload({ only: ['notifications'] });
+const refreshBadge = () => router.reload({ only: ['notifications', 'chat'] });
 
 /**
  * Dipasang sekali per layout: notifikasi realtime (toast + badge), fallback muat ulang saat
  * tab kembali fokus / koneksi pulih, dan indikator kecil hanya saat koneksi terputus.
  */
 export function RealtimeBridge() {
-    const { realtime } = usePage().props;
+    const { realtime, auth } = usePage().props;
+    const chatBase = `/${auth.roles.find((role) => role.code === auth.activeRole)?.prefix ?? ''}/chat`;
     const status = useRealtimeStatus();
     const throttle = useRef(createThrottle(30_000));
     const wasUnavailable = useRef(false);
 
     useEchoChannel(
         realtime?.userChannel ?? null,
-        {},
+        {
+            // Pesan chat baru: badge selalu diperbarui; toast hanya bila percakapan tidak sedang dibuka.
+            '.chat.message': (notice: ChatMessageNotice) => {
+                emitChatUnread(notice.unread_total);
+                window.dispatchEvent(
+                    new CustomEvent<ChatMessageNotice>(CHAT_MESSAGE_EVENT, {
+                        detail: notice,
+                    }),
+                );
+
+                if (notice.muted || isConversationOpen(notice.conversation)) {
+                    return;
+                }
+
+                toast(`Pesan dari ${notice.sender ?? 'pengguna'}`, {
+                    description: notice.preview,
+                    action: {
+                        label: 'Balas',
+                        onClick: () =>
+                            router.visit(`${chatBase}/${notice.conversation}`),
+                    },
+                });
+            },
+        },
         {
             onNotification: (payload: RealtimeNotification) => {
                 toast(payload.title ?? 'Notifikasi baru', {

@@ -2,13 +2,16 @@
 
 use App\Modules\Attendance\Http\Controllers\Guardian\AttendanceController as GuardianAttendanceController;
 use App\Modules\Attendance\Http\Controllers\Operator\AttendanceController as OperatorAttendanceController;
+use App\Modules\Attendance\Http\Controllers\Operator\TeacherAttendanceController as OperatorTeacherAttendanceController;
 use App\Modules\Attendance\Http\Controllers\Principal\AttendanceController as PrincipalAttendanceController;
+use App\Modules\Attendance\Http\Controllers\Principal\TeacherAttendanceController as PrincipalTeacherAttendanceController;
 use App\Modules\Attendance\Http\Controllers\Teacher\AttendanceController as TeacherAttendanceController;
+use App\Modules\Attendance\Http\Controllers\Teacher\SelfAttendanceController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Attendance routes — presensi siswa (S13)
+| Attendance routes — presensi siswa (S13) & presensi guru (S14)
 |--------------------------------------------------------------------------
 */
 
@@ -40,4 +43,25 @@ Route::middleware(['auth', 'active.role:guardian'])
     ->prefix('orang-tua')->name('guardian.')
     ->group(function () {
         Route::get('presensi', [GuardianAttendanceController::class, 'index'])->name('attendance.index');
+    });
+
+Route::middleware(['auth', 'active.role:teacher'])
+    ->prefix('guru/kehadiran')->name('teacher.self_attendance.')
+    ->group(function () {
+        Route::post('masuk', [SelfAttendanceController::class, 'checkIn'])->name('check_in');
+        Route::post('pulang', [SelfAttendanceController::class, 'checkOut'])->name('check_out');
+    });
+
+Route::middleware(['auth', 'active.role:operator', 'permission:attendance.manage'])
+    ->prefix('operator/presensi-guru')->name('operator.teacher_attendance.')
+    ->group(function () {
+        Route::get('/', [OperatorTeacherAttendanceController::class, 'index'])->name('index');
+        Route::get('rekap', [OperatorTeacherAttendanceController::class, 'recap'])->name('recap');
+        Route::put('{teacher}', [OperatorTeacherAttendanceController::class, 'update'])->name('update');
+    });
+
+Route::middleware(['auth', 'active.role:principal'])
+    ->prefix('kepala-sekolah/presensi-guru')->name('principal.teacher_attendance.')
+    ->group(function () {
+        Route::get('/', [PrincipalTeacherAttendanceController::class, 'index'])->name('index');
     });

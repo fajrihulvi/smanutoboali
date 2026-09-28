@@ -28,6 +28,12 @@ function schoolPayload(array $overrides = []): array
         'upload_max_size_kb' => 4096,
         'attendance_mode' => 'HARIAN',
         'attendance_edit_days' => 0,
+        'teacher_late_after' => '07:15',
+        'teacher_attendance_validation' => 'NONAKTIF',
+        'teacher_attendance_ips' => '',
+        'school_latitude' => null,
+        'school_longitude' => null,
+        'teacher_attendance_radius_m' => 200,
     ], $overrides);
 }
 
@@ -149,4 +155,30 @@ it('rentang tingkat mengikuti jenjang', function () {
         ->and(SchoolLevel::Smk->gradeRange())->toBe([10, 11, 12])
         ->and(SchoolLevel::Smp->gradeLabel(7))->toBe('VII')
         ->and(SchoolLevel::Sd->gradeLabel(4))->toBe('4');
+});
+
+it('menyimpan pengaturan presensi guru dan memvalidasi IP & koordinat', function () {
+    $this->actingAsRole(Role::Operator);
+
+    $this->post('/operator/settings', schoolPayload([
+        'teacher_attendance_validation' => 'IP',
+        'teacher_attendance_ips' => "103.10.20.0/24\nbukan-ip",
+    ]))->assertSessionHasErrors('teacher_attendance_ips');
+
+    $this->post('/operator/settings', schoolPayload(['teacher_attendance_validation' => 'GPS']))
+        ->assertSessionHasErrors(['school_latitude', 'school_longitude']);
+
+    $this->post('/operator/settings', schoolPayload([
+        'teacher_late_after' => '07:00',
+        'teacher_attendance_validation' => 'GPS',
+        'school_latitude' => -2.1291,
+        'school_longitude' => 106.1134,
+        'teacher_attendance_radius_m' => 150,
+    ]))->assertSessionHasNoErrors();
+
+    $settings = app(SettingsService::class);
+    $settings->flush();
+    expect($settings->get(SettingKey::TeacherLateAfter))->toBe('07:00')
+        ->and($settings->get(SettingKey::SchoolLatitude))->toBe(-2.1291)
+        ->and($settings->get(SettingKey::TeacherAttendanceRadiusM))->toBe(150);
 });

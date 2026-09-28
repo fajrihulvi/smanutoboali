@@ -53,6 +53,27 @@ class AttendancePages
     }
 
     /**
+     * ?dari=&sampai= (Y-m-d), default awal bulan ini s.d. hari ini; dibalik bila terbalik, maks. 1 tahun.
+     *
+     * @return array{CarbonImmutable, CarbonImmutable}
+     */
+    public function range(Request $request): array
+    {
+        $parse = fn (string $value, CarbonImmutable $default) => preg_match('/^\d{4}-\d{2}-\d{2}$/', $value) === 1
+            ? CarbonImmutable::parse($value)->startOfDay()
+            : $default;
+
+        $from = $parse($request->string('dari')->value(), CarbonImmutable::today()->startOfMonth());
+        $to = $parse($request->string('sampai')->value(), CarbonImmutable::today());
+
+        if ($from->isAfter($to)) {
+            [$from, $to] = [$to, $from];
+        }
+
+        return [$from->max($to->subYear()), $to];
+    }
+
+    /**
      * Daftar yang perlu dipresensi pada satu tanggal: per rombel (harian) atau per jadwal (per mapel).
      *
      * @param  EloquentCollection<int, Classroom>  $classrooms  mode harian

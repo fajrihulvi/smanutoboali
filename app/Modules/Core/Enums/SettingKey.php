@@ -14,6 +14,16 @@ enum SettingKey: string
     case AttendanceMode = 'attendance_mode';
     /** Guru boleh mengubah presensi sampai N hari setelah tanggalnya (0 = hari yang sama). */
     case AttendanceEditDays = 'attendance_edit_days';
+    /** Presensi masuk guru setelah jam ini (HH:MM) = TERLAMBAT. */
+    case TeacherLateAfter = 'teacher_late_after';
+    /** NONAKTIF | IP | GPS — lihat Attendance\Enums\TeacherAttendanceValidation. */
+    case TeacherAttendanceValidation = 'teacher_attendance_validation';
+    /** Daftar IP/CIDR jaringan sekolah, dipisah koma/baris baru. */
+    case TeacherAttendanceIps = 'teacher_attendance_ips';
+    case SchoolLatitude = 'school_latitude';
+    case SchoolLongitude = 'school_longitude';
+    /** Radius GPS (meter) dari titik sekolah. */
+    case TeacherAttendanceRadiusM = 'teacher_attendance_radius_m';
 
     public function default(): mixed
     {
@@ -22,6 +32,11 @@ enum SettingKey: string
             self::UploadMaxSizeKb => (int) config('skoolia.upload.default_max_kb', 5120),
             self::AttendanceMode => 'HARIAN',
             self::AttendanceEditDays => 0,
+            self::TeacherLateAfter => '07:15',
+            self::TeacherAttendanceValidation => 'NONAKTIF',
+            self::TeacherAttendanceIps => '',
+            self::SchoolLatitude, self::SchoolLongitude => null,
+            self::TeacherAttendanceRadiusM => 200,
         };
     }
 

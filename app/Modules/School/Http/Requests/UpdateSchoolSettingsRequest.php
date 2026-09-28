@@ -3,6 +3,7 @@
 namespace App\Modules\School\Http\Requests;
 
 use App\Modules\Attendance\Enums\AttendanceMode;
+use App\Modules\Attendance\Enums\TeacherAttendanceValidation;
 use App\Modules\Core\Enums\SettingKey;
 use App\Modules\School\Enums\SchoolLevel;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -42,6 +43,26 @@ class UpdateSchoolSettingsRequest extends FormRequest
             'upload_max_size_kb' => ['required', 'integer', 'min:256', "max:{$hardMax}"],
             'attendance_mode' => ['required', Rule::enum(AttendanceMode::class)],
             'attendance_edit_days' => ['required', 'integer', 'min:0', 'max:30'],
+            'teacher_late_after' => ['required', 'date_format:H:i'],
+            'teacher_attendance_validation' => ['required', Rule::enum(TeacherAttendanceValidation::class)],
+            'teacher_attendance_ips' => [
+                'nullable', 'string', 'max:1000',
+                Rule::requiredIf($this->input('teacher_attendance_validation') === TeacherAttendanceValidation::Ip->value),
+                function (string $attribute, mixed $value, \Closure $fail) {
+                    foreach (preg_split('/[\s,]+/', (string) $value, -1, PREG_SPLIT_NO_EMPTY) ?: [] as $entry) {
+                        [$ip, $mask] = array_pad(explode('/', $entry, 2), 2, null);
+
+                        if (filter_var($ip, FILTER_VALIDATE_IP) === false || ($mask !== null && ! ctype_digit($mask))) {
+                            $fail("Alamat IP \"{$entry}\" tidak valid.");
+
+                            return;
+                        }
+                    }
+                },
+            ],
+            'school_latitude' => ['nullable', 'numeric', 'between:-90,90', Rule::requiredIf($this->input('teacher_attendance_validation') === TeacherAttendanceValidation::Gps->value)],
+            'school_longitude' => ['nullable', 'numeric', 'between:-180,180', Rule::requiredIf($this->input('teacher_attendance_validation') === TeacherAttendanceValidation::Gps->value)],
+            'teacher_attendance_radius_m' => ['required', 'integer', 'min:10', 'max:5000'],
         ];
     }
 
@@ -63,6 +84,12 @@ class UpdateSchoolSettingsRequest extends FormRequest
             'timezone' => 'zona waktu',
             'attendance_mode' => 'mode presensi',
             'attendance_edit_days' => 'batas edit presensi',
+            'teacher_late_after' => 'jam batas terlambat guru',
+            'teacher_attendance_validation' => 'validasi lokasi presensi guru',
+            'teacher_attendance_ips' => 'daftar IP sekolah',
+            'school_latitude' => 'lintang sekolah',
+            'school_longitude' => 'bujur sekolah',
+            'teacher_attendance_radius_m' => 'radius presensi',
             'upload_max_size_kb' => 'ukuran maksimum upload',
         ];
     }
@@ -107,6 +134,12 @@ class UpdateSchoolSettingsRequest extends FormRequest
             SettingKey::UploadMaxSizeKb->value => $this->integer('upload_max_size_kb'),
             SettingKey::AttendanceMode->value => $this->string('attendance_mode')->value(),
             SettingKey::AttendanceEditDays->value => $this->integer('attendance_edit_days'),
+            SettingKey::TeacherLateAfter->value => $this->string('teacher_late_after')->value(),
+            SettingKey::TeacherAttendanceValidation->value => $this->string('teacher_attendance_validation')->value(),
+            SettingKey::TeacherAttendanceIps->value => $this->string('teacher_attendance_ips')->trim()->value(),
+            SettingKey::SchoolLatitude->value => $this->filled('school_latitude') ? (float) $this->input('school_latitude') : null,
+            SettingKey::SchoolLongitude->value => $this->filled('school_longitude') ? (float) $this->input('school_longitude') : null,
+            SettingKey::TeacherAttendanceRadiusM->value => $this->integer('teacher_attendance_radius_m'),
         ];
     }
 }

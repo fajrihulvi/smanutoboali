@@ -15,6 +15,7 @@ import {
     SelectValue,
 } from '@/Components/ui/select';
 import { Spinner } from '@/Components/ui/spinner';
+import { Textarea } from '@/Components/ui/textarea';
 import AppLayout from '@/Layouts/AppLayout';
 
 type Option = { value: string; label: string };
@@ -36,8 +37,15 @@ type Props = {
         upload_max_size_kb: number;
         attendance_mode: string;
         attendance_edit_days: number;
+        teacher_late_after: string;
+        teacher_attendance_validation: string;
+        teacher_attendance_ips: string;
+        school_latitude: number | null;
+        school_longitude: number | null;
+        teacher_attendance_radius_m: number;
     };
     attendanceModes: Option[];
+    teacherValidations: Option[];
     levels: Option[];
     timezones: Option[];
     uploadHardMaxKb: number;
@@ -95,6 +103,7 @@ export default function Settings({
     timezones,
     uploadHardMaxKb,
     attendanceModes,
+    teacherValidations,
 }: Props) {
     const form = useForm({
         name: school.name,
@@ -111,6 +120,12 @@ export default function Settings({
         upload_max_size_kb: String(system.upload_max_size_kb),
         attendance_mode: system.attendance_mode,
         attendance_edit_days: String(system.attendance_edit_days),
+        teacher_late_after: system.teacher_late_after,
+        teacher_attendance_validation: system.teacher_attendance_validation,
+        teacher_attendance_ips: system.teacher_attendance_ips,
+        school_latitude: system.school_latitude?.toString() ?? '',
+        school_longitude: system.school_longitude?.toString() ?? '',
+        teacher_attendance_radius_m: String(system.teacher_attendance_radius_m),
     });
 
     const submit = (event: FormEvent) => {
@@ -469,6 +484,160 @@ export default function Settings({
                             />
                         </Field>
                     </div>
+                </Section>
+
+                <Section
+                    title="Presensi guru"
+                    description="Jam batas terlambat dan validasi lokasi saat guru presensi masuk dari dashboard."
+                >
+                    <div className="grid gap-5 sm:grid-cols-2">
+                        <Field
+                            id="teacher_late_after"
+                            label="Terlambat setelah jam"
+                            error={form.errors.teacher_late_after}
+                        >
+                            <Input
+                                id="teacher_late_after"
+                                type="time"
+                                value={form.data.teacher_late_after}
+                                onChange={(event) =>
+                                    form.setData(
+                                        'teacher_late_after',
+                                        event.target.value,
+                                    )
+                                }
+                                aria-invalid={!!form.errors.teacher_late_after}
+                            />
+                        </Field>
+                        <Field
+                            id="teacher_attendance_validation"
+                            label="Validasi lokasi"
+                            error={form.errors.teacher_attendance_validation}
+                        >
+                            <Select
+                                value={form.data.teacher_attendance_validation}
+                                onValueChange={(value) =>
+                                    form.setData(
+                                        'teacher_attendance_validation',
+                                        value,
+                                    )
+                                }
+                            >
+                                <SelectTrigger id="teacher_attendance_validation">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {teacherValidations.map((option) => (
+                                        <SelectItem
+                                            key={option.value}
+                                            value={option.value}
+                                        >
+                                            {option.label}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </Field>
+                    </div>
+
+                    {form.data.teacher_attendance_validation === 'IP' && (
+                        <Field
+                            id="teacher_attendance_ips"
+                            label="Daftar IP jaringan sekolah"
+                            error={form.errors.teacher_attendance_ips}
+                            hint="Satu per baris atau dipisah koma. Mendukung CIDR, mis. 103.10.20.0/24. Gunakan IP publik yang terlihat oleh server."
+                        >
+                            <Textarea
+                                id="teacher_attendance_ips"
+                                rows={3}
+                                value={form.data.teacher_attendance_ips}
+                                onChange={(event) =>
+                                    form.setData(
+                                        'teacher_attendance_ips',
+                                        event.target.value,
+                                    )
+                                }
+                                aria-invalid={
+                                    !!form.errors.teacher_attendance_ips
+                                }
+                            />
+                        </Field>
+                    )}
+
+                    {form.data.teacher_attendance_validation === 'GPS' && (
+                        <div className="grid gap-5 sm:grid-cols-3">
+                            <Field
+                                id="school_latitude"
+                                label="Lintang (latitude)"
+                                error={form.errors.school_latitude}
+                            >
+                                <Input
+                                    id="school_latitude"
+                                    inputMode="decimal"
+                                    placeholder="-2.1291"
+                                    value={form.data.school_latitude}
+                                    onChange={(event) =>
+                                        form.setData(
+                                            'school_latitude',
+                                            event.target.value,
+                                        )
+                                    }
+                                    aria-invalid={!!form.errors.school_latitude}
+                                />
+                            </Field>
+                            <Field
+                                id="school_longitude"
+                                label="Bujur (longitude)"
+                                error={form.errors.school_longitude}
+                            >
+                                <Input
+                                    id="school_longitude"
+                                    inputMode="decimal"
+                                    placeholder="106.1134"
+                                    value={form.data.school_longitude}
+                                    onChange={(event) =>
+                                        form.setData(
+                                            'school_longitude',
+                                            event.target.value,
+                                        )
+                                    }
+                                    aria-invalid={
+                                        !!form.errors.school_longitude
+                                    }
+                                />
+                            </Field>
+                            <Field
+                                id="teacher_attendance_radius_m"
+                                label="Radius (meter)"
+                                error={form.errors.teacher_attendance_radius_m}
+                            >
+                                <Input
+                                    id="teacher_attendance_radius_m"
+                                    type="number"
+                                    min={10}
+                                    max={5000}
+                                    value={
+                                        form.data.teacher_attendance_radius_m
+                                    }
+                                    onChange={(event) =>
+                                        form.setData(
+                                            'teacher_attendance_radius_m',
+                                            event.target.value,
+                                        )
+                                    }
+                                    aria-invalid={
+                                        !!form.errors
+                                            .teacher_attendance_radius_m
+                                    }
+                                />
+                            </Field>
+                            <p className="text-xs text-slate-500 sm:col-span-3">
+                                Koordinat dari browser bisa dipalsukan; validasi
+                                GPS hanya pencegah ringan. Koordinat dan jarak
+                                dicatat untuk audit.
+                            </p>
+                        </div>
+                    )}
                 </Section>
 
                 <div className="flex justify-end">

@@ -6,8 +6,11 @@ use App\Models\User;
 use App\Modules\Academic\Enums\EnrollmentStatus;
 use App\Modules\Academic\Models\Classroom;
 use App\Modules\Attendance\Enums\AttendanceStatus;
+use App\Modules\Attendance\Enums\TeacherAttendanceStatus;
 use App\Modules\Attendance\Models\AttendanceRecord;
 use App\Modules\Attendance\Models\AttendanceSession;
+use App\Modules\Attendance\Models\TeacherAttendance;
+use App\Modules\People\Models\Teacher;
 use App\Modules\School\Models\Semester;
 use App\Support\ActivePeriod;
 use Carbon\CarbonImmutable;
@@ -15,7 +18,7 @@ use Illuminate\Database\Seeder;
 
 /**
  * Presensi harian demo 15 hari sekolah terakhir (tidak termasuk hari ini, agar guru bisa mencoba mengisi).
- * Mayoritas HADIR; Aisyah (anak ortu@) punya satu hari SAKIT dan satu ALPA.
+ * Mayoritas HADIR; Aisyah (anak ortu@) punya satu hari SAKIT dan satu ALPA. Juga presensi guru (S14).
  */
 class AttendanceDemoSeeder extends Seeder
 {
@@ -47,6 +50,7 @@ class AttendanceDemoSeeder extends Seeder
         }
 
         mt_srand(2026);
+        $this->seedTeachers($dates, $yearId);
 
         foreach (array_reverse($dates) as $n => $date) {
             $semester = Semester::query()
@@ -104,5 +108,47 @@ class AttendanceDemoSeeder extends Seeder
             $roll <= 98 => [AttendanceStatus::Sick, null],
             default => [AttendanceStatus::Absent, null],
         };
+    }
+
+    /**
+     * Presensi guru: masuk 06:40–07:20 (lewat 07:15 = terlambat), pulang 13:30–14:30, sesekali izin/sakit/dinas.
+     *
+     * @param  list<CarbonImmutable>  $dates
+     */
+    private function seedTeachers(array $dates, int $yearId): void
+    {
+        $teachers = Teacher::query()->where('is_active', true)->pluck('id');
+
+        foreach ($dates as $date) {
+            foreach ($teachers as $teacherId) {
+                $roll = mt_rand(1, 100);
+                $status = match (true) {
+                    $roll <= 3 => TeacherAttendanceStatus::Sick,
+                    $roll <= 6 => TeacherAttendanceStatus::Permit,
+                    $roll <= 8 => TeacherAttendanceStatus::Duty,
+                    default => null,
+                };
+
+                if ($status !== null) {
+                    TeacherAttendance::query()->create([
+                        'academic_year_id' => $yearId, 'teacher_id' => $teacherId, 'date' => $date->toDateString(),
+                        'status' => $status, 'source' => TeacherAttendance::SOURCE_OPERATOR,
+                        'note' => $status === TeacherAttendanceStatus::Duty ? 'Rapat MGMP' : null,
+                    ]);
+
+                    continue;
+                }
+
+                $checkIn = $date->setTime(6, 40)->addMinutes(mt_rand(0, 40));
+
+                TeacherAttendance::query()->create([
+                    'academic_year_id' => $yearId, 'teacher_id' => $teacherId, 'date' => $date->toDateString(),
+                    'check_in_at' => $checkIn,
+                    'check_out_at' => $date->setTime(13, 30)->addMinutes(mt_rand(0, 60)),
+                    'status' => $checkIn->isAfter($date->setTime(7, 15)) ? TeacherAttendanceStatus::Late : TeacherAttendanceStatus::Present,
+                    'source' => TeacherAttendance::SOURCE_SELF,
+                ]);
+            }
+        }
     }
 }

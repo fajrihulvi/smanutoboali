@@ -51,6 +51,18 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             label: 'Monitoring Presensi',
             href: '/kepala-sekolah/presensi',
             icon: ClipboardCheck,
+            children: [
+                {
+                    label: 'Siswa',
+                    href: '/kepala-sekolah/presensi',
+                    icon: GraduationCap,
+                },
+                {
+                    label: 'Guru',
+                    href: '/kepala-sekolah/presensi-guru',
+                    icon: Users,
+                },
+            ],
         },
         {
             label: 'Monitoring Siswa',
@@ -246,6 +258,18 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             href: '/operator/presensi',
             icon: ClipboardCheck,
             permission: 'attendance.manage',
+            children: [
+                {
+                    label: 'Presensi Siswa',
+                    href: '/operator/presensi',
+                    icon: GraduationCap,
+                },
+                {
+                    label: 'Presensi Guru',
+                    href: '/operator/presensi-guru',
+                    icon: Users,
+                },
+            ],
         },
         {
             label: 'Raport',

@@ -4,6 +4,7 @@ namespace App\Modules\School\Http\Controllers\Operator;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Attendance\Enums\AttendanceMode;
+use App\Modules\Attendance\Enums\TeacherAttendanceValidation;
 use App\Modules\Core\Actions\UpdateSystemSettingsAction;
 use App\Modules\Core\Enums\SettingKey;
 use App\Modules\Core\Services\FileUrlGenerator;
@@ -40,7 +41,17 @@ class SchoolSettingsController extends Controller
                 'upload_max_size_kb' => $settings->uploadMaxKb(),
                 'attendance_mode' => $settings->get(SettingKey::AttendanceMode),
                 'attendance_edit_days' => (int) $settings->get(SettingKey::AttendanceEditDays),
+                'teacher_late_after' => $settings->get(SettingKey::TeacherLateAfter),
+                'teacher_attendance_validation' => $settings->get(SettingKey::TeacherAttendanceValidation),
+                'teacher_attendance_ips' => $settings->get(SettingKey::TeacherAttendanceIps),
+                'school_latitude' => $settings->get(SettingKey::SchoolLatitude),
+                'school_longitude' => $settings->get(SettingKey::SchoolLongitude),
+                'teacher_attendance_radius_m' => (int) $settings->get(SettingKey::TeacherAttendanceRadiusM),
             ],
+            'teacherValidations' => array_map(
+                fn (TeacherAttendanceValidation $v) => ['value' => $v->value, 'label' => $v->label()],
+                TeacherAttendanceValidation::cases(),
+            ),
             'attendanceModes' => array_map(
                 fn (AttendanceMode $mode) => ['value' => $mode->value, 'label' => $mode->label()],
                 AttendanceMode::cases(),

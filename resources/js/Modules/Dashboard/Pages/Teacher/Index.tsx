@@ -6,9 +6,15 @@ import {
     MessagesSquare,
 } from 'lucide-react';
 import AppLayout from '@/Layouts/AppLayout';
+import { TeacherCheckInCard } from '@/Modules/Attendance/Components/TeacherCheckInCard';
+import type { SelfAttendance } from '@/Modules/Attendance/Components/TeacherCheckInCard';
 import { DashboardPlaceholder } from '@/Modules/Dashboard/Components/DashboardPlaceholder';
 
-export default function TeacherDashboard() {
+export default function TeacherDashboard({
+    selfAttendance,
+}: {
+    selfAttendance: SelfAttendance;
+}) {
     return (
         <AppLayout
             breadcrumbs={[{ title: 'Dashboard', href: '/guru/dashboard' }]}
@@ -38,7 +44,9 @@ export default function TeacherDashboard() {
                         icon: MessagesSquare,
                     },
                 ]}
-            />
+            >
+                <TeacherCheckInCard data={selfAttendance} />
+            </DashboardPlaceholder>
         </AppLayout>
     );
 }

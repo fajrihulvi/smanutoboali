@@ -43,8 +43,11 @@ export function useCurrentUrl(): UseCurrentUrlReturn {
         const urlToCompare = currentUrl ?? currentUrlPath;
         const urlString = toUrl(urlToCheck);
 
+        // Awalan dihitung per segmen: /operator/presensi bukan induk /operator/presensi-guru.
         const comparePath = (path: string): boolean =>
-            startsWith ? urlToCompare.startsWith(path) : path === urlToCompare;
+            startsWith
+                ? isSameOrChildPath(urlToCompare, path)
+                : path === urlToCompare;
 
         if (!urlString.startsWith('http')) {
             return comparePath(urlString);
@@ -80,4 +83,11 @@ export function useCurrentUrl(): UseCurrentUrlReturn {
         isCurrentOrParentUrl,
         whenCurrentUrl,
     };
+}
+
+/** `current` sama dengan `path` atau berada di bawahnya (batas segmen "/"). */
+export function isSameOrChildPath(current: string, path: string): boolean {
+    const base = path.endsWith('/') ? path.slice(0, -1) : path;
+
+    return current === base || current.startsWith(`${base}/`);
 }

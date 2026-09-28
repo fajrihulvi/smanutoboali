@@ -31,7 +31,13 @@ type Props = {
         principal_nip: string | null;
         logo_url: string | null;
     };
-    system: { timezone: string; upload_max_size_kb: number };
+    system: {
+        timezone: string;
+        upload_max_size_kb: number;
+        attendance_mode: string;
+        attendance_edit_days: number;
+    };
+    attendanceModes: Option[];
     levels: Option[];
     timezones: Option[];
     uploadHardMaxKb: number;
@@ -88,6 +94,7 @@ export default function Settings({
     levels,
     timezones,
     uploadHardMaxKb,
+    attendanceModes,
 }: Props) {
     const form = useForm({
         name: school.name,
@@ -102,6 +109,8 @@ export default function Settings({
         remove_logo: false,
         timezone: system.timezone,
         upload_max_size_kb: String(system.upload_max_size_kb),
+        attendance_mode: system.attendance_mode,
+        attendance_edit_days: String(system.attendance_edit_days),
     });
 
     const submit = (event: FormEvent) => {
@@ -399,6 +408,64 @@ export default function Settings({
                                     )
                                 }
                                 aria-invalid={!!form.errors.upload_max_size_kb}
+                            />
+                        </Field>
+                    </div>
+                </Section>
+
+                <Section
+                    title="Presensi"
+                    description="Cara guru mengisi presensi siswa dan berapa lama presensi masih bisa diubah guru."
+                >
+                    <div className="grid gap-5 sm:grid-cols-2">
+                        <Field
+                            id="attendance_mode"
+                            label="Mode presensi"
+                            error={form.errors.attendance_mode}
+                            hint="Per mata pelajaran memerlukan jadwal pelajaran yang sudah disusun."
+                        >
+                            <Select
+                                value={form.data.attendance_mode}
+                                onValueChange={(value) =>
+                                    form.setData('attendance_mode', value)
+                                }
+                            >
+                                <SelectTrigger id="attendance_mode">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {attendanceModes.map((mode) => (
+                                        <SelectItem
+                                            key={mode.value}
+                                            value={mode.value}
+                                        >
+                                            {mode.label}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </Field>
+                        <Field
+                            id="attendance_edit_days"
+                            label="Batas edit guru (hari)"
+                            error={form.errors.attendance_edit_days}
+                            hint="0 = hanya di hari yang sama. Setelah batas, hanya operator yang bisa mengoreksi."
+                        >
+                            <Input
+                                id="attendance_edit_days"
+                                type="number"
+                                min={0}
+                                max={30}
+                                value={form.data.attendance_edit_days}
+                                onChange={(event) =>
+                                    form.setData(
+                                        'attendance_edit_days',
+                                        event.target.value,
+                                    )
+                                }
+                                aria-invalid={
+                                    !!form.errors.attendance_edit_days
+                                }
                             />
                         </Field>
                     </div>

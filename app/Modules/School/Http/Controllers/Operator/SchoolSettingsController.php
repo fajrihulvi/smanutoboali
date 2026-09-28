@@ -3,6 +3,7 @@
 namespace App\Modules\School\Http\Controllers\Operator;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Attendance\Enums\AttendanceMode;
 use App\Modules\Core\Actions\UpdateSystemSettingsAction;
 use App\Modules\Core\Enums\SettingKey;
 use App\Modules\Core\Services\FileUrlGenerator;
@@ -37,7 +38,13 @@ class SchoolSettingsController extends Controller
             'system' => [
                 'timezone' => $settings->get(SettingKey::Timezone),
                 'upload_max_size_kb' => $settings->uploadMaxKb(),
+                'attendance_mode' => $settings->get(SettingKey::AttendanceMode),
+                'attendance_edit_days' => (int) $settings->get(SettingKey::AttendanceEditDays),
             ],
+            'attendanceModes' => array_map(
+                fn (AttendanceMode $mode) => ['value' => $mode->value, 'label' => $mode->label()],
+                AttendanceMode::cases(),
+            ),
             'levels' => array_map(
                 fn (SchoolLevel $level) => ['value' => $level->value, 'label' => $level->label()],
                 SchoolLevel::cases(),

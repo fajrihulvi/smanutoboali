@@ -10,12 +10,18 @@ enum SettingKey: string
 {
     case Timezone = 'timezone';
     case UploadMaxSizeKb = 'upload_max_size_kb';
+    /** HARIAN | PER_MAPEL — lihat Attendance\Enums\AttendanceMode. */
+    case AttendanceMode = 'attendance_mode';
+    /** Guru boleh mengubah presensi sampai N hari setelah tanggalnya (0 = hari yang sama). */
+    case AttendanceEditDays = 'attendance_edit_days';
 
     public function default(): mixed
     {
         return match ($this) {
             self::Timezone => 'Asia/Jakarta',
             self::UploadMaxSizeKb => (int) config('skoolia.upload.default_max_kb', 5120),
+            self::AttendanceMode => 'HARIAN',
+            self::AttendanceEditDays => 0,
         };
     }
 

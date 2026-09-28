@@ -26,6 +26,8 @@ function schoolPayload(array $overrides = []): array
         'principal_nip' => '196801011990032001',
         'timezone' => 'Asia/Jakarta',
         'upload_max_size_kb' => 4096,
+        'attendance_mode' => 'HARIAN',
+        'attendance_edit_days' => 0,
     ], $overrides);
 }
 

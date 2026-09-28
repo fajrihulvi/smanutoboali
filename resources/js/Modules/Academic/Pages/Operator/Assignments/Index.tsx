@@ -118,7 +118,7 @@ export default function AssignmentsIndex({
                 </div>
 
                 {empty ?? (
-                    <div className="overflow-x-auto">
+                    <div className="relative overflow-x-auto">
                         <table className="w-full border-separate border-spacing-0 text-sm">
                             <thead>
                                 <tr>

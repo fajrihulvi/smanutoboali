@@ -184,7 +184,7 @@ export default function PromotionCreate({
                     </div>
 
                     <section className="mb-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                        <div className="overflow-x-auto">
+                        <div className="relative overflow-x-auto">
                             <table className="w-full text-sm">
                                 <thead className="bg-slate-50 text-left text-xs font-semibold text-slate-600">
                                     <tr>

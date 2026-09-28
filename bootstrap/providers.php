@@ -2,6 +2,7 @@
 
 use App\Modules\Academic\AcademicServiceProvider;
 use App\Modules\Access\AccessServiceProvider;
+use App\Modules\Attendance\AttendanceServiceProvider;
 use App\Modules\Auth\AuthServiceProvider;
 use App\Modules\Core\CoreServiceProvider;
 use App\Modules\Dashboard\DashboardServiceProvider;
@@ -12,6 +13,7 @@ use App\Providers\AppServiceProvider;
 return [
     AcademicServiceProvider::class,
     AccessServiceProvider::class,
+    AttendanceServiceProvider::class,
     AuthServiceProvider::class,
     CoreServiceProvider::class,
     DashboardServiceProvider::class,

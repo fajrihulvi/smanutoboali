@@ -2,6 +2,7 @@
 
 namespace App\Modules\School\Http\Requests;
 
+use App\Modules\Attendance\Enums\AttendanceMode;
 use App\Modules\Core\Enums\SettingKey;
 use App\Modules\School\Enums\SchoolLevel;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -39,6 +40,8 @@ class UpdateSchoolSettingsRequest extends FormRequest
             'remove_logo' => ['boolean'],
             'timezone' => ['required', Rule::in(array_keys(SettingKey::timezones()))],
             'upload_max_size_kb' => ['required', 'integer', 'min:256', "max:{$hardMax}"],
+            'attendance_mode' => ['required', Rule::enum(AttendanceMode::class)],
+            'attendance_edit_days' => ['required', 'integer', 'min:0', 'max:30'],
         ];
     }
 
@@ -58,6 +61,8 @@ class UpdateSchoolSettingsRequest extends FormRequest
             'principal_nip' => 'NIP kepala sekolah',
             'logo' => 'logo',
             'timezone' => 'zona waktu',
+            'attendance_mode' => 'mode presensi',
+            'attendance_edit_days' => 'batas edit presensi',
             'upload_max_size_kb' => 'ukuran maksimum upload',
         ];
     }
@@ -100,6 +105,8 @@ class UpdateSchoolSettingsRequest extends FormRequest
         return [
             SettingKey::Timezone->value => $this->string('timezone')->value(),
             SettingKey::UploadMaxSizeKb->value => $this->integer('upload_max_size_kb'),
+            SettingKey::AttendanceMode->value => $this->string('attendance_mode')->value(),
+            SettingKey::AttendanceEditDays->value => $this->integer('attendance_edit_days'),
         ];
     }
 }

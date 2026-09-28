@@ -34,6 +34,10 @@ function schoolPayload(array $overrides = []): array
         'school_latitude' => null,
         'school_longitude' => null,
         'teacher_attendance_radius_m' => 200,
+        'grade_kkm' => 75,
+        'grade_predicate_a' => 90,
+        'grade_predicate_b' => 80,
+        'grade_predicate_c' => 70,
     ], $overrides);
 }
 
@@ -181,4 +185,11 @@ it('menyimpan pengaturan presensi guru dan memvalidasi IP & koordinat', function
     expect($settings->get(SettingKey::TeacherLateAfter))->toBe('07:00')
         ->and($settings->get(SettingKey::SchoolLatitude))->toBe(-2.1291)
         ->and($settings->get(SettingKey::TeacherAttendanceRadiusM))->toBe(150);
+});
+
+it('batas predikat harus menurun A > B > C', function () {
+    $this->actingAsRole(Role::Operator);
+
+    $this->post('/operator/settings', schoolPayload(['grade_predicate_a' => 80, 'grade_predicate_b' => 85]))
+        ->assertSessionHasErrors('grade_predicate_a');
 });

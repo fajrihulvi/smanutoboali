@@ -24,6 +24,12 @@ enum SettingKey: string
     case SchoolLongitude = 'school_longitude';
     /** Radius GPS (meter) dari titik sekolah. */
     case TeacherAttendanceRadiusM = 'teacher_attendance_radius_m';
+    /** Kriteria ketuntasan minimal (0–100). */
+    case GradeKkm = 'grade_kkm';
+    /** Batas bawah predikat A/B/C (nilai akhir); di bawah C = D. */
+    case GradePredicateA = 'grade_predicate_a';
+    case GradePredicateB = 'grade_predicate_b';
+    case GradePredicateC = 'grade_predicate_c';
 
     public function default(): mixed
     {
@@ -37,6 +43,10 @@ enum SettingKey: string
             self::TeacherAttendanceIps => '',
             self::SchoolLatitude, self::SchoolLongitude => null,
             self::TeacherAttendanceRadiusM => 200,
+            self::GradeKkm => 75,
+            self::GradePredicateA => 90,
+            self::GradePredicateB => 80,
+            self::GradePredicateC => 70,
         };
     }
 

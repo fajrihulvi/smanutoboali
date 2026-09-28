@@ -46,6 +46,18 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             label: 'Monitoring Akademik',
             href: '/kepala-sekolah/akademik',
             icon: Library,
+            children: [
+                {
+                    label: 'Jadwal',
+                    href: '/kepala-sekolah/akademik',
+                    icon: CalendarDays,
+                },
+                {
+                    label: 'Nilai',
+                    href: '/kepala-sekolah/nilai',
+                    icon: NotebookPen,
+                },
+            ],
         },
         {
             label: 'Monitoring Presensi',
@@ -251,6 +263,12 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
                     href: '/operator/akademik/jadwal',
                     icon: CalendarDays,
                 },
+                {
+                    label: 'Nilai',
+                    href: '/operator/nilai',
+                    icon: NotebookPen,
+                    permission: 'grade.view',
+                },
             ],
         },
         {
@@ -348,6 +366,7 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             permission: 'student.view',
         },
         { label: 'Akademik', href: '/orang-tua/akademik', icon: Library },
+        { label: 'Nilai', href: '/orang-tua/nilai', icon: NotebookPen },
         {
             label: 'Presensi',
             href: '/orang-tua/presensi',

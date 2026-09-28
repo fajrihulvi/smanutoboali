@@ -63,6 +63,10 @@ class UpdateSchoolSettingsRequest extends FormRequest
             'school_latitude' => ['nullable', 'numeric', 'between:-90,90', Rule::requiredIf($this->input('teacher_attendance_validation') === TeacherAttendanceValidation::Gps->value)],
             'school_longitude' => ['nullable', 'numeric', 'between:-180,180', Rule::requiredIf($this->input('teacher_attendance_validation') === TeacherAttendanceValidation::Gps->value)],
             'teacher_attendance_radius_m' => ['required', 'integer', 'min:10', 'max:5000'],
+            'grade_kkm' => ['required', 'integer', 'min:0', 'max:100'],
+            'grade_predicate_a' => ['required', 'integer', 'min:1', 'max:100', 'gt:grade_predicate_b'],
+            'grade_predicate_b' => ['required', 'integer', 'min:1', 'max:100', 'gt:grade_predicate_c'],
+            'grade_predicate_c' => ['required', 'integer', 'min:1', 'max:100'],
         ];
     }
 
@@ -90,6 +94,10 @@ class UpdateSchoolSettingsRequest extends FormRequest
             'school_latitude' => 'lintang sekolah',
             'school_longitude' => 'bujur sekolah',
             'teacher_attendance_radius_m' => 'radius presensi',
+            'grade_kkm' => 'KKM',
+            'grade_predicate_a' => 'batas predikat A',
+            'grade_predicate_b' => 'batas predikat B',
+            'grade_predicate_c' => 'batas predikat C',
             'upload_max_size_kb' => 'ukuran maksimum upload',
         ];
     }
@@ -140,6 +148,10 @@ class UpdateSchoolSettingsRequest extends FormRequest
             SettingKey::SchoolLatitude->value => $this->filled('school_latitude') ? (float) $this->input('school_latitude') : null,
             SettingKey::SchoolLongitude->value => $this->filled('school_longitude') ? (float) $this->input('school_longitude') : null,
             SettingKey::TeacherAttendanceRadiusM->value => $this->integer('teacher_attendance_radius_m'),
+            SettingKey::GradeKkm->value => $this->integer('grade_kkm'),
+            SettingKey::GradePredicateA->value => $this->integer('grade_predicate_a'),
+            SettingKey::GradePredicateB->value => $this->integer('grade_predicate_b'),
+            SettingKey::GradePredicateC->value => $this->integer('grade_predicate_c'),
         ];
     }
 }

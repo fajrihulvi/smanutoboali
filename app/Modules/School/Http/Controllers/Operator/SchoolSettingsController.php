@@ -47,6 +47,10 @@ class SchoolSettingsController extends Controller
                 'school_latitude' => $settings->get(SettingKey::SchoolLatitude),
                 'school_longitude' => $settings->get(SettingKey::SchoolLongitude),
                 'teacher_attendance_radius_m' => (int) $settings->get(SettingKey::TeacherAttendanceRadiusM),
+                'grade_kkm' => (int) $settings->get(SettingKey::GradeKkm),
+                'grade_predicate_a' => (int) $settings->get(SettingKey::GradePredicateA),
+                'grade_predicate_b' => (int) $settings->get(SettingKey::GradePredicateB),
+                'grade_predicate_c' => (int) $settings->get(SettingKey::GradePredicateC),
             ],
             'teacherValidations' => array_map(
                 fn (TeacherAttendanceValidation $v) => ['value' => $v->value, 'label' => $v->label()],

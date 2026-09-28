@@ -43,6 +43,10 @@ type Props = {
         school_latitude: number | null;
         school_longitude: number | null;
         teacher_attendance_radius_m: number;
+        grade_kkm: number;
+        grade_predicate_a: number;
+        grade_predicate_b: number;
+        grade_predicate_c: number;
     };
     attendanceModes: Option[];
     teacherValidations: Option[];
@@ -126,6 +130,10 @@ export default function Settings({
         school_latitude: system.school_latitude?.toString() ?? '',
         school_longitude: system.school_longitude?.toString() ?? '',
         teacher_attendance_radius_m: String(system.teacher_attendance_radius_m),
+        grade_kkm: String(system.grade_kkm),
+        grade_predicate_a: String(system.grade_predicate_a),
+        grade_predicate_b: String(system.grade_predicate_b),
+        grade_predicate_c: String(system.grade_predicate_c),
     });
 
     const submit = (event: FormEvent) => {
@@ -638,6 +646,94 @@ export default function Settings({
                             </p>
                         </div>
                     )}
+                </Section>
+
+                <Section
+                    title="Penilaian"
+                    description="KKM dan batas nilai akhir untuk predikat. Nilai di bawah batas C mendapat predikat D. Berlaku untuk semua mata pelajaran."
+                >
+                    <div className="grid gap-5 sm:grid-cols-4">
+                        <Field
+                            id="grade_kkm"
+                            label="KKM"
+                            error={form.errors.grade_kkm}
+                        >
+                            <Input
+                                id="grade_kkm"
+                                type="number"
+                                min={0}
+                                max={100}
+                                value={form.data.grade_kkm}
+                                onChange={(event) =>
+                                    form.setData(
+                                        'grade_kkm',
+                                        event.target.value,
+                                    )
+                                }
+                                aria-invalid={!!form.errors.grade_kkm}
+                            />
+                        </Field>
+                        <Field
+                            id="grade_predicate_a"
+                            label="Predikat A mulai"
+                            error={form.errors.grade_predicate_a}
+                        >
+                            <Input
+                                id="grade_predicate_a"
+                                type="number"
+                                min={0}
+                                max={100}
+                                value={form.data.grade_predicate_a}
+                                onChange={(event) =>
+                                    form.setData(
+                                        'grade_predicate_a',
+                                        event.target.value,
+                                    )
+                                }
+                                aria-invalid={!!form.errors.grade_predicate_a}
+                            />
+                        </Field>
+                        <Field
+                            id="grade_predicate_b"
+                            label="Predikat B mulai"
+                            error={form.errors.grade_predicate_b}
+                        >
+                            <Input
+                                id="grade_predicate_b"
+                                type="number"
+                                min={0}
+                                max={100}
+                                value={form.data.grade_predicate_b}
+                                onChange={(event) =>
+                                    form.setData(
+                                        'grade_predicate_b',
+                                        event.target.value,
+                                    )
+                                }
+                                aria-invalid={!!form.errors.grade_predicate_b}
+                            />
+                        </Field>
+                        <Field
+                            id="grade_predicate_c"
+                            label="Predikat C mulai"
+                            error={form.errors.grade_predicate_c}
+                        >
+                            <Input
+                                id="grade_predicate_c"
+                                type="number"
+                                min={0}
+                                max={100}
+                                value={form.data.grade_predicate_c}
+                                onChange={(event) =>
+                                    form.setData(
+                                        'grade_predicate_c',
+                                        event.target.value,
+                                    )
+                                }
+                                aria-invalid={!!form.errors.grade_predicate_c}
+                            />
+                        </Field>
+                    </div>
                 </Section>
 
                 <div className="flex justify-end">

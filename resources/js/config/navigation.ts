@@ -343,6 +343,38 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             href: '/operator/keuangan',
             icon: Wallet,
             permission: 'finance.manage',
+            children: [
+                {
+                    label: 'Tagihan',
+                    href: '/operator/keuangan/tagihan',
+                    icon: Wallet,
+                },
+                {
+                    label: 'Buat Tagihan',
+                    href: '/operator/keuangan/buat',
+                    icon: Wallet,
+                },
+                {
+                    label: 'Verifikasi',
+                    href: '/operator/keuangan/verifikasi',
+                    icon: Wallet,
+                },
+                {
+                    label: 'Jenis Biaya',
+                    href: '/operator/keuangan/jenis-biaya',
+                    icon: Wallet,
+                },
+                {
+                    label: 'Potongan',
+                    href: '/operator/keuangan/potongan',
+                    icon: Wallet,
+                },
+                {
+                    label: 'Rekap',
+                    href: '/operator/keuangan/rekap',
+                    icon: BarChart3,
+                },
+            ],
         },
         {
             label: 'PPDB',

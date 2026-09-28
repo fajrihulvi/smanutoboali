@@ -31,6 +31,7 @@ class AuditLogQueryService
         'activity' => 'Kegiatan',
         'child_condition' => 'Kondisi Anak',
         'announcement' => 'Pengumuman',
+        'finance' => 'Keuangan',
     ];
 
     /**

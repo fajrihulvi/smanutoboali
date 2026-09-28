@@ -29,6 +29,9 @@ Schedule::command('queue:work --stop-when-empty --max-time=50 --tries=3')
 // Pengumuman terjadwal yang sudah tiba waktunya → notifikasi audiens (S23).
 Schedule::command('announcements:publish-due')->everyMinute()->withoutOverlapping();
 
+// Pengingat tagihan H-3 & H+1 jatuh tempo (S24).
+Schedule::command('finance:remind')->dailyAt('07:00')->withoutOverlapping();
+
 // Hapus permanen file > 30 hari di tempat sampah (File::prunable()) dan ZIP cetak raport > 7 hari.
 Schedule::command('model:prune', ['--model' => [File::class, ReportCardExport::class]])->dailyAt('01:30');
 

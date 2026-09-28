@@ -11,6 +11,7 @@ use App\Modules\Chat\ChatServiceProvider;
 use App\Modules\ChildCondition\ChildConditionServiceProvider;
 use App\Modules\Core\CoreServiceProvider;
 use App\Modules\Dashboard\DashboardServiceProvider;
+use App\Modules\Finance\FinanceServiceProvider;
 use App\Modules\People\PeopleServiceProvider;
 use App\Modules\Portfolio\PortfolioServiceProvider;
 use App\Modules\ReportCard\ReportCardServiceProvider;
@@ -29,6 +30,7 @@ return [
     ChildConditionServiceProvider::class,
     CoreServiceProvider::class,
     DashboardServiceProvider::class,
+    FinanceServiceProvider::class,
     PeopleServiceProvider::class,
     PortfolioServiceProvider::class,
     ReportCardServiceProvider::class,

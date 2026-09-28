@@ -32,6 +32,8 @@ enum SettingKey: string
     case GradePredicateC = 'grade_predicate_c';
     /** Presence channel status online di chat (opsional, menambah koneksi Pusher). */
     case ChatPresenceEnabled = 'chat_presence_enabled';
+    /** Petunjuk pembayaran/rekening sekolah yang tampil di tagihan orang tua. */
+    case PaymentInstructions = 'payment_instructions';
 
     public function default(): mixed
     {
@@ -50,6 +52,7 @@ enum SettingKey: string
             self::GradePredicateB => 80,
             self::GradePredicateC => 70,
             self::ChatPresenceEnabled => false,
+            self::PaymentInstructions => '',
         };
     }
 

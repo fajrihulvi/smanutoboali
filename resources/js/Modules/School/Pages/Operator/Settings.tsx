@@ -51,6 +51,7 @@ type Props = {
         grade_predicate_b: number;
         grade_predicate_c: number;
         chat_presence_enabled: boolean;
+        payment_instructions: string;
     };
     attendanceModes: Option[];
     teacherValidations: Option[];
@@ -139,6 +140,7 @@ export default function Settings({
         grade_predicate_b: String(system.grade_predicate_b),
         grade_predicate_c: String(system.grade_predicate_c),
         chat_presence_enabled: system.chat_presence_enabled,
+        payment_instructions: system.payment_instructions,
     });
 
     const submit = (event: FormEvent) => {
@@ -746,6 +748,31 @@ export default function Settings({
                             />
                         </Field>
                     </div>
+                </Section>
+
+                <Section
+                    title="Keuangan"
+                    description="Petunjuk pembayaran yang tampil di halaman tagihan orang tua, mis. nomor rekening sekolah."
+                >
+                    <Field
+                        id="payment_instructions"
+                        label="Petunjuk pembayaran"
+                        error={form.errors.payment_instructions}
+                    >
+                        <Textarea
+                            id="payment_instructions"
+                            rows={4}
+                            maxLength={1000}
+                            value={form.data.payment_instructions}
+                            onChange={(event) =>
+                                form.setData(
+                                    'payment_instructions',
+                                    event.target.value,
+                                )
+                            }
+                            placeholder="Transfer ke BSI 1234567890 a.n. Sekolah Skoolia. Cantumkan nama & NIS siswa di berita transfer."
+                        />
+                    </Field>
                 </Section>
 
                 <Section

@@ -68,6 +68,7 @@ class UpdateSchoolSettingsRequest extends FormRequest
             'grade_predicate_b' => ['required', 'integer', 'min:1', 'max:100', 'gt:grade_predicate_c'],
             'grade_predicate_c' => ['required', 'integer', 'min:1', 'max:100'],
             'chat_presence_enabled' => ['sometimes', 'boolean'],
+            'payment_instructions' => ['nullable', 'string', 'max:1000'],
         ];
     }
 
@@ -154,6 +155,7 @@ class UpdateSchoolSettingsRequest extends FormRequest
             SettingKey::GradePredicateB->value => $this->integer('grade_predicate_b'),
             SettingKey::GradePredicateC->value => $this->integer('grade_predicate_c'),
             SettingKey::ChatPresenceEnabled->value => $this->boolean('chat_presence_enabled'),
+            SettingKey::PaymentInstructions->value => $this->string('payment_instructions')->trim()->value(),
         ];
     }
 }

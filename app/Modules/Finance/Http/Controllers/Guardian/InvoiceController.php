@@ -6,14 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Modules\Core\Enums\SettingKey;
 use App\Modules\Core\Services\SettingsService;
+use App\Modules\Finance\Actions\StartOnlinePaymentAction;
 use App\Modules\Finance\Actions\SubmitPaymentProofAction;
 use App\Modules\Finance\Enums\InvoiceStatus;
+use App\Modules\Finance\Gateway\PaymentGateway;
 use App\Modules\Finance\Http\Requests\PaymentRequest;
 use App\Modules\Finance\Http\Resources\InvoiceResource;
+use App\Modules\Finance\Models\GatewayTransaction;
 use App\Modules\Finance\Models\Invoice;
 use App\Modules\People\Services\GuardianChildren;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -66,7 +70,53 @@ class InvoiceController extends Controller
         return Inertia::render('Finance::Guardian/Show', [
             'invoice' => (new InvoiceResource($invoice))->detail()->resolve($request),
             'instructions' => (string) app(SettingsService::class)->get(SettingKey::PaymentInstructions) ?: null,
+            'onlinePayment' => app(PaymentGateway::class)->isEnabled(),
             'today' => CarbonImmutable::today()->toDateString(),
+        ]);
+    }
+
+    /**
+     * POST /orang-tua/keuangan/{invoice}/bayar — buat sesi Snap untuk sisa tagihan.
+     */
+    public function pay(Request $request, Invoice $invoice, StartOnlinePaymentAction $start, PaymentGateway $gateway): JsonResponse
+    {
+        $this->authorize('pay', $invoice);
+
+        /** @var User $user */
+        $user = $request->user();
+        $transaction = $start->handle($invoice, $user, url('/orang-tua/keuangan/'.$invoice->public_id));
+        $statusUrl = "/orang-tua/keuangan/{$invoice->public_id}/status/{$transaction->public_id}";
+
+        return response()->json([
+            'token' => $transaction->snap_token,
+            'redirect_url' => $transaction->redirect_url,
+            'status_url' => $statusUrl,
+            ...$gateway->clientConfig(),
+        ]);
+    }
+
+    /**
+     * Status percobaan bayar — selalu dari DB (hasil webhook), bukan dari redirect Snap.
+     */
+    public function status(Request $request, Invoice $invoice, GatewayTransaction $transaction): Response
+    {
+        $this->authorize('view', $invoice);
+        abort_unless($transaction->invoice_id === $invoice->id, 404);
+        $invoice->load(['student', 'feeType']);
+
+        return Inertia::render('Finance::Guardian/PaymentStatus', [
+            'invoice' => (new InvoiceResource($invoice))->resolve($request),
+            'transaction' => [
+                'public_id' => $transaction->public_id,
+                'order_id' => $transaction->order_id,
+                'amount' => $transaction->amount,
+                'status' => ['value' => $transaction->status->value, 'label' => $transaction->status->label()],
+                'final' => $transaction->status->isFinal(),
+                'payment_type' => $transaction->payment_type,
+                'receipt_url' => $transaction->payment_id
+                    ? '/orang-tua/keuangan/pembayaran/'.$transaction->payment()->value('public_id').'/kwitansi'
+                    : null,
+            ],
         ]);
     }
 

@@ -9,6 +9,11 @@ use App\Modules\Academic\Models\Schedule;
 use App\Modules\Academic\Models\Subject;
 use App\Modules\Academic\Models\TeachingAssignment;
 use App\Modules\Core\Enums\Role;
+use App\Modules\Finance\Enums\DiscountKind;
+use App\Modules\Finance\Enums\FeeFrequency;
+use App\Modules\Finance\Models\FeeType;
+use App\Modules\Finance\Models\Invoice;
+use App\Modules\Finance\Models\StudentDiscount;
 use App\Modules\People\Models\Guardian;
 use App\Modules\People\Models\Student;
 use App\Modules\People\Models\Teacher;
@@ -142,4 +147,55 @@ function usePusherForChat(): void
     ]);
 
     require base_path('routes/channels.php');
+}
+
+/*
+|--------------------------------------------------------------------------
+| Helper keuangan (S24)
+|--------------------------------------------------------------------------
+*/
+
+/**
+ * VII-A: Ani (punya akun orang tua) & Budi (beasiswa 50%); VIII-B: Citra (orang tua lain). SPP bulanan Rp150.000.
+ *
+ * @return array<string, mixed>
+ */
+function financeScenario(): array
+{
+    $year = activeAcademicYear();
+    $classA = Classroom::factory()->for($year)->create(['name' => 'VII-A', 'grade' => 7]);
+    $classB = Classroom::factory()->for($year)->create(['name' => 'VIII-B', 'grade' => 8]);
+
+    $parent = User::factory()->withRole(Role::Guardian)->create();
+    $ani = Student::factory()->withGuardian(Guardian::factory()->withAccount($parent)->create())->create(['name' => 'Ani']);
+    $budi = Student::factory()->create(['name' => 'Budi']);
+    $otherParent = User::factory()->withRole(Role::Guardian)->create();
+    $citra = Student::factory()->withGuardian(Guardian::factory()->withAccount($otherParent)->create())->create(['name' => 'Citra']);
+    enrollIn($classA, $ani);
+    enrollIn($classA, $budi);
+    enrollIn($classB, $citra);
+
+    $spp = FeeType::query()->create(['name' => 'SPP', 'default_amount' => 150000, 'frequency' => FeeFrequency::Monthly]);
+    StudentDiscount::query()->create(['student_id' => $budi->id, 'fee_type_id' => null, 'kind' => DiscountKind::Percent, 'value' => 50, 'reason' => 'Beasiswa prestasi']);
+
+    return [
+        'year' => $year, 'classA' => $classA, 'classB' => $classB, 'parent' => $parent, 'otherParent' => $otherParent,
+        'ani' => $ani, 'budi' => $budi, 'citra' => $citra, 'spp' => $spp,
+        'operator' => User::factory()->withRole(Role::Operator)->create(),
+        'principal' => User::factory()->withRole(Role::Principal)->create(),
+    ];
+}
+
+/**
+ * @param  array<string, mixed>  $extra
+ * @return array<string, mixed>
+ */
+function generatePayload(FeeType $fee, array $extra = []): array
+{
+    return ['fee_type' => $fee->public_id, 'month' => '2026-09', 'amount' => 150000, 'due_date' => '2026-10-10', 'scope' => 'SEMUA', ...$extra];
+}
+
+function invoiceFor(Student $student): Invoice
+{
+    return Invoice::query()->where('student_id', $student->id)->where('status', '!=', 'CANCELLED')->sole();
 }

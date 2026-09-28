@@ -6,6 +6,7 @@ import ParentLayout from '@/Layouts/ParentLayout';
 import { formatDate } from '@/lib/format';
 import { InvoiceItems } from '@/Modules/Finance/Components/InvoiceItems';
 import { InvoiceStatusBadge } from '@/Modules/Finance/Components/InvoiceStatusBadge';
+import { OnlinePayButton } from '@/Modules/Finance/Components/OnlinePayButton';
 import { PaymentForm } from '@/Modules/Finance/Components/PaymentForm';
 import { PaymentList } from '@/Modules/Finance/Components/PaymentList';
 import type { InvoiceDetail } from '@/Modules/Finance/types';
@@ -14,6 +15,7 @@ type Props = {
     invoice: InvoiceDetail;
     today: string;
     instructions: string | null;
+    onlinePayment: boolean;
 };
 
 function Card({ title, children }: { title: string; children: ReactNode }) {
@@ -29,6 +31,7 @@ export default function GuardianInvoiceShow({
     invoice,
     today,
     instructions,
+    onlinePayment,
 }: Props) {
     const pending = invoice.payments.some((p) => p.status.value === 'PENDING');
 
@@ -82,25 +85,40 @@ export default function GuardianInvoiceShow({
                             </p>
                         </Card>
                     ) : invoice.can.pay ? (
-                        <Card title="Sudah transfer? Kirim bukti">
-                            <p className="text-sm text-slate-500">
-                                Transfer ke rekening sekolah, lalu unggah
-                                foto/tangkapan layar bukti transfer. Boleh
-                                dicicil.
-                            </p>
-                            {instructions && (
-                                <p className="rounded-xl bg-brand-50 p-3 text-sm whitespace-pre-wrap text-brand-900">
-                                    {instructions}
-                                </p>
+                        <div className="space-y-5">
+                            {onlinePayment && (
+                                <Card title="Bayar online">
+                                    <p className="text-sm text-slate-500">
+                                        Virtual account, QRIS, e-wallet, atau
+                                        kartu lewat Midtrans. Status lunas
+                                        otomatis.
+                                    </p>
+                                    <OnlinePayButton
+                                        invoiceId={invoice.public_id}
+                                        amount={invoice.remaining}
+                                    />
+                                </Card>
                             )}
-                            <PaymentForm
-                                url={`/orang-tua/keuangan/${invoice.public_id}/bukti`}
-                                remaining={invoice.remaining}
-                                today={today}
-                                proofRequired
-                                submitLabel="Kirim bukti transfer"
-                            />
-                        </Card>
+                            <Card title="Sudah transfer? Kirim bukti">
+                                <p className="text-sm text-slate-500">
+                                    Transfer ke rekening sekolah, lalu unggah
+                                    foto/tangkapan layar bukti transfer. Boleh
+                                    dicicil.
+                                </p>
+                                {instructions && (
+                                    <p className="rounded-xl bg-brand-50 p-3 text-sm whitespace-pre-wrap text-brand-900">
+                                        {instructions}
+                                    </p>
+                                )}
+                                <PaymentForm
+                                    url={`/orang-tua/keuangan/${invoice.public_id}/bukti`}
+                                    remaining={invoice.remaining}
+                                    today={today}
+                                    proofRequired
+                                    submitLabel="Kirim bukti transfer"
+                                />
+                            </Card>
+                        </div>
                     ) : null}
                 </aside>
             </div>

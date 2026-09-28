@@ -23,6 +23,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->encryptCookies(except: ['sidebar_state']);
 
+        // Callback server-ke-server payment gateway (diverifikasi dengan signature, bukan CSRF).
+        $middleware->validateCsrfTokens(except: ['webhooks/*']);
+
         $middleware->web(append: [
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,

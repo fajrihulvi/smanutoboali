@@ -8,6 +8,7 @@ use App\Modules\Finance\Http\Controllers\Operator\InvoiceController;
 use App\Modules\Finance\Http\Controllers\Operator\VerificationController;
 use App\Modules\Finance\Http\Controllers\ReceiptController;
 use App\Modules\Finance\Http\Controllers\ReportController;
+use App\Modules\Finance\Http\Controllers\WebhookController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -65,5 +66,12 @@ Route::middleware(['auth', 'active.role:guardian', 'permission:finance.view'])
         Route::get('/', [GuardianInvoiceController::class, 'index'])->name('index');
         Route::get('{invoice}', [GuardianInvoiceController::class, 'show'])->name('show');
         Route::post('{invoice}/bukti', [GuardianInvoiceController::class, 'storeProof'])->name('proof.store');
+        Route::post('{invoice}/bayar', [GuardianInvoiceController::class, 'pay'])->middleware('throttle:10,1')->name('pay');
+        Route::get('{invoice}/status/{transaction}', [GuardianInvoiceController::class, 'status'])->name('pay.status');
         Route::get('pembayaran/{payment}/kwitansi', ReceiptController::class)->name('payments.receipt');
     });
+
+// Callback server-ke-server Midtrans (S25): tanpa login/CSRF, diverifikasi signature_key.
+Route::post('webhooks/midtrans', [WebhookController::class, 'midtrans'])
+    ->middleware('throttle:120,1')
+    ->name('webhooks.midtrans');

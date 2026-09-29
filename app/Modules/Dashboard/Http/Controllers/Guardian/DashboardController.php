@@ -20,6 +20,6 @@ class DashboardController extends Controller
         $list = $children->of($user);
         $child = $children->selected($list, $request->string(GuardianChildren::QUERY_KEY)->value());
 
-        return Inertia::render('Dashboard::Guardian/Index', $overview->for($user, $child, CarbonImmutable::today()));
+        return Inertia::render('Dashboard::Guardian/Index', $overview->for($user, $list, $child, CarbonImmutable::today()));
     }
 }

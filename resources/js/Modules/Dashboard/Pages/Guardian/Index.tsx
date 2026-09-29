@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import {
     Baby,
     CalendarCheck2,
@@ -11,6 +11,7 @@ import {
     NotebookPen,
     PartyPopper,
     Pin,
+    Wallet,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
@@ -20,10 +21,32 @@ import { StatusBadge } from '@/Components/shared/StatusBadge';
 import { Button } from '@/Components/ui/button';
 import { useChatUnread } from '@/hooks/use-chat-unread';
 import ParentLayout from '@/Layouts/ParentLayout';
-import { formatDate, formatRelative } from '@/lib/format';
+import { formatCurrency, formatDate, formatRelative } from '@/lib/format';
+import { cn } from '@/lib/utils';
+import { RecentChatsList } from '@/Modules/Dashboard/Components/RecentChatsList';
+import type { ChatItem } from '@/Modules/Dashboard/types';
 import type { StatusVariant } from '@/types';
 
+type ChildCard = {
+    public_id: string;
+    name: string;
+    photo_url: string | null;
+    classroom: string | null;
+    attendance: { status: string; label: string } | null;
+    outstanding: number;
+    active: boolean;
+};
+
 type Props = {
+    childCards: ChildCard[];
+    invoices: {
+        public_id: string;
+        title: string;
+        remaining: number;
+        due_date: string;
+        overdue: boolean;
+    }[];
+    recentChats: ChatItem[];
     child: {
         public_id: string;
         name: string;
@@ -109,7 +132,86 @@ function Muted({ children }: { children: ReactNode }) {
     return <p className="text-sm text-slate-500">{children}</p>;
 }
 
+function ChildCards({ items }: { items: ChildCard[] }) {
+    return (
+        <section
+            aria-label="Anak Anda"
+            className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0"
+        >
+            <ul className="flex gap-3 sm:grid sm:grid-cols-2 lg:grid-cols-3">
+                {items.map((item) => (
+                    <li
+                        key={item.public_id}
+                        className="w-64 shrink-0 sm:w-auto"
+                    >
+                        <button
+                            type="button"
+                            disabled={item.active}
+                            onClick={() =>
+                                router.post(
+                                    '/orang-tua/anak-aktif',
+                                    {
+                                        anak: item.public_id,
+                                        kembali: '/orang-tua/dashboard',
+                                    },
+                                    { preserveScroll: true },
+                                )
+                            }
+                            aria-pressed={item.active}
+                            className={cn(
+                                'flex w-full items-center gap-3 rounded-2xl border bg-white p-3 text-left shadow-sm transition-colors duration-150',
+                                item.active
+                                    ? 'border-brand-500 ring-1 ring-brand-500'
+                                    : 'border-slate-200 hover:border-brand-300',
+                            )}
+                        >
+                            <PersonAvatar
+                                name={item.name}
+                                photoUrl={item.photo_url}
+                                className="size-10"
+                            />
+                            <span className="min-w-0 flex-1">
+                                <span className="block truncate text-sm font-semibold text-slate-900">
+                                    {item.name}
+                                </span>
+                                <span className="block truncate text-xs text-slate-500">
+                                    {item.classroom ?? 'Belum ada rombel'}
+                                </span>
+                                <span className="mt-1 flex flex-wrap items-center gap-1.5">
+                                    {item.attendance ? (
+                                        <StatusBadge
+                                            variant={
+                                                ATTENDANCE_VARIANT[
+                                                    item.attendance.status
+                                                ] ?? 'neutral'
+                                            }
+                                        >
+                                            {item.attendance.label}
+                                        </StatusBadge>
+                                    ) : (
+                                        <span className="text-xs text-slate-400">
+                                            Presensi belum diisi
+                                        </span>
+                                    )}
+                                    {item.outstanding > 0 && (
+                                        <StatusBadge variant="warning">
+                                            {formatCurrency(item.outstanding)}
+                                        </StatusBadge>
+                                    )}
+                                </span>
+                            </span>
+                        </button>
+                    </li>
+                ))}
+            </ul>
+        </section>
+    );
+}
+
 export default function GuardianDashboard({
+    childCards,
+    invoices,
+    recentChats,
     child,
     attendanceToday,
     activitiesToday,
@@ -123,6 +225,8 @@ export default function GuardianDashboard({
     return (
         <ParentLayout>
             <Head title="Beranda" />
+
+            {childCards.length > 1 && <ChildCards items={childCards} />}
 
             {!child ? (
                 <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -208,6 +312,63 @@ export default function GuardianDashboard({
                     </div>
 
                     <div className="grid gap-4 md:grid-cols-2">
+                        <Section
+                            title="Tagihan"
+                            icon={Wallet}
+                            href="/orang-tua/keuangan"
+                        >
+                            {invoices.length === 0 ? (
+                                <Muted>
+                                    Tidak ada tagihan yang belum lunas.
+                                </Muted>
+                            ) : (
+                                <ul className="divide-y divide-slate-100">
+                                    {invoices.map((invoice) => (
+                                        <li key={invoice.public_id}>
+                                            <Link
+                                                href={`/orang-tua/keuangan/${invoice.public_id}`}
+                                                className="flex items-center justify-between gap-3 py-2 text-sm"
+                                            >
+                                                <span className="min-w-0">
+                                                    <span className="block truncate font-medium text-slate-900">
+                                                        {invoice.title}
+                                                    </span>
+                                                    <span
+                                                        className={cn(
+                                                            'text-xs',
+                                                            invoice.overdue
+                                                                ? 'text-rose-600'
+                                                                : 'text-slate-500',
+                                                        )}
+                                                    >
+                                                        {invoice.overdue
+                                                            ? 'Lewat jatuh tempo'
+                                                            : 'Jatuh tempo'}{' '}
+                                                        {formatDate(
+                                                            invoice.due_date,
+                                                        )}
+                                                    </span>
+                                                </span>
+                                                <span className="shrink-0 font-semibold text-slate-900 tabular-nums">
+                                                    {formatCurrency(
+                                                        invoice.remaining,
+                                                    )}
+                                                </span>
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </Section>
+
+                        <Section
+                            title="Chat terbaru"
+                            icon={MessagesSquare}
+                            href="/orang-tua/chat"
+                        >
+                            <RecentChatsList items={recentChats} />
+                        </Section>
+
                         <Section
                             title="Kegiatan hari ini"
                             icon={PartyPopper}

@@ -43,6 +43,27 @@ export function formatCurrency(value: number | null | undefined): string {
     return currency.format(value ?? 0);
 }
 
+const compactCurrency = new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    notation: 'compact',
+    maximumFractionDigits: 1,
+});
+
+/** Rp 8,5 jt — untuk kartu KPI yang sempit. */
+export function formatCompactCurrency(
+    value: number | null | undefined,
+): string {
+    return compactCurrency.format(value ?? 0);
+}
+
+/** 92,5% — null menjadi tanda pisah. */
+export function formatPercent(value: number | null | undefined): string {
+    return value === null || value === undefined
+        ? '—'
+        : `${new Intl.NumberFormat('id-ID', { maximumFractionDigits: 1 }).format(value)}%`;
+}
+
 const number = new Intl.NumberFormat('id-ID');
 
 export function formatNumber(value: number | null | undefined): string {

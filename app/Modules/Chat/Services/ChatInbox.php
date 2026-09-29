@@ -21,7 +21,7 @@ class ChatInbox
     /**
      * @return Collection<int, Conversation>
      */
-    public function conversations(User $user, bool $archived = false, ?string $search = null): Collection
+    public function conversations(User $user, bool $archived = false, ?string $search = null, int $limit = self::LIMIT): Collection
     {
         $search = trim((string) $search);
 
@@ -33,7 +33,7 @@ class ChatInbox
             ->whereNotNull('conversations.last_message_at')
             ->orderByDesc('conversations.last_message_at')
             ->orderByDesc('conversations.id')
-            ->limit(self::LIMIT)
+            ->limit($limit)
             ->with(['latestMessage', 'student', 'participants.user.roles'])
             ->get();
     }

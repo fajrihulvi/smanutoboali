@@ -8,6 +8,8 @@ use App\Modules\Academic\Models\Classroom;
 use App\Modules\Academic\Models\Schedule;
 use App\Modules\Academic\Models\Subject;
 use App\Modules\Academic\Models\TeachingAssignment;
+use App\Modules\Attendance\Models\AttendanceRecord;
+use App\Modules\Attendance\Models\AttendanceSession;
 use App\Modules\Core\Enums\Role;
 use App\Modules\Finance\Enums\DiscountKind;
 use App\Modules\Finance\Enums\FeeFrequency;
@@ -21,6 +23,7 @@ use App\Modules\Ppdb\Models\PpdbApplicant;
 use App\Modules\Ppdb\Models\PpdbPeriod;
 use App\Modules\Ppdb\Models\PpdbTrack;
 use App\Modules\School\Models\AcademicYear;
+use App\Modules\School\Models\Semester;
 use App\Support\ActivePeriod;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -94,6 +97,20 @@ function scheduleAt(TeachingAssignment $assignment, int $day = 1, string $start 
         'start_time' => $start.':00',
         'end_time' => $end.':00',
     ]);
+}
+
+/**
+ * Satu sesi presensi harian berisi satu siswa (tanpa action).
+ */
+function recordAttendance(Classroom $classroom, Student $student, string $status, string $date): void
+{
+    $session = AttendanceSession::query()->create([
+        'academic_year_id' => $classroom->academic_year_id,
+        'semester_id' => Semester::query()->where('academic_year_id', $classroom->academic_year_id)->value('id'),
+        'classroom_id' => $classroom->id,
+        'date' => $date,
+    ]);
+    AttendanceRecord::query()->create(['attendance_session_id' => $session->id, 'student_id' => $student->id, 'status' => $status]);
 }
 
 /*

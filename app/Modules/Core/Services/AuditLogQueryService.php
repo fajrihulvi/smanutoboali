@@ -33,6 +33,8 @@ class AuditLogQueryService
         'announcement' => 'Pengumuman',
         'finance' => 'Keuangan',
         'ppdb' => 'PPDB',
+        'cms' => 'Website',
+        'report' => 'Laporan',
     ];
 
     /**

@@ -5,8 +5,6 @@ use App\Modules\Academic\Models\Classroom;
 use App\Modules\Academic\Models\Subject;
 use App\Modules\Assessment\Models\Grade;
 use App\Modules\Assessment\Models\GradeComponent;
-use App\Modules\Attendance\Models\AttendanceRecord;
-use App\Modules\Attendance\Models\AttendanceSession;
 use App\Modules\ChildCondition\Enums\ConditionStatus;
 use App\Modules\ChildCondition\Models\ChildCondition;
 use App\Modules\Core\Enums\Role;
@@ -47,17 +45,6 @@ function portalScenario(): array
     enrollIn($classA, $stranger);
 
     return compact('year', 'classA', 'classB', 'parent', 'ani', 'budi', 'otherParent', 'stranger');
-}
-
-function recordAttendance(Classroom $classroom, Student $student, string $status, string $date): void
-{
-    $session = AttendanceSession::query()->create([
-        'academic_year_id' => $classroom->academic_year_id,
-        'semester_id' => Semester::query()->where('academic_year_id', $classroom->academic_year_id)->value('id'),
-        'classroom_id' => $classroom->id,
-        'date' => $date,
-    ]);
-    AttendanceRecord::query()->create(['attendance_session_id' => $session->id, 'student_id' => $student->id, 'status' => $status]);
 }
 
 describe('anak aktif global (session)', function () {

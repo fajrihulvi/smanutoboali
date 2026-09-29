@@ -14,12 +14,15 @@ use App\Modules\Attendance\Models\AttendanceRecord;
 use App\Modules\ChildCondition\Models\ChildCondition;
 use App\Modules\Core\Enums\Role;
 use App\Modules\Core\Services\FileUrlGenerator;
+use App\Modules\Finance\Models\Invoice;
 use App\Modules\People\Models\Student;
 use App\Modules\Portfolio\Enums\PortfolioVisibility;
 use App\Modules\Portfolio\Models\Portfolio;
 use App\Support\ActivePeriod;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Ringkasan beranda orang tua untuk anak aktif (mobile-first).
@@ -31,14 +34,19 @@ class GuardianOverview
         private ActivityVisibility $activities,
         private AnnouncementAudienceResolver $announcements,
         private FileUrlGenerator $urls,
+        private RecentChats $chats,
     ) {}
 
     /**
+     * @param  Collection<int, Student>  $children  semua anak (untuk kartu per anak)
      * @return array<string, mixed>
      */
-    public function for(User $guardian, ?Student $child, CarbonImmutable $today): array
+    public function for(User $guardian, Collection $children, ?Student $child, CarbonImmutable $today): array
     {
         return [
+            'childCards' => $children->count() > 1 ? $this->childCards($children, $child, $today) : [],
+            'invoices' => $child ? $this->dueInvoices($child, $today) : [],
+            'recentChats' => $this->chats->for($guardian, '/orang-tua/chat', 3),
             'child' => $child ? $this->child($child) : null,
             'attendanceToday' => $child ? $this->attendanceToday($child, $today) : null,
             'activitiesToday' => $child ? $this->activitiesToday($child, $today) : [],
@@ -70,6 +78,78 @@ class GuardianOverview
             'homeroom' => $enrollment?->classroom->homeroomTeacher?->name,
             'photo_url' => $child->photo ? $this->urls->url($child->photo) : null,
         ];
+    }
+
+    /**
+     * Kartu ringkas per anak: rombel, kehadiran hari ini, tunggakan (beberapa query untuk semua anak).
+     *
+     * @param  Collection<int, Student>  $children
+     * @return list<array{public_id: string, name: string, photo_url: string|null, classroom: string|null, attendance: array{status: string, label: string}|null, outstanding: int, active: bool}>
+     */
+    private function childCards(Collection $children, ?Student $active, CarbonImmutable $today): array
+    {
+        $ids = $children->modelKeys();
+
+        $classrooms = ClassEnrollment::query()
+            ->whereIn('student_id', $ids)
+            ->where('academic_year_id', $this->period->academicYearId() ?? 0)
+            ->where('status', EnrollmentStatus::Active)
+            ->with('classroom:id,name')
+            ->get()
+            ->mapWithKeys(fn (ClassEnrollment $e) => [$e->student_id => $e->classroom->name]);
+
+        $attendance = AttendanceRecord::query()
+            ->whereIn('student_id', $ids)
+            ->whereHas('session', fn (Builder $s) => $s->whereDate('date', $today->toDateString()))
+            ->orderBy('id')
+            ->get(['student_id', 'status'])
+            ->groupBy('student_id')
+            ->map(fn ($records) => $records->sortByDesc(fn (AttendanceRecord $r) => $r->status->severity())->first());
+
+        $outstanding = Invoice::query()
+            ->outstanding()
+            ->whereIn('student_id', $ids)
+            ->groupBy('student_id')
+            ->select('student_id', DB::raw('SUM(total - paid_amount) as amount'))
+            ->toBase()
+            ->pluck('amount', 'student_id');
+
+        return $children->map(function (Student $student) use ($classrooms, $attendance, $outstanding, $active) {
+            $record = $attendance->get($student->id);
+
+            return [
+                'public_id' => $student->public_id,
+                'name' => $student->name,
+                'photo_url' => $student->photo ? $this->urls->url($student->photo) : null,
+                'classroom' => $classrooms->get($student->id),
+                'attendance' => $record ? ['status' => $record->status->value, 'label' => $record->status->label()] : null,
+                'outstanding' => (int) $outstanding->get($student->id, 0),
+                'active' => $active?->is($student) ?? false,
+            ];
+        })->values()->all();
+    }
+
+    /**
+     * Tagihan belum lunas anak aktif, jatuh tempo terdekat dulu.
+     *
+     * @return list<array{public_id: string, title: string, remaining: int, due_date: string, overdue: bool}>
+     */
+    private function dueInvoices(Student $child, CarbonImmutable $today): array
+    {
+        return Invoice::query()
+            ->outstanding()
+            ->where('student_id', $child->id)
+            ->with('feeType:id,name')
+            ->orderBy('due_date')
+            ->limit(3)
+            ->get()
+            ->map(fn (Invoice $i) => [
+                'public_id' => $i->public_id,
+                'title' => $i->feeType->name.' '.$i->period_label,
+                'remaining' => $i->remaining(),
+                'due_date' => $i->due_date->toDateString(),
+                'overdue' => $i->isOverdue($today),
+            ])->values()->all();
     }
 
     /**

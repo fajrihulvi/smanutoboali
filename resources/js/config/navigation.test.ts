@@ -119,6 +119,7 @@ describe('navigasi per role sesuai matriks permission', () => {
             'Laporan',
             'Audit Log',
             'Pengaturan Sekolah',
+            'Sistem',
             'Profil',
         ]);
     });

@@ -73,6 +73,24 @@ return [
             'replace_placeholders' => true,
         ],
 
+        // Log khusus (S34): jejak pembayaran & autentikasi, disimpan lebih lama dari log umum.
+        // Tidak pernah berisi password, token, atau kunci API.
+        'payment' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/payment.log'),
+            'level' => 'info',
+            'days' => env('LOG_PAYMENT_DAYS', 30),
+            'replace_placeholders' => true,
+        ],
+
+        'auth' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/auth.log'),
+            'level' => 'info',
+            'days' => env('LOG_AUTH_DAYS', 30),
+            'replace_placeholders' => true,
+        ],
+
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),

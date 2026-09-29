@@ -14,6 +14,7 @@ use App\Modules\Finance\Models\Invoice;
 use App\Modules\Finance\Models\Payment;
 use App\Modules\Finance\Notifications\PaymentProofSubmittedNotification;
 use App\Modules\Finance\Services\InvoiceBalance;
+use App\Modules\Finance\Services\PaymentLog;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -59,6 +60,7 @@ class SubmitPaymentProofAction
 
         $payment->load('invoice.student', 'invoice.feeType');
         $invoice = $payment->invoice;
+        PaymentLog::info('proof_submitted', ['invoice' => $invoice->number, 'amount' => $amount, 'user_id' => $guardian->id]);
         $this->audit->record('finance', 'proof_submitted', "Mengunggah bukti transfer untuk {$invoice->number}", $invoice, ['amount' => $amount]);
 
         $operators = User::permission(Permission::FinanceManage->value)->where('is_active', true)->get();

@@ -76,7 +76,7 @@
                 @hasSection('actions')
                     @yield('actions')
                 @else
-                    <a class="btn secondary" href="javascript:history.back()">Kembali</a>
+                    <a class="btn secondary" href="{{ url()->previous() }}">Kembali</a>
                     <a class="btn primary" href="{{ url('/dashboard') }}">Ke dashboard</a>
                 @endif
             </div>

@@ -5,6 +5,7 @@ use App\Modules\Core\Http\Controllers\AuditLogController;
 use App\Modules\Core\Http\Controllers\FileController;
 use App\Modules\Core\Http\Controllers\HealthController;
 use App\Modules\Core\Http\Controllers\NotificationController;
+use App\Modules\Core\Http\Controllers\Operator\SystemController;
 use App\Modules\Core\Http\Controllers\StyleGuideController;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -58,6 +59,18 @@ Route::middleware(['auth', 'active.role:operator', 'permission:audit_log.view'])
 Route::middleware(['auth', 'active.role:principal', 'permission:audit_log.view'])
     ->get('kepala-sekolah/audit-log', AuditLogController::class)
     ->name('principal.audit-log.index');
+
+// Status sistem (S34): antrean, backup, storage, log.
+Route::middleware(['auth', 'active.role:operator', 'permission:setting.manage'])
+    ->prefix('operator/sistem')->name('operator.system.')
+    ->controller(SystemController::class)
+    ->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('antrean/ulang-semua', 'retryAll')->name('retry-all');
+        Route::post('antrean/{uuid}/ulang', 'retry')->whereUuid('uuid')->name('retry');
+        Route::delete('antrean/{uuid}', 'forget')->whereUuid('uuid')->name('forget');
+        Route::post('backup', 'backup')->middleware('throttle:3,10')->name('backup');
+    });
 
 // Review visual design system — hanya di lingkungan lokal.
 if (app()->environment('local')) {

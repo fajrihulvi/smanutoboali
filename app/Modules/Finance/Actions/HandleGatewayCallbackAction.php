@@ -16,6 +16,7 @@ use App\Modules\Finance\Models\PaymentCallback;
 use App\Modules\Finance\Notifications\OnlinePaymentNotification;
 use App\Modules\Finance\Services\FinanceSequence;
 use App\Modules\Finance\Services\InvoiceBalance;
+use App\Modules\Finance\Services\PaymentLog;
 use App\Modules\Finance\Services\StudentGuardians;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
@@ -56,6 +57,17 @@ class HandleGatewayCallbackAction
 
         $result = $this->process($log, $payload);
         $log->update(['result' => $result]);
+
+        $context = [
+            'order_id' => $log->order_id,
+            'transaction_status' => $log->transaction_status,
+            'gross_amount' => $log->gross_amount,
+            'signature_valid' => $log->signature_valid,
+            'result' => $result,
+        ];
+        in_array($result, ['invalid_signature', 'unknown_order', 'amount_mismatch'], true)
+            ? PaymentLog::warning('gateway_callback_rejected', $context)
+            : PaymentLog::info('gateway_callback', $context);
 
         return $result;
     }

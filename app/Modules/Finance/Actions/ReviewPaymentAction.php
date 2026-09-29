@@ -9,6 +9,7 @@ use App\Modules\Finance\Models\Invoice;
 use App\Modules\Finance\Models\Payment;
 use App\Modules\Finance\Services\FinanceSequence;
 use App\Modules\Finance\Services\InvoiceBalance;
+use App\Modules\Finance\Services\PaymentLog;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -54,6 +55,7 @@ class ReviewPaymentAction
         });
 
         $payment->load('invoice.student', 'invoice.feeType');
+        PaymentLog::info($approve ? 'payment_confirmed' : 'payment_rejected', ['payment' => $payment->public_id, 'receipt' => $payment->receipt_number, 'amount' => $payment->amount, 'operator_id' => $operator->id]);
         $this->audit->record('finance', $approve ? 'payment_confirmed' : 'payment_rejected',
             ($approve ? 'Menerima' : 'Menolak')." bukti transfer untuk {$payment->invoice->number}", $payment->invoice);
         $this->notify->handle($payment, accepted: $approve);

@@ -5,5 +5,5 @@
 @section('message', 'Halaman sudah terlalu lama dibuka sehingga sesi keamanannya berakhir. Muat ulang halaman lalu coba lagi.')
 
 @section('actions')
-    <a class="btn primary" href="javascript:location.reload()">Muat ulang</a>
+    <a class="btn primary" href="">Muat ulang</a>
 @endsection

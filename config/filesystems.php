@@ -47,6 +47,15 @@ return [
             'report' => false,
         ],
 
+        // Arsip backup (S34) — privat, tidak pernah disajikan lewat web.
+        'backups' => [
+            'driver' => 'local',
+            'root' => storage_path('app/backups'),
+            'visibility' => 'private',
+            'throw' => false,
+            'report' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

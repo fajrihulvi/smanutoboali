@@ -13,6 +13,7 @@ use App\Modules\Finance\Models\Invoice;
 use App\Modules\Finance\Models\Payment;
 use App\Modules\Finance\Services\FinanceSequence;
 use App\Modules\Finance\Services\InvoiceBalance;
+use App\Modules\Finance\Services\PaymentLog;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -63,6 +64,7 @@ class RecordPaymentAction
         });
 
         $payment->load('invoice.student', 'invoice.feeType');
+        PaymentLog::info('payment_recorded', ['receipt' => $payment->receipt_number, 'invoice' => $payment->invoice->number, 'amount' => $amount, 'operator_id' => $operator->id]);
         $this->audit->record('finance', 'payment_recorded', "Mencatat pembayaran {$payment->receipt_number} untuk {$payment->invoice->number}", $payment->invoice, ['amount' => $amount]);
         $this->notify->handle($payment, accepted: true);
 

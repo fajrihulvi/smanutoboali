@@ -4,6 +4,7 @@ namespace App\Modules\Auth\Actions;
 
 use App\Models\User;
 use App\Modules\Auth\Services\ActiveRoleService;
+use App\Modules\Auth\Services\AuthLog;
 use App\Modules\Core\Enums\Role;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Http\Request;
@@ -42,6 +43,7 @@ class AttemptPortalLoginAction
 
         if (! $valid) {
             RateLimiter::hit($key);
+            AuthLog::record('login_failed', ['email' => Str::lower($credentials['email']), 'portal' => $portal->value, 'reason' => 'invalid_credentials'], 'warning');
 
             // Pesan generik agar keberadaan akun/role tidak bocor.
             throw ValidationException::withMessages([
@@ -51,6 +53,7 @@ class AttemptPortalLoginAction
 
         if (! $user->is_active) {
             RateLimiter::hit($key);
+            AuthLog::record('login_failed', ['email' => $user->email, 'user_id' => $user->id, 'portal' => $portal->value, 'reason' => 'inactive'], 'warning');
 
             throw ValidationException::withMessages([
                 'email' => 'Akun Anda sedang dinonaktifkan. Hubungi operator sekolah.',

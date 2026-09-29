@@ -43,3 +43,13 @@ Schedule::command('activitylog:clean --force')->dailyAt('02:00');
 
 // Bersihkan token reset password kedaluwarsa.
 Schedule::command('auth:clear-resets')->dailyAt('02:15');
+
+/*
+|--------------------------------------------------------------------------
+| Backup (S34) — retensi 7 hari / 4 minggu / 3 bulan, email bila gagal/tidak sehat
+|--------------------------------------------------------------------------
+*/
+Schedule::command('skoolia:backup database')->dailyAt('02:30')->withoutOverlapping(60);
+Schedule::command('skoolia:backup files')->weeklyOn(0, '03:00')->withoutOverlapping(120);
+Schedule::command('skoolia:backup clean')->dailyAt('04:00')->withoutOverlapping();
+Schedule::command('backup:monitor')->dailyAt('05:00');

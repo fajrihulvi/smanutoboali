@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $gateway
  * @property string|null $order_id
  * @property string|null $transaction_status
+ * @property string|null $status_code
+ * @property string|null $gross_amount
  * @property bool $signature_valid
  * @property string|null $result
  * @property array<string, mixed> $payload

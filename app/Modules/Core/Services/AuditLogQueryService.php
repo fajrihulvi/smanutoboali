@@ -35,6 +35,7 @@ class AuditLogQueryService
         'ppdb' => 'PPDB',
         'cms' => 'Website',
         'report' => 'Laporan',
+        'system' => 'Sistem',
     ];
 
     /**

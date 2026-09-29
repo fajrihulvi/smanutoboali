@@ -10,6 +10,7 @@ use App\Modules\Finance\Gateway\GatewayException;
 use App\Modules\Finance\Gateway\PaymentGateway;
 use App\Modules\Finance\Models\GatewayTransaction;
 use App\Modules\Finance\Models\Invoice;
+use App\Modules\Finance\Services\PaymentLog;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -54,6 +55,7 @@ class StartOnlinePaymentAction
             throw ValidationException::withMessages(['payment' => $e->getMessage()]);
         }
 
+        PaymentLog::info('online_payment_started', ['order_id' => $transaction->order_id, 'invoice' => $invoice->number, 'amount' => $transaction->amount, 'user_id' => $guardian->id]);
         $this->audit->record('finance', 'online_payment_started', "Memulai pembayaran online {$transaction->order_id} untuk {$invoice->number}", $invoice);
 
         return $transaction;

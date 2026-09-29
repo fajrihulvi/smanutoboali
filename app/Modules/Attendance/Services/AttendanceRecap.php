@@ -37,8 +37,7 @@ class AttendanceRecap
         $rows = AttendanceRecord::query()
             ->join('attendance_sessions', 'attendance_sessions.id', '=', 'attendance_records.attendance_session_id')
             ->whereNull('attendance_sessions.deleted_at')
-            ->whereDate('attendance_sessions.date', '>=', $from->toDateString())
-            ->whereDate('attendance_sessions.date', '<=', $to->toDateString())
+            ->whereDateBetween('attendance_sessions.date', $from->toDateString(), $to->toDateString())
             ->when($classroomId !== null, fn (Builder $q) => $q->where('attendance_sessions.classroom_id', $classroomId))
             ->when($studentIds !== null, fn (Builder $q) => $q->whereIn('attendance_records.student_id', $studentIds))
             ->groupBy('attendance_records.student_id', 'attendance_sessions.date')
@@ -89,8 +88,7 @@ class AttendanceRecap
 
         $dates = AttendanceSession::query()
             ->where('classroom_id', $classroom->id)
-            ->whereDate('date', '>=', $from->toDateString())
-            ->whereDate('date', '<=', $to->toDateString())
+            ->whereDateBetween('date', $from->toDateString(), $to->toDateString())
             ->pluck('date')
             ->map(fn (CarbonImmutable $date) => $date->toDateString())
             ->unique()->sort()->values()->all();
@@ -125,8 +123,7 @@ class AttendanceRecap
         $entries = AttendanceRecord::query()
             ->where('student_id', $student->id)
             ->whereHas('session', fn (Builder $q) => $q
-                ->whereDate('date', '>=', $from->toDateString())
-                ->whereDate('date', '<=', $to->toDateString()))
+                ->whereDateBetween('date', $from->toDateString(), $to->toDateString()))
             ->with(['session:id,date,schedule_id', 'session.schedule.teachingAssignment.subject:id,name'])
             ->get()
             ->groupBy(fn (AttendanceRecord $r) => $r->session->date->toDateString());

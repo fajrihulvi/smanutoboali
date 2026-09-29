@@ -2,6 +2,7 @@
 
 namespace App\Modules\Core;
 
+use App\Modules\Core\Console\GenerateThumbnails;
 use App\Modules\Core\Contracts\StudentOwnershipGate;
 use App\Modules\Core\Models\File;
 use App\Modules\Core\Policies\FilePolicy;
@@ -47,6 +48,10 @@ class CoreServiceProvider extends ModuleServiceProvider
         Event::listen(JobProcessed::class, fn () => HealthCheckService::markQueueProcessed());
 
         $this->app->make(SettingsService::class)->applyRuntimeConfig();
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([GenerateThumbnails::class]);
+        }
     }
 
     /**

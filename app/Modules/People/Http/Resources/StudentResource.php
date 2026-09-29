@@ -36,7 +36,7 @@ class StudentResource extends JsonResource
             'address' => $this->address,
             'status' => ['value' => $this->status->value, 'label' => $this->status->label()],
             'entry_date' => $this->entry_date?->toDateString(),
-            'photo_url' => $this->whenLoaded('photo', fn () => $this->photo ? app(FileUrlGenerator::class)->url($this->photo) : null),
+            'photo_url' => $this->whenLoaded('photo', fn () => $this->photo ? app(FileUrlGenerator::class)->thumbnailUrl($this->photo) : null),
             'guardians' => $this->whenLoaded('guardians', fn () => $this->guardians
                 ->sortByDesc(fn (Guardian $guardian) => $guardian->getRelationValue('pivot')->is_primary)
                 ->map(function (Guardian $guardian) {

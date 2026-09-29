@@ -12,7 +12,7 @@
                     <a href="{{ url('galeri/'.$gallery->slug) }}" class="group min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-shadow duration-150 hover:shadow-md">
                         <span class="block aspect-[4/3] overflow-hidden bg-brand-50">
                             @if ($gallery->photos->first())
-                                <img src="{{ $img($gallery->photos->first()->file) }}" alt="" loading="lazy" class="size-full object-cover transition-transform duration-300 group-hover:scale-105">
+                                <img src="{{ $thumb($gallery->photos->first()->file) }}" alt="" loading="lazy" class="size-full object-cover transition-transform duration-300 group-hover:scale-105">
                             @endif
                         </span>
                         <span class="block p-5">

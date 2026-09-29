@@ -108,7 +108,7 @@ class TeacherDashboard
 
         $sessions = AttendanceSession::query()
             ->whereIn('classroom_id', $classroomIds)
-            ->whereDate('date', $today->toDateString())
+            ->whereOnDate('date', $today->toDateString())
             ->get(['classroom_id', 'schedule_id'])
             ->map(fn (AttendanceSession $s) => $s->classroom_id.':'.($s->schedule_id ?? ''))
             ->flip();

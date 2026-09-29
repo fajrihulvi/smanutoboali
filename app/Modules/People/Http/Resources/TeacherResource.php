@@ -26,7 +26,7 @@ class TeacherResource extends JsonResource
             'phone' => $this->phone,
             'employment_status' => ['value' => $this->employment_status->value, 'label' => $this->employment_status->label()],
             'is_active' => $this->is_active,
-            'photo_url' => $this->whenLoaded('photo', fn () => $this->photo ? app(FileUrlGenerator::class)->url($this->photo) : null),
+            'photo_url' => $this->whenLoaded('photo', fn () => $this->photo ? app(FileUrlGenerator::class)->thumbnailUrl($this->photo) : null),
             'account' => $this->whenLoaded('user', fn () => $this->user ? [
                 'email' => $this->user->email,
                 'is_active' => $this->user->is_active,

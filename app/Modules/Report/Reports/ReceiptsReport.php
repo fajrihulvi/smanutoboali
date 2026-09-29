@@ -60,8 +60,7 @@ class ReceiptsReport extends Report
 
         $payments = Payment::query()
             ->where('status', PaymentStatus::Confirmed)
-            ->whereDate('paid_on', '>=', $filters['from'])
-            ->whereDate('paid_on', '<=', $filters['to'])
+            ->whereDateBetween('paid_on', $filters['from'], $filters['to'])
             ->when($classroom, fn (Builder $q) => $q->whereHas('invoice.student.enrollments', fn (Builder $e) => $e
                 ->where('classroom_id', $classroom?->id)
                 ->where('status', EnrollmentStatus::Active)))

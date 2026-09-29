@@ -58,7 +58,7 @@ Tidak ditemukan celah akses silang data (IDOR) pada route yang menerima `public_
   - Test arsitektur memastikan setiap route portal memakai `auth` + `active.role:<role>`.
   - Setiap route tanpa login harus terdaftar di daftar publik.
   - Setiap route tulis publik memakai `throttle`/`signed`. Login portal & PPDB dibatasi di `AttemptPortalLoginAction`.
-- **Upload.** MIME dideteksi dari isi file (finfo), bukan ekstensi; gambar diproses ulang. File PHP yang menyamar sebagai `.jpg` ditolak (test sejak S05). File privat hanya lewat `/files/{id}` dengan policy pemilik. `/media/{id}` hanya melayani file publik.
+- **Upload.** MIME dideteksi dari isi file (finfo), bukan ekstensi; ekstensi file tersimpan diturunkan dari MIME tersebut, dan file disajikan dengan `Content-Type` hasil deteksi + `nosniff`. Gambar di atas 1600 px di-encode ulang (dan sejak S33 dibuatkan thumbnail); gambar kecil disimpan apa adanya. File PHP yang menyamar sebagai `.jpg` ditolak (test sejak S05). File privat hanya lewat `/files/{id}` dengan policy pemilik. `/media/{id}` hanya melayani file publik.
 - **SQL.** Tidak ada query mentah yang menyisipkan input pengguna. Satu-satunya interpolasi (`AttendanceRecap`) dibangun dari konstanta enum.
 - **XSS.**
   - HTML dari editor CMS disanitasi di server (whitelist, S28), dan konten lain di-escape Blade/React.

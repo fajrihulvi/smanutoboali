@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Support\ActivePeriod;
 use App\Support\Broadcasting\ResilientBroadcastChannel;
+use App\Support\QueryMacros;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
@@ -39,6 +40,8 @@ class AppServiceProvider extends ServiceProvider
     protected function configureDefaults(): void
     {
         Date::use(CarbonImmutable::class);
+
+        QueryMacros::register();
 
         Model::preventLazyLoading(! app()->isProduction());
 

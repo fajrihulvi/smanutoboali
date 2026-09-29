@@ -55,7 +55,7 @@ class PrincipalDashboard
             'reportCards' => $this->cache->remember("principal.report-cards.{$semesterId}", $today, fn () => $this->reportCards($semesterId)),
             'activitiesToday' => $this->cache->remember('principal.activities', $today, fn () => Activity::query()
                 ->where('status', ActivityStatus::Published)
-                ->whereDate('date', $today->toDateString())
+                ->whereOnDate('date', $today->toDateString())
                 ->orderBy('start_time')
                 ->limit(5)
                 ->get(['public_id', 'title', 'start_time', 'location'])

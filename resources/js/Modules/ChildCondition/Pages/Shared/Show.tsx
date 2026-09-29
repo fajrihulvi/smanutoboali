@@ -100,7 +100,7 @@ export default function ConditionShow({ base, condition }: Props) {
                                             aria-label={`Lihat ${item.name}`}
                                         >
                                             <img
-                                                src={item.url}
+                                                src={item.thumb_url}
                                                 alt={item.name}
                                                 className="aspect-square w-full object-cover"
                                             />

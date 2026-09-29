@@ -30,6 +30,7 @@ return [
     | hard_max_kb    : batas tertinggi yang boleh diset lewat Pengaturan
     |                  (sesuaikan dengan upload_max_filesize PHP di hosting).
     | image_max_dimension : gambar lebih besar dari ini (px) diperkecil.
+    | thumbnail_dimension : sisi terpanjang thumbnail untuk daftar & galeri (S33).
     |
     */
 
@@ -37,6 +38,7 @@ return [
         'default_max_kb' => (int) env('UPLOAD_MAX_SIZE_KB', 5120),
         'hard_max_kb' => 20480,
         'image_max_dimension' => 1600,
+        'thumbnail_dimension' => 480,
         'image_quality' => 80,
     ],
 

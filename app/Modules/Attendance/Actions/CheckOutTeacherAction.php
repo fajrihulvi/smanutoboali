@@ -19,7 +19,7 @@ class CheckOutTeacherAction
     {
         $record = TeacherAttendance::query()
             ->where('teacher_id', $teacher->id)
-            ->whereDate('date', CarbonImmutable::today()->toDateString())
+            ->whereOnDate('date', CarbonImmutable::today()->toDateString())
             ->first();
 
         if ($record?->check_in_at === null) {

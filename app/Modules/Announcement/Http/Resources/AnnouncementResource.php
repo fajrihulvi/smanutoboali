@@ -55,6 +55,7 @@ class AnnouncementResource extends JsonResource
                 'is_image' => $f->isImage(),
                 'size' => $f->size,
                 'url' => $urls->url($f),
+                'thumb_url' => $urls->thumbnailUrl($f),
             ])->values(),
             'creator' => $this->creator?->name,
             'created_at' => $this->created_at->toIso8601String(),

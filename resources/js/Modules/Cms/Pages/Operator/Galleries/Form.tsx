@@ -44,7 +44,7 @@ export default function CmsGalleryForm({
         photos: (gallery?.photos ?? []).map((p): PhotoItem => ({
             id: p.public_id,
             caption: p.caption ?? '',
-            url: p.url,
+            url: p.thumb_url ?? p.url,
         })),
         remove_photos: [] as string[],
         uploads: [] as File[],
@@ -105,7 +105,7 @@ export default function CmsGalleryForm({
                     photos: (fresh?.photos ?? []).map((p) => ({
                         id: p.public_id,
                         caption: p.caption ?? '',
-                        url: p.url,
+                        url: p.thumb_url ?? p.url,
                     })),
                 }));
             },

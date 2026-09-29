@@ -24,7 +24,12 @@ export type ConditionRow = {
 };
 
 export type ConditionDetail = ConditionRow & {
-    photos: { public_id: string; name: string; url: string }[];
+    photos: {
+        public_id: string;
+        name: string;
+        url: string;
+        thumb_url: string;
+    }[];
     responses: { author: string; body: string; created_at: string }[];
     timeline: { label: string; at: string }[];
     attendance_suggestion: string | null;

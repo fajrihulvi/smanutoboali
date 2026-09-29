@@ -31,8 +31,7 @@ class ReceiptsExport implements FromQuery, ShouldAutoSize, WithCustomValueBinder
     {
         return Payment::query()
             ->where('status', PaymentStatus::Confirmed)
-            ->whereDate('paid_on', '>=', $this->from->toDateString())
-            ->whereDate('paid_on', '<=', $this->to->toDateString())
+            ->whereDateBetween('paid_on', $this->from->toDateString(), $this->to->toDateString())
             ->with(['invoice.student', 'invoice.feeType'])
             ->orderBy('paid_on')->orderBy('id');
     }

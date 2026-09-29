@@ -76,7 +76,7 @@ class GuardianOverview
             'name' => $child->name,
             'classroom' => $enrollment?->classroom->name,
             'homeroom' => $enrollment?->classroom->homeroomTeacher?->name,
-            'photo_url' => $child->photo ? $this->urls->url($child->photo) : null,
+            'photo_url' => $child->photo ? $this->urls->thumbnailUrl($child->photo) : null,
         ];
     }
 
@@ -100,7 +100,7 @@ class GuardianOverview
 
         $attendance = AttendanceRecord::query()
             ->whereIn('student_id', $ids)
-            ->whereHas('session', fn (Builder $s) => $s->whereDate('date', $today->toDateString()))
+            ->whereHas('session', fn (Builder $s) => $s->whereOnDate('date', $today->toDateString()))
             ->orderBy('id')
             ->get(['student_id', 'status'])
             ->groupBy('student_id')
@@ -120,7 +120,7 @@ class GuardianOverview
             return [
                 'public_id' => $student->public_id,
                 'name' => $student->name,
-                'photo_url' => $student->photo ? $this->urls->url($student->photo) : null,
+                'photo_url' => $student->photo ? $this->urls->thumbnailUrl($student->photo) : null,
                 'classroom' => $classrooms->get($student->id),
                 'attendance' => $record ? ['status' => $record->status->value, 'label' => $record->status->label()] : null,
                 'outstanding' => (int) $outstanding->get($student->id, 0),
@@ -161,7 +161,7 @@ class GuardianOverview
     {
         $record = AttendanceRecord::query()
             ->where('student_id', $child->id)
-            ->whereHas('session', fn (Builder $s) => $s->whereDate('date', $today->toDateString()))
+            ->whereHas('session', fn (Builder $s) => $s->whereOnDate('date', $today->toDateString()))
             ->orderBy('id')
             ->first();
 
@@ -174,7 +174,7 @@ class GuardianOverview
     private function activitiesToday(Student $child, CarbonImmutable $today): array
     {
         return $this->activities->publishedForStudents([$child->id])
-            ->whereDate('date', $today->toDateString())
+            ->whereOnDate('date', $today->toDateString())
             ->orderBy('start_time')
             ->limit(3)
             ->get()
@@ -228,7 +228,7 @@ class GuardianOverview
             'title' => $portfolio->title,
             'category' => $portfolio->category->name,
             'date' => $portfolio->date->toDateString(),
-            'thumbnail' => $image ? $this->urls->url($image) : null,
+            'thumbnail' => $image ? $this->urls->thumbnailUrl($image) : null,
         ];
     }
 

@@ -24,10 +24,12 @@ trait PresentsContent
     }
 
     /**
-     * @return array{public_id: string, url: string}|null
+     * @return array{public_id: string, url: string, thumb_url: string}|null
      */
     protected function imageData(?File $file): ?array
     {
-        return $file ? ['public_id' => $file->public_id, 'url' => app(FileUrlGenerator::class)->url($file)] : null;
+        $urls = app(FileUrlGenerator::class);
+
+        return $file ? ['public_id' => $file->public_id, 'url' => $urls->url($file), 'thumb_url' => $urls->thumbnailUrl($file)] : null;
     }
 }

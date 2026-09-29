@@ -90,7 +90,7 @@ class AttendancePages
 
         $sessions = AttendanceSession::query()
             ->whereIn('classroom_id', $classroomIds)
-            ->whereDate('date', $date->toDateString())
+            ->whereOnDate('date', $date->toDateString())
             ->with('records:id,attendance_session_id,status')
             ->get()
             ->keyBy(fn (AttendanceSession $s) => $s->classroom_id.':'.($s->schedule_id ?? ''));

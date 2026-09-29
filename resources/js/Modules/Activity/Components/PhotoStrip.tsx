@@ -48,7 +48,7 @@ export function PhotoStrip({
                         aria-label={`Lihat foto ${i + 1} ${activity.title}`}
                     >
                         <img
-                            src={photo.url}
+                            src={photo.thumb_url}
                             alt=""
                             loading="lazy"
                             className="size-full object-cover"

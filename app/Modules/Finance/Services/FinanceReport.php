@@ -34,10 +34,9 @@ class FinanceReport
         return [
             'outstanding' => (int) (clone $outstanding)->sum(DB::raw('total - paid_amount')),
             'outstanding_invoices' => (clone $outstanding)->count(),
-            'overdue' => (int) (clone $outstanding)->whereDate('due_date', '<', $today->toDateString())->sum(DB::raw('total - paid_amount')),
+            'overdue' => (int) (clone $outstanding)->where('due_date', '<', $today->toDateString())->sum(DB::raw('total - paid_amount')),
             'received_this_month' => (int) Payment::query()->where('status', PaymentStatus::Confirmed)
-                ->whereDate('paid_on', '>=', $today->startOfMonth()->toDateString())
-                ->whereDate('paid_on', '<=', $today->endOfMonth()->toDateString())
+                ->whereDateBetween('paid_on', $today->startOfMonth()->toDateString(), $today->endOfMonth()->toDateString())
                 ->sum('amount'),
             'pending_verification' => Payment::query()->where('status', PaymentStatus::Pending)->count(),
         ];
@@ -95,8 +94,7 @@ class FinanceReport
             ->join('fee_types', 'fee_types.id', '=', 'invoices.fee_type_id')
             ->where('payments.status', PaymentStatus::Confirmed->value)
             ->whereNull('payments.deleted_at')
-            ->whereDate('payments.paid_on', '>=', $from->toDateString())
-            ->whereDate('payments.paid_on', '<=', $to->toDateString());
+            ->whereDateBetween('payments.paid_on', $from->toDateString(), $to->toDateString());
 
         $months = $base()
             ->selectRaw('SUBSTR(payments.paid_on, 1, 7) as month, SUM(payments.amount) as total')

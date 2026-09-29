@@ -10,7 +10,12 @@ export type ActivityRow = {
     status: { value: 'DRAF' | 'TERBIT'; label: string };
     classrooms: { public_id: string; name: string }[];
     students: { public_id: string; name: string }[];
-    photos: { public_id: string; name: string; url: string }[];
+    photos: {
+        public_id: string;
+        name: string;
+        url: string;
+        thumb_url: string;
+    }[];
     creator: string | null;
     can: { update: boolean };
 };

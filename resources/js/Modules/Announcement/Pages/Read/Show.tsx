@@ -79,7 +79,7 @@ export default function ShowAnnouncement({
                                 aria-label={`Lihat ${image.name}`}
                             >
                                 <img
-                                    src={image.url}
+                                    src={image.thumb_url}
                                     alt={image.name}
                                     loading="lazy"
                                     className="aspect-video w-full object-cover"

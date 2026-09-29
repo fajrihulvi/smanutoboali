@@ -10,11 +10,11 @@ import AppLayout from '@/Layouts/AppLayout';
 import type { Option } from '@/Modules/Academic/types';
 import { FormCard } from '@/Modules/Cms/Components/FormCard';
 import { ImageField } from '@/Modules/Cms/Components/ImageField';
+import { LazyRichTextEditor } from '@/Modules/Cms/Components/LazyRichTextEditor';
 import {
     PublishCard,
     toLocalInput,
 } from '@/Modules/Cms/Components/PublishCard';
-import { RichTextEditor } from '@/Modules/Cms/Components/RichTextEditor';
 import { SeoFields } from '@/Modules/Cms/Components/SeoFields';
 import type { PageRow } from '@/Modules/Cms/types';
 
@@ -89,7 +89,7 @@ export default function CmsPageForm({ page, statuses }: Props) {
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="page-content">Isi</Label>
-                            <RichTextEditor
+                            <LazyRichTextEditor
                                 id="page-content"
                                 value={form.data.content}
                                 onChange={(html) =>

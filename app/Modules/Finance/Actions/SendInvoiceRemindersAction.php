@@ -27,7 +27,7 @@ class SendInvoiceRemindersAction
         Invoice::query()
             ->whereIn('status', [InvoiceStatus::Unpaid, InvoiceStatus::Failed])
             ->where(fn ($q) => $q
-                ->whereDate('due_date', $today->addDays(self::DAYS_BEFORE)->toDateString())
+                ->whereOnDate('due_date', $today->addDays(self::DAYS_BEFORE)->toDateString())
                 ->orWhereDate('due_date', $today->subDay()->toDateString()))
             ->with(['student', 'feeType'])
             ->chunkById(200, function (Collection $invoices) use ($today, &$sent) {

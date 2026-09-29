@@ -18,7 +18,7 @@
                 @foreach ($gallery->photos as $photo)
                     <figure class="min-w-0">
                         <a href="{{ $img($photo->file) }}" target="_blank" rel="noopener" class="block overflow-hidden rounded-xl bg-brand-50">
-                            <img src="{{ $img($photo->file) }}" alt="{{ $photo->caption ?? $gallery->title }}" loading="lazy" class="aspect-[4/3] w-full object-cover transition-transform duration-300 hover:scale-105">
+                            <img src="{{ $thumb($photo->file) }}" alt="{{ $photo->caption ?? $gallery->title }}" loading="lazy" class="aspect-[4/3] w-full object-cover transition-transform duration-300 hover:scale-105">
                         </a>
                         @if ($photo->caption)
                             <figcaption class="mt-2 text-sm text-slate-600">{{ $photo->caption }}</figcaption>

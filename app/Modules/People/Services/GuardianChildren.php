@@ -80,7 +80,7 @@ class GuardianChildren
             'childOptions' => $children->map(fn (Student $child) => [
                 'public_id' => $child->public_id,
                 'name' => $child->name,
-                'photo_url' => $child->photo ? $this->urls->url($child->photo) : null,
+                'photo_url' => $child->photo ? $this->urls->thumbnailUrl($child->photo) : null,
             ])->values()->all(),
             'activeChild' => $selected?->public_id,
         ];

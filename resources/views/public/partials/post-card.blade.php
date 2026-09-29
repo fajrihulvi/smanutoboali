@@ -2,7 +2,7 @@
 @php
     $href = url(($post->type->value === 'AGENDA' ? 'agenda' : 'berita').'/'.$post->slug);
     $large = $large ?? false;
-    $cover = $img($post->featuredImage);
+    $cover = $large ? $img($post->featuredImage) : $thumb($post->featuredImage);
 @endphp
 <article class="group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-shadow duration-150 hover:shadow-md">
     <a href="{{ $href }}" class="block {{ $large ? 'aspect-[16/10]' : 'aspect-video' }} overflow-hidden bg-brand-50">

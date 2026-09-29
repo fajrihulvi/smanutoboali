@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Storage;
  * @property string $original_name
  * @property string $stored_name
  * @property string $path
+ * @property string|null $thumbnail_path
  * @property string $mime_type
  * @property int $size
  * @property int|null $width
@@ -39,7 +40,7 @@ class File extends Model
 
     protected $guarded = ['id'];
 
-    protected $hidden = ['id', 'path', 'disk', 'fileable_id', 'fileable_type', 'uploaded_by'];
+    protected $hidden = ['id', 'path', 'thumbnail_path', 'disk', 'fileable_id', 'fileable_type', 'uploaded_by'];
 
     /**
      * @return array<string, string>
@@ -83,7 +84,7 @@ class File extends Model
 
     protected function pruning(): void
     {
-        Storage::disk($this->disk)->delete($this->path);
+        Storage::disk($this->disk)->delete(array_filter([$this->path, $this->thumbnail_path]));
     }
 
     public function isImage(): bool

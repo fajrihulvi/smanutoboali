@@ -67,6 +67,7 @@ class CmsServiceProvider extends ModuleServiceProvider
             $view->with([
                 ...$this->app->make(PublicSite::class)->shared(),
                 'img' => fn (?File $file) => $file ? $urls->url($file) : null,
+                'thumb' => fn (?File $file) => $file ? $urls->thumbnailUrl($file) : null,
             ]);
         });
 

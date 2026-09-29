@@ -49,7 +49,7 @@ class CorrectTeacherAttendanceAction
         return DB::transaction(function () use ($teacher, $date, $data, $actor, $checkIn, $checkOut) {
             $record = TeacherAttendance::query()
                 ->where('teacher_id', $teacher->id)
-                ->whereDate('date', $date->toDateString())
+                ->whereOnDate('date', $date->toDateString())
                 ->first() ?? new TeacherAttendance([
                     'teacher_id' => $teacher->id,
                     'date' => $date->toDateString(),

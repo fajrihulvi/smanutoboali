@@ -29,8 +29,7 @@ class CalendarController extends Controller
         $month = preg_match('/^\d{4}-\d{2}$/', $value) === 1 ? CarbonImmutable::parse($value.'-01') : CarbonImmutable::today()->startOfMonth();
 
         $activities = $visibility->forUser($user, $role)
-            ->whereDate('date', '>=', $month->startOfMonth()->toDateString())
-            ->whereDate('date', '<=', $month->endOfMonth()->toDateString())
+            ->whereDateBetween('date', $month->startOfMonth()->toDateString(), $month->endOfMonth()->toDateString())
             ->with(['participants.classroom:id,public_id,name', 'participants.student:id,public_id,name', 'photos', 'creator:id,name'])
             ->orderBy('date')->orderBy('start_time')
             ->get();

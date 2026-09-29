@@ -18,24 +18,28 @@ class FileController extends Controller
     {
         $this->authorize('view', $file);
 
-        return $this->stream($file, $request->boolean('download'), private: true);
+        return $this->stream($file, $request->boolean('download'), private: true, small: $request->query('ukuran') === 'kecil');
     }
 
     /**
      * GET /media/{file} — fallback file publik bila storage:link tidak tersedia.
      */
-    public function media(File $file): StreamedResponse
+    public function media(Request $request, File $file): StreamedResponse
     {
         abort_unless($file->visibility === FileVisibility::Public, 404);
 
-        return $this->stream($file, false, private: false);
+        return $this->stream($file, false, private: false, small: $request->query('ukuran') === 'kecil');
     }
 
-    private function stream(File $file, bool $download, bool $private): StreamedResponse
+    /**
+     * `small` = thumbnail (?ukuran=kecil) bila ada; selain itu file asli.
+     */
+    private function stream(File $file, bool $download, bool $private, bool $small = false): StreamedResponse
     {
         $disk = Storage::disk($file->disk);
+        $path = $small && $file->thumbnail_path !== null && $disk->exists($file->thumbnail_path) ? $file->thumbnail_path : $file->path;
 
-        abort_unless($disk->exists($file->path), 404);
+        abort_unless($disk->exists($path), 404);
 
         $headers = [
             'Content-Type' => $file->mime_type,
@@ -44,7 +48,7 @@ class FileController extends Controller
         ];
 
         return $disk->response(
-            $file->path,
+            $path,
             $file->original_name,
             $headers,
             $download ? 'attachment' : 'inline',

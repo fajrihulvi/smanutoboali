@@ -33,7 +33,7 @@ class AttendanceRoster
     {
         return AttendanceSession::query()
             ->where('classroom_id', $classroom->id)
-            ->whereDate('date', $date->toDateString())
+            ->whereOnDate('date', $date->toDateString())
             ->where('schedule_id', $schedule?->id)
             ->first();
     }

@@ -40,7 +40,7 @@ class CheckInTeacherAction
         return DB::transaction(function () use ($teacher, $actor, $meta, $now, $today) {
             $existing = TeacherAttendance::query()
                 ->where('teacher_id', $teacher->id)
-                ->whereDate('date', $today->toDateString())
+                ->whereOnDate('date', $today->toDateString())
                 ->lockForUpdate()
                 ->first();
 

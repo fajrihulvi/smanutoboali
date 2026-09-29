@@ -106,7 +106,7 @@ export default function CmsGalleries({ galleries, filters, statuses }: Props) {
                             >
                                 {gallery.cover ? (
                                     <img
-                                        src={gallery.cover.url}
+                                        src={gallery.cover.thumb_url}
                                         alt=""
                                         loading="lazy"
                                         className="size-full object-cover"

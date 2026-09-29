@@ -116,7 +116,7 @@
                     @include('public.partials.post-card', ['post' => $news->first(), 'large' => true])
                     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-1">
                         @foreach ($news->skip(1) as $post)
-                            @php $href = url('berita/'.$post->slug); $cover = $img($post->featuredImage); @endphp
+                            @php $href = url('berita/'.$post->slug); $cover = $thumb($post->featuredImage); @endphp
                             <article class="flex min-w-0 gap-4 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
                                 <a href="{{ $href }}" class="aspect-square w-24 shrink-0 overflow-hidden rounded-xl bg-brand-50 sm:w-28">
                                     @if ($cover)
@@ -176,7 +176,7 @@
                     @foreach ($galleries as $gallery)
                         <a href="{{ url('galeri/'.$gallery->slug) }}" @class(['group relative block overflow-hidden rounded-2xl bg-brand-100', 'sm:col-span-2 aspect-[2/1]' => $loop->first, 'aspect-[4/3]' => ! $loop->first])>
                             @if ($gallery->photos->first())
-                                <img src="{{ $img($gallery->photos->first()->file) }}" alt="" loading="lazy" class="absolute inset-0 size-full object-cover transition-transform duration-300 group-hover:scale-105">
+                                <img src="{{ $thumb($gallery->photos->first()->file) }}" alt="" loading="lazy" class="absolute inset-0 size-full object-cover transition-transform duration-300 group-hover:scale-105">
                             @endif
                             <span class="absolute inset-0 bg-gradient-to-t from-brand-950/80 via-brand-950/10 to-transparent"></span>
                             <span class="absolute inset-x-0 bottom-0 p-4 text-white">

@@ -20,13 +20,15 @@ import {
     formatNumber,
     formatPercent,
 } from '@/lib/format';
-import { AttendanceTrendChart } from '@/Modules/Dashboard/Components/AttendanceTrendChart';
 import { AuditFeedList } from '@/Modules/Dashboard/Components/AuditFeedList';
 import {
     DashboardPanel,
     PanelEmpty,
 } from '@/Modules/Dashboard/Components/DashboardPanel';
-import { GradeDistributionChart } from '@/Modules/Dashboard/Components/GradeDistributionChart';
+import {
+    LazyAttendanceTrendChart,
+    LazyGradeDistributionChart,
+} from '@/Modules/Dashboard/Components/LazyCharts';
 import type {
     AttendanceToday,
     AuditItem,
@@ -142,7 +144,7 @@ export default function PrincipalDashboard({
                     href={`${BASE}/presensi`}
                     className="lg:col-span-2"
                 >
-                    <AttendanceTrendChart data={attendanceTrend} />
+                    <LazyAttendanceTrendChart data={attendanceTrend} />
                 </DashboardPanel>
 
                 <div className="grid min-w-0 content-start gap-4">
@@ -234,7 +236,7 @@ export default function PrincipalDashboard({
                     href={`${BASE}/nilai`}
                     className="lg:col-span-2"
                 >
-                    <GradeDistributionChart summary={grades} />
+                    <LazyGradeDistributionChart summary={grades} />
                 </DashboardPanel>
 
                 <DashboardPanel

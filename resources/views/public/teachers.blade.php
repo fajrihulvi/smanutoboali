@@ -15,7 +15,7 @@
                     <li class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white text-center shadow-sm">
                         <div class="aspect-[4/5] bg-gradient-to-br from-brand-100 to-brand-50">
                             @if ($teacher->photo)
-                                <img src="{{ $img($teacher->photo) }}" alt="{{ $teacher->name }}" loading="lazy" class="size-full object-cover">
+                                <img src="{{ $thumb($teacher->photo) }}" alt="{{ $teacher->name }}" loading="lazy" class="size-full object-cover">
                             @else
                                 <span class="flex size-full items-center justify-center text-4xl font-bold text-brand-400">{{ $initials }}</span>
                             @endif

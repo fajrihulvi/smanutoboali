@@ -7,6 +7,7 @@ export type AnnouncementAttachment = {
     is_image: boolean;
     size: number;
     url: string;
+    thumb_url: string;
 };
 
 export type AnnouncementRow = {

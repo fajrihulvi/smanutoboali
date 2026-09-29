@@ -52,7 +52,7 @@ class ActivityResource extends JsonResource
             'status' => ['value' => $this->status->value, 'label' => $this->status->label()],
             'classrooms' => $classrooms->map(fn (ActivityParticipant $p) => ['public_id' => $p->classroom?->public_id, 'name' => $p->classroom?->name])->values(),
             'students' => $students->map(fn (ActivityParticipant $p) => ['public_id' => $p->student?->public_id, 'name' => $p->student?->name])->values(),
-            'photos' => $this->photos->map(fn (File $f) => ['public_id' => $f->public_id, 'name' => $f->original_name, 'url' => $urls->url($f)])->values(),
+            'photos' => $this->photos->map(fn (File $f) => ['public_id' => $f->public_id, 'name' => $f->original_name, 'url' => $urls->url($f), 'thumb_url' => $urls->thumbnailUrl($f)])->values(),
             'creator' => $this->creator?->name,
             'can' => ['update' => $request->user()?->can('update', $this->resource) ?? false],
         ];

@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Modules\Core\Enums\FileDirectory;
 use App\Modules\Core\Enums\FileVisibility;
 use App\Modules\Core\Models\File;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -86,6 +87,7 @@ class FileService
         [$contents, $width, $height] = $this->prepareContents($upload, $mime);
 
         $disk->put($path, $contents, ['visibility' => $visibility->value]);
+        $thumbnailPath = $this->storeThumbnail($disk, $contents, $mime, $directory->value.'/'.now()->format('Y/m').'/thumbs/'.$storedName, $visibility);
 
         $file = new File([
             'disk' => $visibility->disk(),
@@ -94,6 +96,7 @@ class FileService
             'original_name' => Str::limit($upload->getClientOriginalName(), 250, ''),
             'stored_name' => $storedName,
             'path' => $path,
+            'thumbnail_path' => $thumbnailPath,
             'mime_type' => $mime,
             'size' => strlen($contents),
             'width' => $width,
@@ -108,6 +111,32 @@ class FileService
         $file->save();
 
         return $file;
+    }
+
+    /**
+     * Buat thumbnail untuk gambar yang lebih besar dari `thumbnail_dimension` (untuk file
+     * yang sudah ada juga, lihat `skoolia:thumbnails`). Null bila tidak perlu.
+     */
+    public function makeThumbnail(File $file): ?string
+    {
+        if (! in_array($file->mime_type, self::RESIZABLE_MIMES, true) || $file->thumbnail_path !== null) {
+            return $file->thumbnail_path;
+        }
+
+        $disk = Storage::disk($file->disk);
+
+        if (! $disk->exists($file->path)) {
+            return null;
+        }
+
+        $path = dirname($file->path).'/thumbs/'.basename($file->path);
+        $thumbnail = $this->storeThumbnail($disk, (string) $disk->get($file->path), $file->mime_type, $path, $file->visibility);
+
+        if ($thumbnail !== null) {
+            $file->forceFill(['thumbnail_path' => $thumbnail])->saveQuietly();
+        }
+
+        return $thumbnail;
     }
 
     /**
@@ -127,6 +156,25 @@ class FileService
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
 
         return (string) $finfo->file($upload->getRealPath());
+    }
+
+    private function storeThumbnail(Filesystem $disk, string $contents, string $mime, string $path, FileVisibility $visibility): ?string
+    {
+        if (! in_array($mime, self::RESIZABLE_MIMES, true)) {
+            return null;
+        }
+
+        $size = (int) config('skoolia.upload.thumbnail_dimension', 480);
+        $image = (new ImageManager(new Driver))->read($contents);
+
+        if ($image->width() <= $size && $image->height() <= $size) {
+            return null;
+        }
+
+        $image->scaleDown($size, $size);
+        $disk->put($path, (string) $image->encodeByMediaType($mime, quality: 75), ['visibility' => $visibility->value]);
+
+        return $path;
     }
 
     /**

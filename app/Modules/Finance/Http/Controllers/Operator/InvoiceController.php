@@ -51,7 +51,7 @@ class InvoiceController extends Controller
             ->when($filters['q'] !== '', fn (Builder $q) => $q->where(fn (Builder $w) => $w
                 ->where('number', 'like', "%{$filters['q']}%")
                 ->orWhereHas('student', fn (Builder $s) => $s->search($filters['q']))))
-            ->when($filters['status'] === 'TERLAMBAT', fn (Builder $q) => $q->outstanding()->whereDate('due_date', '<', CarbonImmutable::today()->toDateString()))
+            ->when($filters['status'] === 'TERLAMBAT', fn (Builder $q) => $q->outstanding()->where('due_date', '<', CarbonImmutable::today()->toDateString()))
             ->when(InvoiceStatus::tryFrom($filters['status']) !== null, fn (Builder $q) => $q->where('status', $filters['status']))
             ->when($filters['jenis'] !== '', fn (Builder $q) => $q->whereHas('feeType', fn (Builder $f) => $f->where('public_id', $filters['jenis'])))
             ->when($filters['periode'] !== '', fn (Builder $q) => $q->where('period', $filters['periode']))

@@ -22,7 +22,7 @@ class TeacherWebsiteResource extends JsonResource
         return [
             'public_id' => $this->public_id,
             'name' => $this->name,
-            'photo_url' => $this->photo ? app(FileUrlGenerator::class)->url($this->photo) : null,
+            'photo_url' => $this->photo ? app(FileUrlGenerator::class)->thumbnailUrl($this->photo) : null,
             'show_on_website' => $this->show_on_website,
             'website_title' => $this->website_title,
         ];

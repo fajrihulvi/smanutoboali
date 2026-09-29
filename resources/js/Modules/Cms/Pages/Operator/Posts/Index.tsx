@@ -130,7 +130,7 @@ export default function CmsPosts({
                             >
                                 {post.image ? (
                                     <img
-                                        src={post.image.url}
+                                        src={post.image.thumb_url}
                                         alt=""
                                         className="hidden size-14 shrink-0 rounded-lg object-cover sm:block"
                                     />

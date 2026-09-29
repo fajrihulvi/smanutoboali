@@ -5,6 +5,7 @@ export type MediaFile = {
     is_image: boolean;
     size: number;
     url: string;
+    thumb_url: string;
 };
 
 export type PortfolioRow = {

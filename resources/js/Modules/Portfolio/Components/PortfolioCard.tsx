@@ -34,7 +34,7 @@ export function PortfolioCard({
                     aria-label={`Lihat foto ${portfolio.title}`}
                 >
                     <img
-                        src={cover.url}
+                        src={cover.thumb_url}
                         alt={portfolio.title}
                         loading="lazy"
                         className="size-full object-cover transition-transform duration-300 group-hover:scale-105"

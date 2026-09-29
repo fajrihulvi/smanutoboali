@@ -8,7 +8,7 @@ export type ContentStatus = {
     scheduled: boolean;
 };
 
-export type ImageRef = { public_id: string; url: string };
+export type ImageRef = { public_id: string; url: string; thumb_url: string };
 
 export type PageRow = {
     public_id: string;
@@ -61,6 +61,7 @@ export type GalleryPhoto = {
     public_id: string;
     caption: string | null;
     url: string | null;
+    thumb_url: string | null;
 };
 
 export type GalleryRow = {

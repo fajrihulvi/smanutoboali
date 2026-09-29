@@ -179,7 +179,7 @@ export default function AnnouncementForm({
                                             >
                                                 {file.is_image ? (
                                                     <img
-                                                        src={file.url}
+                                                        src={file.thumb_url}
                                                         alt=""
                                                         className="size-10 rounded-lg object-cover"
                                                     />

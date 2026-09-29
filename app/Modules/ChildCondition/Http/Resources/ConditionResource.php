@@ -60,7 +60,7 @@ class ConditionResource extends JsonResource
 
         return [
             ...$data,
-            'photos' => $this->photos->map(fn (File $f) => ['public_id' => $f->public_id, 'name' => $f->original_name, 'url' => $urls->url($f)])->values(),
+            'photos' => $this->photos->map(fn (File $f) => ['public_id' => $f->public_id, 'name' => $f->original_name, 'url' => $urls->url($f), 'thumb_url' => $urls->thumbnailUrl($f)])->values(),
             'responses' => $this->responses->map(fn (ChildConditionResponse $r) => [
                 'author' => $r->user->name ?? 'Guru',
                 'body' => $r->body,

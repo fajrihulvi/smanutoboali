@@ -203,7 +203,7 @@ export default function PortfolioForm({
                                         >
                                             {file.is_image ? (
                                                 <img
-                                                    src={file.url}
+                                                    src={file.thumb_url}
                                                     alt={file.name}
                                                     className="aspect-square w-full object-cover"
                                                 />

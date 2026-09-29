@@ -68,8 +68,7 @@ class TeacherAttendanceRecap
 
         $records = TeacherAttendance::query()
             ->where('teacher_id', $teacher->id)
-            ->whereDate('date', '>=', $today->startOfMonth()->toDateString())
-            ->whereDate('date', '<=', $today->toDateString())
+            ->whereDateBetween('date', $today->startOfMonth()->toDateString(), $today->toDateString())
             ->get();
 
         $todayRecord = $records->first(fn (TeacherAttendance $r) => $r->date->isSameDay($today));
@@ -95,7 +94,7 @@ class TeacherAttendanceRecap
     public function daily(CarbonImmutable $date): array
     {
         $records = TeacherAttendance::query()
-            ->whereDate('date', $date->toDateString())
+            ->whereOnDate('date', $date->toDateString())
             ->get()
             ->keyBy('teacher_id');
 
@@ -118,8 +117,7 @@ class TeacherAttendanceRecap
     {
         /** @var Collection<int, TeacherAttendance> $records */
         $records = TeacherAttendance::query()
-            ->whereDate('date', '>=', $from->toDateString())
-            ->whereDate('date', '<=', $to->toDateString())
+            ->whereDateBetween('date', $from->toDateString(), $to->toDateString())
             ->get(['id', 'teacher_id', 'status']);
 
         $byTeacher = $records->groupBy('teacher_id');

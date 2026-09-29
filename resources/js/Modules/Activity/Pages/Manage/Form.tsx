@@ -268,7 +268,7 @@ export default function ActivityForm({
                                             )}
                                         >
                                             <img
-                                                src={photo.url}
+                                                src={photo.thumb_url}
                                                 alt={photo.name}
                                                 className="aspect-square w-full object-cover"
                                             />

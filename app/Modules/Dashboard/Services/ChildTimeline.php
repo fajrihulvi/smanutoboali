@@ -57,7 +57,7 @@ class ChildTimeline
         return AttendanceRecord::query()
             ->where('student_id', $child->id)
             ->where('status', '!=', AttendanceStatus::Present)
-            ->whereHas('session', fn (Builder $s) => $s->whereDate('date', '>=', $from->toDateString())->whereDate('date', '<=', $to->toDateString()))
+            ->whereHas('session', fn (Builder $s) => $s->whereDateBetween('date', $from->toDateString(), $to->toDateString()))
             ->with('session.schedule.teachingAssignment.subject')
             ->get()
             ->map(fn (AttendanceRecord $r) => [
@@ -122,8 +122,7 @@ class ChildTimeline
     private function activityEntries(Student $child, CarbonImmutable $from, CarbonImmutable $to): array
     {
         return $this->activities->publishedForStudents([$child->id])
-            ->whereDate('date', '>=', $from->toDateString())
-            ->whereDate('date', '<=', $to->toDateString())
+            ->whereDateBetween('date', $from->toDateString(), $to->toDateString())
             ->get()
             ->map(fn (Activity $a) => [
                 'key' => 'activity:'.$a->id,
@@ -144,8 +143,7 @@ class ChildTimeline
         return Portfolio::query()
             ->where('visibility', PortfolioVisibility::Published)
             ->whereHas('students', fn (Builder $s) => $s->whereKey($child->id))
-            ->whereDate('date', '>=', $from->toDateString())
-            ->whereDate('date', '<=', $to->toDateString())
+            ->whereDateBetween('date', $from->toDateString(), $to->toDateString())
             ->with('category')
             ->get()
             ->map(fn (Portfolio $p) => [

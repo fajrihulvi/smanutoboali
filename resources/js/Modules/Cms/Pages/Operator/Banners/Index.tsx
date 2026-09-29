@@ -85,7 +85,7 @@ export default function CmsBanners({ banners }: Props) {
                             >
                                 {banner.image && (
                                     <img
-                                        src={banner.image.url}
+                                        src={banner.image.thumb_url}
                                         alt=""
                                         className="aspect-video w-20 shrink-0 rounded-lg object-cover sm:w-32"
                                     />

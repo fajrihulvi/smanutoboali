@@ -37,6 +37,7 @@ class GalleryResource extends JsonResource
                 'public_id' => $p->public_id,
                 'caption' => $p->caption,
                 'url' => $this->imageData($p->file)['url'] ?? null,
+                'thumb_url' => $this->imageData($p->file)['thumb_url'] ?? null,
             ])->values(),
         ];
     }

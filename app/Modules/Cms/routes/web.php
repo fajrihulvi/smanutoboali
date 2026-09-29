@@ -8,7 +8,36 @@ use App\Modules\Cms\Http\Controllers\Operator\PageController;
 use App\Modules\Cms\Http\Controllers\Operator\PostController;
 use App\Modules\Cms\Http\Controllers\Operator\SettingController;
 use App\Modules\Cms\Http\Controllers\Operator\TeacherController;
+use App\Modules\Cms\Http\Controllers\Public\GalleryController as PublicGalleryController;
+use App\Modules\Cms\Http\Controllers\Public\HomeController;
+use App\Modules\Cms\Http\Controllers\Public\PostController as PublicPostController;
+use App\Modules\Cms\Http\Controllers\Public\PpdbController;
+use App\Modules\Cms\Http\Controllers\Public\SeoController;
+use App\Modules\Cms\Http\Controllers\Public\TeacherController as PublicTeacherController;
 use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Website publik (S29) — Blade, di-cache untuk tamu.
+| Halaman `/{slug}` didaftarkan terakhir oleh CmsServiceProvider.
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('public.cache')->name('public.')->group(function () {
+    Route::get('berita', [PublicPostController::class, 'news'])->name('news.index');
+    Route::get('berita/{slug}', [PublicPostController::class, 'show'])->defaults('type', 'berita')->name('news.show');
+    Route::get('agenda', [PublicPostController::class, 'agenda'])->name('agenda.index');
+    Route::get('agenda/{slug}', [PublicPostController::class, 'show'])->defaults('type', 'agenda')->name('agenda.show');
+    Route::get('galeri', [PublicGalleryController::class, 'index'])->name('galleries.index');
+    Route::get('galeri/{slug}', [PublicGalleryController::class, 'show'])->name('galleries.show');
+    Route::get('guru', PublicTeacherController::class)->name('teachers');
+    Route::get('ppdb', PpdbController::class)->name('ppdb');
+    Route::get('sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
+    Route::get('robots.txt', [SeoController::class, 'robots'])->name('robots');
+});
+
+// Beranda memakai nama `home` (dipakai aplikasi untuk tautan kembali).
+Route::middleware('public.cache')->get('/', HomeController::class)->name('home');
 
 /*
 |--------------------------------------------------------------------------

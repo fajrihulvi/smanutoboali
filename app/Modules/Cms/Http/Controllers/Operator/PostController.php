@@ -9,6 +9,7 @@ use App\Modules\Cms\Actions\DeleteContentAction;
 use App\Modules\Cms\Actions\SavePostAction;
 use App\Modules\Cms\Enums\ContentStatus;
 use App\Modules\Cms\Enums\PostType;
+use App\Modules\Cms\Http\Controllers\Public\PostController as PublicPostController;
 use App\Modules\Cms\Http\Requests\PostRequest;
 use App\Modules\Cms\Http\Resources\PostResource;
 use App\Modules\Cms\Models\WebsiteCategory;
@@ -112,23 +113,9 @@ class PostController extends Controller
     public function preview(Request $request, WebsitePost $post): View
     {
         $this->authorizePost($request, $post, 'view');
-        $post->load(['category', 'featuredImage']);
+        $post->load(['category', 'featuredImage', 'author']);
 
-        $meta = array_filter([
-            $post->category?->name,
-            $post->published_at?->translatedFormat('d F Y'),
-            $post->event_starts_at ? 'Waktu: '.$post->event_starts_at->translatedFormat('d F Y, H.i') : null,
-            $post->event_location ? 'Lokasi: '.$post->event_location : null,
-        ]);
-
-        return view('cms::preview', [
-            'title' => $post->title,
-            'kind' => $post->type->label(),
-            'content' => $post->content,
-            'image' => $post->featuredImage,
-            'meta' => $meta,
-            'status' => $post->status->label(),
-        ]);
+        return PublicPostController::render($post, preview: true);
     }
 
     public function destroy(Request $request, WebsitePost $post, DeleteContentAction $delete): RedirectResponse

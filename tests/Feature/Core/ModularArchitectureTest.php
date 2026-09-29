@@ -48,9 +48,9 @@ describe('make:module', function () {
 });
 
 it('me-render halaman modul dengan format Module::Path', function () {
-    $this->get(route('home'))
+    $this->get(route('login'))
         ->assertOk()
-        ->assertInertia(fn (Assert $page) => $page->component('Core::Welcome'));
+        ->assertInertia(fn (Assert $page) => $page->component('Auth::PortalSelect'));
 });
 
 it('HasPublicId mengisi ULID otomatis dan menjadikannya route key', function () {

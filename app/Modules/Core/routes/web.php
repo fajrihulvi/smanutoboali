@@ -22,8 +22,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 |
 */
 
-// Sementara: halaman sambutan. Diganti website publik Blade di S29.
-Route::inertia('/', 'Core::Welcome')->name('home');
+// Beranda `/` adalah website publik (modul Cms, S29).
 
 // Status operasional berbasis token — tanpa sesi agar ping monitor tidak membuat baris sessions.
 Route::get('health', HealthController::class)

@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ContentStatus $status
  * @property CarbonImmutable|null $publish_at
  * @property CarbonImmutable|null $published_at
+ * @property CarbonImmutable $updated_at
  * @property-read Collection<int, WebsiteGalleryPhoto> $photos
  * @property-read int|null $photos_count
  */

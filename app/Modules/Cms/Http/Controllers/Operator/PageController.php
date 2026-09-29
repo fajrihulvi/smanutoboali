@@ -8,6 +8,7 @@ use App\Modules\Cms\Actions\ChangeContentStatusAction;
 use App\Modules\Cms\Actions\DeleteContentAction;
 use App\Modules\Cms\Actions\SavePageAction;
 use App\Modules\Cms\Enums\ContentStatus;
+use App\Modules\Cms\Http\Controllers\Public\PageController as PublicPageController;
 use App\Modules\Cms\Http\Requests\PageRequest;
 use App\Modules\Cms\Http\Resources\PageResource;
 use App\Modules\Cms\Models\WebsitePage;
@@ -99,14 +100,7 @@ class PageController extends Controller
         $this->authorize('view', $page);
         $page->load('featuredImage');
 
-        return view('cms::preview', [
-            'title' => $page->title,
-            'kind' => 'Halaman',
-            'content' => $page->content,
-            'image' => $page->featuredImage,
-            'meta' => [],
-            'status' => $page->status->label(),
-        ]);
+        return PublicPageController::render($page, preview: true);
     }
 
     public function destroy(WebsitePage $page, DeleteContentAction $delete): RedirectResponse

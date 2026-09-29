@@ -8,6 +8,7 @@ use App\Modules\Cms\Actions\ChangeContentStatusAction;
 use App\Modules\Cms\Actions\DeleteContentAction;
 use App\Modules\Cms\Actions\SaveGalleryAction;
 use App\Modules\Cms\Enums\ContentStatus;
+use App\Modules\Cms\Http\Controllers\Public\GalleryController as PublicGalleryController;
 use App\Modules\Cms\Http\Requests\GalleryRequest;
 use App\Modules\Cms\Http\Resources\GalleryResource;
 use App\Modules\Cms\Models\WebsiteGallery;
@@ -104,15 +105,7 @@ class GalleryController extends Controller
         $this->authorize('view', $gallery);
         $gallery->load('photos.file');
 
-        return view('cms::preview', [
-            'title' => $gallery->title,
-            'kind' => 'Galeri',
-            'content' => $gallery->description ? '<p>'.e($gallery->description).'</p>' : null,
-            'image' => null,
-            'meta' => array_filter([$gallery->date?->translatedFormat('d F Y'), $gallery->photos->count().' foto']),
-            'status' => $gallery->status->label(),
-            'photos' => $gallery->photos,
-        ]);
+        return PublicGalleryController::render($gallery, preview: true);
     }
 
     public function destroy(WebsiteGallery $gallery, DeleteContentAction $delete): RedirectResponse

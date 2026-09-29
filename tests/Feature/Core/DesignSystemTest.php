@@ -8,7 +8,7 @@ it('tidak mendaftarkan style guide di luar lingkungan lokal', function () {
 });
 
 it('membagikan shared props dasar ke Inertia', function () {
-    $this->get(route('home'))
+    $this->get(route('login'))
         ->assertInertia(fn (Assert $page) => $page
             ->where('auth.user', null)
             ->where('auth.roles', [])

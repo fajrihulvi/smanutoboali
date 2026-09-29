@@ -1,0 +1,11 @@
+/*
+|--------------------------------------------------------------------------
+| Website publik (Blade) — S29
+|--------------------------------------------------------------------------
+| Hanya memindai view publik agar CSS tetap kecil.
+*/
+
+@import 'tailwindcss' source(none);
+@import './brand.css';
+
+@source '../views/public';

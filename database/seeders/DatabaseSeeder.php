@@ -11,6 +11,7 @@ use App\Modules\Attendance\Database\Seeders\AttendanceDemoSeeder;
 use App\Modules\Auth\Database\Seeders\DemoUserSeeder;
 use App\Modules\Chat\Database\Seeders\ChatDemoSeeder;
 use App\Modules\ChildCondition\Database\Seeders\ChildConditionDemoSeeder;
+use App\Modules\Cms\Database\Seeders\CmsDemoSeeder;
 use App\Modules\Finance\Database\Seeders\FinanceDemoSeeder;
 use App\Modules\People\Database\Seeders\PeopleDemoSeeder;
 use App\Modules\Portfolio\Database\Seeders\PortfolioDemoSeeder;
@@ -42,6 +43,7 @@ class DatabaseSeeder extends Seeder
             AnnouncementDemoSeeder::class,
             FinanceDemoSeeder::class,
             PpdbDemoSeeder::class,
+            CmsDemoSeeder::class,
         ]);
     }
 }

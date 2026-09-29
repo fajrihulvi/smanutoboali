@@ -9,6 +9,7 @@ use App\Modules\Attendance\AttendanceServiceProvider;
 use App\Modules\Auth\AuthServiceProvider;
 use App\Modules\Chat\ChatServiceProvider;
 use App\Modules\ChildCondition\ChildConditionServiceProvider;
+use App\Modules\Cms\CmsServiceProvider;
 use App\Modules\Core\CoreServiceProvider;
 use App\Modules\Dashboard\DashboardServiceProvider;
 use App\Modules\Finance\FinanceServiceProvider;
@@ -29,6 +30,7 @@ return [
     AuthServiceProvider::class,
     ChatServiceProvider::class,
     ChildConditionServiceProvider::class,
+    CmsServiceProvider::class,
     CoreServiceProvider::class,
     DashboardServiceProvider::class,
     FinanceServiceProvider::class,

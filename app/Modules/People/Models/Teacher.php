@@ -27,6 +27,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null $signature_file_id
  * @property EmploymentStatus $employment_status
  * @property bool $is_active
+ * @property bool $show_on_website
+ * @property string|null $website_title
  * @property-read User|null $user
  * @property-read File|null $photo
  */
@@ -37,7 +39,7 @@ class Teacher extends Model
 
     protected $fillable = [
         'user_id', 'nip', 'nuptk', 'name', 'gender', 'phone',
-        'photo_file_id', 'signature_file_id', 'employment_status', 'is_active',
+        'photo_file_id', 'signature_file_id', 'employment_status', 'is_active', 'show_on_website', 'website_title',
     ];
 
     /**
@@ -49,6 +51,7 @@ class Teacher extends Model
             'gender' => Gender::class,
             'employment_status' => EmploymentStatus::class,
             'is_active' => 'boolean',
+            'show_on_website' => 'boolean',
         ];
     }
 

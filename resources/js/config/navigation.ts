@@ -426,6 +426,48 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             href: '/operator/cms',
             icon: Globe,
             permission: 'cms.manage',
+            children: [
+                {
+                    label: 'Halaman',
+                    href: '/operator/cms/halaman',
+                    icon: Globe,
+                },
+                {
+                    label: 'Berita',
+                    href: '/operator/cms/berita',
+                    icon: Globe,
+                },
+                {
+                    label: 'Agenda',
+                    href: '/operator/cms/agenda',
+                    icon: Globe,
+                },
+                {
+                    label: 'Galeri',
+                    href: '/operator/cms/galeri',
+                    icon: Globe,
+                },
+                {
+                    label: 'Banner',
+                    href: '/operator/cms/banner',
+                    icon: Globe,
+                },
+                {
+                    label: 'Kategori',
+                    href: '/operator/cms/kategori',
+                    icon: Globe,
+                },
+                {
+                    label: 'Guru di Website',
+                    href: '/operator/cms/guru',
+                    icon: Globe,
+                },
+                {
+                    label: 'Pengaturan',
+                    href: '/operator/cms/pengaturan',
+                    icon: Globe,
+                },
+            ],
         },
         {
             label: 'User Management',

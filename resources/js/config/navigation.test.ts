@@ -61,6 +61,7 @@ describe('navigasi per role sesuai matriks permission', () => {
             'Akademik › Nilai',
             'Presensi',
             'Raport',
+            'Laporan',
             'Portofolio',
             'Kegiatan',
             'Kondisi Anak',

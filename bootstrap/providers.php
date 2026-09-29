@@ -16,6 +16,7 @@ use App\Modules\Finance\FinanceServiceProvider;
 use App\Modules\People\PeopleServiceProvider;
 use App\Modules\Portfolio\PortfolioServiceProvider;
 use App\Modules\Ppdb\PpdbServiceProvider;
+use App\Modules\Report\ReportServiceProvider;
 use App\Modules\ReportCard\ReportCardServiceProvider;
 use App\Modules\School\SchoolServiceProvider;
 use App\Providers\AppServiceProvider;
@@ -38,6 +39,7 @@ return [
     PortfolioServiceProvider::class,
     PpdbServiceProvider::class,
     ReportCardServiceProvider::class,
+    ReportServiceProvider::class,
     SchoolServiceProvider::class,
     AppServiceProvider::class,
 ];

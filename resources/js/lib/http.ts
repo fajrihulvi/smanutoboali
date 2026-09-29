@@ -99,3 +99,73 @@ export async function requestJson<T>(
 ): Promise<T> {
     return sendJson<T>(url, method);
 }
+
+/** Nama file dari header Content-Disposition (attachment; filename="..."). */
+export function filenameFromDisposition(
+    header: string | null,
+    fallback: string,
+): string {
+    const match = header?.match(/filename\*?=(?:UTF-8'')?"?([^";]+)"?/i);
+
+    return match ? decodeURIComponent(match[1]) : fallback;
+}
+
+export type DownloadResult =
+    { queued: false; filename: string } | { queued: true; message: string };
+
+/**
+ * POST lalu unduh respons berupa file (blob). Bila server membalas JSON (mis. 202 diproses
+ * antrean), kembalikan pesannya. Error validasi dilempar sebagai HttpError per field.
+ */
+export async function postForDownload(
+    url: string,
+    body: Record<string, unknown>,
+    fallbackName = 'unduhan',
+): Promise<DownloadResult> {
+    const response = await fetch(url, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-XSRF-TOKEN': xsrfToken(),
+        },
+        body: JSON.stringify(body),
+    });
+
+    const type = response.headers.get('Content-Type') ?? '';
+
+    if (!response.ok) {
+        const data: unknown = type.includes('json')
+            ? await response.json().catch(() => null)
+            : null;
+
+        throw new HttpError(
+            errorMessage(response.status, data),
+            response.status,
+            fieldErrors(data),
+        );
+    }
+
+    if (type.includes('json')) {
+        const data = (await response.json()) as { message?: string };
+
+        return { queued: true, message: data.message ?? 'Sedang diproses.' };
+    }
+
+    const filename = filenameFromDisposition(
+        response.headers.get('Content-Disposition'),
+        fallbackName,
+    );
+    const href = URL.createObjectURL(await response.blob());
+    const link = document.createElement('a');
+    link.href = href;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(href), 1000);
+
+    return { queued: false, filename };
+}

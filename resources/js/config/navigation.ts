@@ -206,6 +206,12 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             permission: 'report_card.review',
         },
         {
+            label: 'Laporan',
+            href: '/guru/laporan',
+            icon: BarChart3,
+            permission: 'report.export',
+        },
+        {
             label: 'Portofolio',
             href: '/guru/portofolio',
             icon: FolderKanban,
@@ -483,7 +489,7 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
         },
         {
             label: 'Laporan',
-            href: '/operator/reports',
+            href: '/operator/laporan',
             icon: BarChart3,
             permission: 'report.export',
         },

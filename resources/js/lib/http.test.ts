@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { errorMessage } from '@/lib/http';
+import { errorMessage, filenameFromDisposition } from '@/lib/http';
 
 describe('errorMessage', () => {
     it('mengambil pesan validasi pertama', () => {
@@ -21,5 +21,26 @@ describe('errorMessage', () => {
         expect(errorMessage(419, null)).toBe(
             'Sesi berakhir. Muat ulang halaman.',
         );
+    });
+});
+
+describe('filenameFromDisposition', () => {
+    it('membaca nama file dari header attachment', () => {
+        expect(
+            filenameFromDisposition(
+                'attachment; filename="laporan-penerimaan-2026-09-29.pdf"',
+                'x',
+            ),
+        ).toBe('laporan-penerimaan-2026-09-29.pdf');
+        expect(
+            filenameFromDisposition(
+                "attachment; filename*=UTF-8''rekap%20nilai.xlsx",
+                'x',
+            ),
+        ).toBe('rekap nilai.xlsx');
+    });
+
+    it('memakai nama cadangan bila header tidak ada', () => {
+        expect(filenameFromDisposition(null, 'unduhan')).toBe('unduhan');
     });
 });

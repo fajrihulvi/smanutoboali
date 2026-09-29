@@ -40,4 +40,18 @@ return [
         'image_quality' => 80,
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Laporan (S31)
+    |--------------------------------------------------------------------------
+    |
+    | direct_limit : laporan dengan baris <= nilai ini langsung diunduh;
+    |                lebih besar diproses Job (antrean database lewat scheduler).
+    |
+    */
+
+    'reports' => [
+        'direct_limit' => (int) env('REPORT_DIRECT_LIMIT', 300),
+    ],
+
 ];

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Finance\Http\Requests;
 
+use App\Modules\Finance\Models\Invoice;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -13,6 +14,23 @@ use Illuminate\Http\UploadedFile;
  */
 class PaymentRequest extends FormRequest
 {
+    /**
+     * Otorisasi sebelum validasi (S32): operator mencatat pembayaran, orang tua hanya
+     * untuk tagihan anaknya sendiri.
+     */
+    public function authorize(): bool
+    {
+        $invoice = $this->route('invoice');
+
+        if (! $invoice instanceof Invoice || $this->user() === null) {
+            return false;
+        }
+
+        return $this->routeIs('operator.*')
+            ? $this->user()->can('manage', Invoice::class)
+            : $this->user()->can('pay', $invoice);
+    }
+
     /**
      * @return array<string, ValidationRule|array<mixed>|string>
      */

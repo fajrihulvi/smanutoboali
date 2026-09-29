@@ -34,7 +34,7 @@
 @if ($description !== '')
     <meta name="twitter:description" content="{{ $description }}">
 @endif
-<script type="application/ld+json">{!! json_encode(array_filter([
+<script type="application/ld+json" nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">{!! json_encode(array_filter([
     '@context' => 'https://schema.org',
     '@type' => 'School',
     'name' => $siteName,

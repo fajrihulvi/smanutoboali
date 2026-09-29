@@ -4,6 +4,7 @@ namespace App\Modules\Auth\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Modules\Access\Services\UserSessionTerminator;
 use App\Modules\Auth\Http\Requests\ForgotPasswordRequest;
 use App\Modules\Auth\Http\Requests\ResetPasswordRequest;
 use Illuminate\Auth\Events\PasswordReset;
@@ -49,6 +50,9 @@ class PasswordResetController extends Controller
                     'password' => $password,
                     'remember_token' => Str::random(60),
                 ])->save();
+
+                // Semua sesi lama (mis. perangkat yang mungkin dicuri) dikeluarkan.
+                app(UserSessionTerminator::class)->terminate($user);
 
                 event(new PasswordReset($user));
             },

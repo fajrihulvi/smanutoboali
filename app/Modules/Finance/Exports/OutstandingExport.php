@@ -2,15 +2,18 @@
 
 namespace App\Modules\Finance\Exports;
 
+use App\Support\Excel\SafeValueBinder;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithCustomValueBinder;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use PhpOffice\PhpSpreadsheet\Cell\Cell;
 
 /**
  * Tunggakan per siswa (nominal rupiah sebagai angka agar bisa dijumlah di Excel).
  */
-class OutstandingExport implements FromArray, ShouldAutoSize, WithHeadings, WithTitle
+class OutstandingExport implements FromArray, ShouldAutoSize, WithCustomValueBinder, WithHeadings, WithTitle
 {
     /**
      * @param  list<array{nis: string, name: string, classroom: string|null, invoices: int, amount: int, oldest_due: string|null}>  $rows
@@ -36,5 +39,13 @@ class OutstandingExport implements FromArray, ShouldAutoSize, WithHeadings, With
     public function title(): string
     {
         return 'Tunggakan';
+    }
+
+    /**
+     * Teks tidak pernah dibaca sebagai formula (cegah formula injection).
+     */
+    public function bindValue(Cell $cell, mixed $value): bool
+    {
+        return (new SafeValueBinder)->bindValue($cell, $value);
     }
 }

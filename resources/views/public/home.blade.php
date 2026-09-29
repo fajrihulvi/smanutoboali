@@ -29,7 +29,7 @@
                     <button type="button" data-banner="-1" class="flex size-10 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur hover:bg-white/30" aria-label="Banner sebelumnya">@include('public.partials.icon', ['name' => 'chevron-left'])</button>
                     <button type="button" data-banner="1" class="flex size-10 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur hover:bg-white/30" aria-label="Banner berikutnya">@include('public.partials.icon', ['name' => 'chevron-right'])</button>
                 </div>
-                <script>
+                <script nonce="{{ \Illuminate\Support\Facades\Vite::cspNonce() }}">
                     (() => {
                         const track = document.getElementById('banner-track');
                         const go = (dir) => {

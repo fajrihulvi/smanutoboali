@@ -54,4 +54,22 @@ return [
         'direct_limit' => (int) env('REPORT_DIRECT_LIMIT', 300),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Keamanan HTTP (S32)
+    |--------------------------------------------------------------------------
+    |
+    | csp             : kirim Content-Security-Policy (nonce untuk script).
+    | csp_report_only : kirim sebagai Content-Security-Policy-Report-Only
+    |                   (tidak memblokir) — dipakai sementara saat go-live bila perlu.
+    | hsts            : Strict-Transport-Security, hanya di produksi lewat HTTPS.
+    |
+    */
+
+    'security' => [
+        'csp' => (bool) env('CSP_ENABLED', true),
+        'csp_report_only' => (bool) env('CSP_REPORT_ONLY', false),
+        'hsts' => (bool) env('HSTS_ENABLED', true),
+    ],
+
 ];

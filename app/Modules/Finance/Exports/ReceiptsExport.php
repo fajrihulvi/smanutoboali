@@ -4,20 +4,23 @@ namespace App\Modules\Finance\Exports;
 
 use App\Modules\Finance\Enums\PaymentStatus;
 use App\Modules\Finance\Models\Payment;
+use App\Support\Excel\SafeValueBinder;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithCustomValueBinder;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use PhpOffice\PhpSpreadsheet\Cell\Cell;
 
 /**
  * Daftar penerimaan (pembayaran terkonfirmasi) dalam rentang tanggal; dibaca per chunk.
  *
  * @implements WithMapping<Payment>
  */
-class ReceiptsExport implements FromQuery, ShouldAutoSize, WithHeadings, WithMapping, WithTitle
+class ReceiptsExport implements FromQuery, ShouldAutoSize, WithCustomValueBinder, WithHeadings, WithMapping, WithTitle
 {
     public function __construct(private CarbonImmutable $from, private CarbonImmutable $to) {}
 
@@ -64,5 +67,13 @@ class ReceiptsExport implements FromQuery, ShouldAutoSize, WithHeadings, WithMap
     public function title(): string
     {
         return 'Penerimaan';
+    }
+
+    /**
+     * Teks tidak pernah dibaca sebagai formula (cegah formula injection).
+     */
+    public function bindValue(Cell $cell, mixed $value): bool
+    {
+        return (new SafeValueBinder)->bindValue($cell, $value);
     }
 }

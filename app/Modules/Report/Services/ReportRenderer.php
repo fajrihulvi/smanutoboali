@@ -8,6 +8,7 @@ use App\Modules\Report\Enums\ExportFormat;
 use App\Modules\Report\Exports\ReportSheet;
 use App\Modules\Report\Reports\ReportData;
 use App\Modules\School\Models\School;
+use App\Support\Excel\SafeValueBinder;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Storage;
@@ -25,7 +26,7 @@ class ReportRenderer
         $school = School::current()->loadMissing('logo');
 
         return match ($format) {
-            ExportFormat::Excel => Excel::raw(new ReportSheet($data, $school->name), ExcelWriter::XLSX),
+            ExportFormat::Excel => tap(Excel::raw(new ReportSheet($data, $school->name), ExcelWriter::XLSX), fn () => SafeValueBinder::reset()),
             ExportFormat::Pdf => Pdf::loadView('report::pdf', [
                 'data' => $data,
                 'school' => $school,

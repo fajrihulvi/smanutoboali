@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\SecurityHeaders;
 use App\Modules\Auth\Http\Middleware\EnsureActiveRole;
 use App\Modules\Auth\Services\ActiveRoleService;
 use Illuminate\Foundation\Application;
@@ -22,6 +23,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->encryptCookies(except: ['sidebar_state']);
+
+        // Header keamanan (CSP bernonce, anti-framing, HSTS produksi) untuk semua respons.
+        $middleware->append(SecurityHeaders::class);
 
         // Callback server-ke-server payment gateway (diverifikasi dengan signature, bukan CSRF).
         $middleware->validateCsrfTokens(except: ['webhooks/*']);

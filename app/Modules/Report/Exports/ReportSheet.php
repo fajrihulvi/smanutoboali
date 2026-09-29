@@ -3,11 +3,14 @@
 namespace App\Modules\Report\Exports;
 
 use App\Modules\Report\Reports\ReportData;
+use App\Support\Excel\SafeValueBinder;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithCustomValueBinder;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
@@ -15,7 +18,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
  * Satu sheet laporan: judul & keterangan filter di atas, lalu header dan data.
  * Angka & rupiah tetap bertipe angka agar bisa dijumlah di Excel.
  */
-class ReportSheet implements FromArray, ShouldAutoSize, WithStyles, WithTitle
+class ReportSheet implements FromArray, ShouldAutoSize, WithCustomValueBinder, WithStyles, WithTitle
 {
     public function __construct(private ReportData $data, private string $school) {}
 
@@ -58,5 +61,13 @@ class ReportSheet implements FromArray, ShouldAutoSize, WithStyles, WithTitle
     public function title(): string
     {
         return Str::limit($this->data->title, 31, '');
+    }
+
+    /**
+     * Teks tidak pernah dibaca sebagai formula (cegah formula injection).
+     */
+    public function bindValue(Cell $cell, mixed $value): bool
+    {
+        return (new SafeValueBinder)->bindValue($cell, $value);
     }
 }

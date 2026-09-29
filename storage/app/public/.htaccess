@@ -1,0 +1,14 @@
+# Skoolia (S32): folder upload publik — file hanya disajikan sebagai data statis.
+# Berlaku bila hosting memakai symlink public/storage (storage:link).
+Options -Indexes -ExecCGI
+RemoveHandler .php .phtml .phar .php3 .php4 .php5 .php7 .php8 .pl .py .cgi .sh
+RemoveType .php .phtml .phar
+<FilesMatch "\.(?i:php\d?|phtml|phar|pl|py|cgi|sh|htaccess)$">
+    Require all denied
+</FilesMatch>
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+</IfModule>

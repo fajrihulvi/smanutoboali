@@ -4,6 +4,7 @@ namespace App\Modules\Cms\Services;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Vite;
 
 /**
  * Cache HTML halaman website publik untuk tamu.
@@ -33,7 +34,11 @@ class PublicPageCache
         $query = $request->query();
         ksort($query);
 
-        return 'cms.page.'.$this->version().'.'.sha1($request->path().'?'.http_build_query($query));
+        // Hash manifest Vite ikut kunci: setelah build baru, HTML lama (yang merujuk
+        // file aset ber-hash lama) otomatis tidak dipakai lagi.
+        $assets = Vite::isRunningHot() ? 'hot' : (string) Vite::manifestHash();
+
+        return 'cms.page.'.$this->version().'.'.sha1($assets.'|'.$request->path().'?'.http_build_query($query));
     }
 
     /**

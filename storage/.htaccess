@@ -1,0 +1,2 @@
+# Skoolia (S32): folder storage tidak boleh diakses langsung dari web.
+Require all denied

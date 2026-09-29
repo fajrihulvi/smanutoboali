@@ -1,0 +1,2 @@
+# Skoolia (S32): file privat hanya boleh diakses lewat aplikasi (/files/{id} dengan otorisasi).
+Require all denied

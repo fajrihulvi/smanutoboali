@@ -63,6 +63,10 @@ describe('security headers', function () {
 
         $this->get('https://skoolia.test/login')->assertHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         $this->get('http://skoolia.test/login')->assertHeaderMissing('Strict-Transport-Security');
+
+        // upgrade-insecure-requests hanya di HTTPS (situs http tidak boleh kehilangan asetnya).
+        expect($this->get('https://skoolia.test/login')->headers->get('Content-Security-Policy'))->toContain('upgrade-insecure-requests')
+            ->and($this->get('http://skoolia.test/login')->headers->get('Content-Security-Policy'))->not->toContain('upgrade-insecure-requests');
     });
 });
 

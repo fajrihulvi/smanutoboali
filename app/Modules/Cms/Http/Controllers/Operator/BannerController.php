@@ -10,6 +10,7 @@ use App\Modules\Cms\Http\Requests\BannerRequest;
 use App\Modules\Cms\Http\Resources\BannerResource;
 use App\Modules\Cms\Models\WebsiteBanner;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -18,14 +19,15 @@ use Inertia\Response;
  */
 class BannerController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
         $this->authorize('manage', WebsiteBanner::class);
 
         $banners = WebsiteBanner::query()->with('image')->orderBy('position')->orderBy('id')->get();
 
         return Inertia::render('Cms::Operator/Banners/Index', [
-            'banners' => BannerResource::collection($banners),
+            // resolve(): array biasa (tanpa pembungkus "data") — halaman memakai banners.map().
+            'banners' => BannerResource::collection($banners)->resolve($request),
         ]);
     }
 

@@ -74,4 +74,23 @@ return [
         'hsts' => (bool) env('HSTS_ENABLED', true),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Pemasangan awal produksi (S35) — dibaca ProductionSeeder
+    |--------------------------------------------------------------------------
+    |
+    | Hapus OPERATOR_PASSWORD dari .env setelah `php artisan db:seed --force`
+    | berhasil (lalu `php artisan optimize` lagi); `skoolia:go-live-check`
+    | memperingatkan bila masih terisi.
+    |
+    */
+
+    'setup' => [
+        'school_name' => env('SCHOOL_NAME'),
+        'school_level' => env('SCHOOL_LEVEL'),
+        'operator_name' => env('OPERATOR_NAME') ?: 'Operator Sekolah',
+        'operator_email' => env('OPERATOR_EMAIL'),
+        'operator_password' => env('OPERATOR_PASSWORD'),
+    ],
+
 ];

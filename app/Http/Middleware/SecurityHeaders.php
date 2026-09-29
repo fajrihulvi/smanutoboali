@@ -32,7 +32,7 @@ class SecurityHeaders
 
         if (config('skoolia.security.csp')) {
             $name = config('skoolia.security.csp_report_only') ? 'Content-Security-Policy-Report-Only' : 'Content-Security-Policy';
-            $headers->set($name, $this->policy($nonce));
+            $headers->set($name, $this->policy($nonce, $request->isSecure()));
         }
 
         if (config('skoolia.security.hsts') && app()->isProduction() && $request->isSecure()) {
@@ -42,7 +42,7 @@ class SecurityHeaders
         return $response;
     }
 
-    private function policy(string $nonce): string
+    private function policy(string $nonce, bool $secure): string
     {
         $midtrans = 'https://*.midtrans.com';
         $dev = $this->viteDevOrigins();
@@ -65,7 +65,9 @@ class SecurityHeaders
 
         $policy = collect($directives)->map(fn (array $sources, string $name) => $name.' '.implode(' ', array_unique($sources)))->implode('; ');
 
-        return app()->isProduction() ? $policy.'; upgrade-insecure-requests' : $policy;
+        // Hanya di HTTPS: pada situs http (mis. staging tanpa SSL) direktif ini membuat
+        // browser meminta aset lewat https dan semuanya gagal dimuat (temuan geladi S35).
+        return app()->isProduction() && $secure ? $policy.'; upgrade-insecure-requests' : $policy;
     }
 
     /**

@@ -23,10 +23,17 @@ use Illuminate\Database\Seeder;
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Data demo lokal (php artisan migrate:fresh --seed).
+     * Lokal/staging: data demo (php artisan migrate:fresh --seed).
+     * Produksi: hanya ProductionSeeder (role, profil sekolah, operator dari .env) — S35.
      */
     public function run(): void
     {
+        if (app()->isProduction()) {
+            $this->call(ProductionSeeder::class);
+
+            return;
+        }
+
         $this->call([
             RolesAndPermissionsSeeder::class,
             DemoUserSeeder::class,

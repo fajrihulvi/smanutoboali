@@ -296,6 +296,16 @@ describe('gambar & galeri', function () {
 });
 
 describe('banner, pengaturan, guru', function () {
+    it('halaman banner menerima daftar biasa, juga saat masih kosong (temuan geladi S35)', function () {
+        $this->actingAs($this->operator)->get('/operator/cms/banner')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->component('Cms::Operator/Banners/Index')->has('banners', 0));
+
+        WebsiteBanner::query()->create(['title' => 'PPDB', 'position' => 1, 'is_active' => true]);
+
+        $this->get('/operator/cms/banner')->assertInertia(fn (Assert $page) => $page->has('banners', 1)->where('banners.0.title', 'PPDB'));
+    });
+
     it('banner wajib bergambar dan hanya yang aktif dalam periode yang tayang', function () {
         $this->actingAs($this->operator);
         $this->post('/operator/cms/banner', ['title' => 'PPDB dibuka', 'is_active' => true])->assertSessionHasErrors('image');

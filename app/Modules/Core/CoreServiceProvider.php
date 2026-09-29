@@ -3,6 +3,7 @@
 namespace App\Modules\Core;
 
 use App\Modules\Core\Console\GenerateThumbnails;
+use App\Modules\Core\Console\GoLiveCheck;
 use App\Modules\Core\Console\RunBackup;
 use App\Modules\Core\Contracts\StudentOwnershipGate;
 use App\Modules\Core\Models\File;
@@ -51,7 +52,7 @@ class CoreServiceProvider extends ModuleServiceProvider
         $this->app->make(SettingsService::class)->applyRuntimeConfig();
 
         if ($this->app->runningInConsole()) {
-            $this->commands([GenerateThumbnails::class, RunBackup::class]);
+            $this->commands([GenerateThumbnails::class, RunBackup::class, GoLiveCheck::class]);
         }
     }
 

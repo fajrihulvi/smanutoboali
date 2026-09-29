@@ -32,6 +32,27 @@ class PpdbApplicantPolicy
     }
 
     /**
+     * Pendaftar diterima (hasil sudah diumumkan) mengirim data daftar ulang, sekali.
+     */
+    public function reregister(User $user, PpdbApplicant $applicant): bool
+    {
+        return $applicant->user_id === $user->id
+            && $applicant->status === ApplicantStatus::Accepted
+            && $applicant->period->results_published_at !== null
+            && $applicant->reregistration_submitted_at === null;
+    }
+
+    public function manage(User $user): bool
+    {
+        return $user->can(Permission::PpdbManage->value);
+    }
+
+    public function decide(User $user): bool
+    {
+        return $user->can(Permission::PpdbDecide->value);
+    }
+
+    /**
      * Pemilik boleh menghapus draf yang belum pernah dikirim.
      */
     public function delete(User $user, PpdbApplicant $applicant): bool

@@ -5,12 +5,8 @@ use App\Modules\Core\Enums\Role;
 use App\Modules\Core\Models\File;
 use App\Modules\Ppdb\Enums\ApplicantStatus;
 use App\Modules\Ppdb\Models\PpdbApplicant;
-use App\Modules\Ppdb\Models\PpdbPeriod;
-use App\Modules\Ppdb\Models\PpdbTrack;
 use App\Modules\Ppdb\Notifications\ApplicationSubmittedNotification;
 use App\Modules\Ppdb\Notifications\VerifyApplicantEmailNotification;
-use App\Modules\School\Models\AcademicYear;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -19,72 +15,6 @@ beforeEach(function () {
     Storage::fake('private');
     $this->travelTo('2026-10-01 09:00:00');
 });
-
-/**
- * Periode PPDB 2027/2028 yang sedang dibuka: jalur Reguler (akta wajib, rapor opsional) & Prestasi.
- *
- * @return array{period: PpdbPeriod, regular: PpdbTrack, operator: User}
- */
-function ppdbScenario(): array
-{
-    activeAcademicYear(2026);
-    $target = AcademicYear::factory()->startingIn(2027)->create();
-    $operator = User::factory()->withRole(Role::Operator)->create();
-
-    test()->actingAsRole(Role::Operator, $operator);
-    test()->post('/operator/ppdb/periode', [
-        'name' => 'PPDB 2027/2028 Gelombang 1',
-        'academic_year' => $target->public_id,
-        'grade' => 7,
-        'opens_at' => '2026-09-01T08:00',
-        'closes_at' => '2026-10-31T23:59',
-        'is_active' => true,
-        'tracks' => [
-            ['name' => 'Reguler', 'quota' => 100, 'requirements' => [
-                ['name' => 'Akta kelahiran', 'is_required' => true],
-                ['name' => 'Rapor', 'is_required' => false],
-            ]],
-            ['name' => 'Prestasi', 'quota' => 10, 'requirements' => [['name' => 'Sertifikat', 'is_required' => true]]],
-        ],
-    ])->assertSessionHasNoErrors();
-    auth()->logout();
-
-    $period = PpdbPeriod::query()->sole();
-
-    return ['period' => $period, 'regular' => $period->tracks()->where('name', 'Reguler')->sole(), 'operator' => $operator];
-}
-
-function verifiedApplicant(string $email = 'budi@contoh.test'): User
-{
-    $user = User::factory()->withRole(Role::Applicant)->create(['email' => $email, 'email_verified_at' => now()]);
-    test()->actingAsRole(Role::Applicant, $user);
-
-    return $user;
-}
-
-/**
- * @return array<string, mixed>
- */
-function completeStudent(): array
-{
-    return ['name' => 'Rafi Pratama', 'nik' => '1971010101100001', 'gender' => 'L', 'birth_place' => 'Pangkalpinang', 'birth_date' => '2014-05-10', 'religion' => 'ISLAM', 'address' => 'Jl. Merdeka 1'];
-}
-
-function startApplication(PpdbTrack $track): PpdbApplicant
-{
-    test()->post('/ppdb/akun/pendaftaran', ['track' => $track->public_id])->assertRedirect();
-
-    return PpdbApplicant::query()->latest('id')->firstOrFail();
-}
-
-function fillApplication(PpdbApplicant $applicant, PpdbTrack $track): void
-{
-    $base = "/ppdb/akun/pendaftaran/{$applicant->public_id}";
-    test()->putJson($base, ['student' => completeStudent(), 'complete' => true])->assertOk();
-    test()->putJson($base, ['guardians' => [['relationship' => 'AYAH', 'name' => 'Budi Pratama', 'phone' => '081234567890', 'is_primary' => true]], 'complete' => true])->assertOk();
-    $akta = $track->requirements()->where('name', 'Akta kelahiran')->sole();
-    test()->post("{$base}/dokumen/{$akta->public_id}", ['file' => UploadedFile::fake()->image('akta.jpg')])->assertSessionHasNoErrors();
-}
 
 describe('akun PPDB', function () {
     it('daftar akun → email verifikasi → portal terbuka setelah verifikasi', function () {

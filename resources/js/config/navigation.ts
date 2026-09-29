@@ -110,6 +110,23 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             href: '/kepala-sekolah/ppdb',
             icon: UserRoundPlus,
             permission: 'ppdb.decide',
+            children: [
+                {
+                    label: 'Dashboard',
+                    href: '/kepala-sekolah/ppdb/dashboard',
+                    icon: UserRoundPlus,
+                },
+                {
+                    label: 'Seleksi',
+                    href: '/kepala-sekolah/ppdb/seleksi',
+                    icon: UserRoundPlus,
+                },
+                {
+                    label: 'Pendaftar',
+                    href: '/kepala-sekolah/ppdb/pendaftar',
+                    icon: UserRoundPlus,
+                },
+            ],
         },
         {
             label: 'Laporan',
@@ -382,6 +399,21 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             icon: UserRoundPlus,
             permission: 'ppdb.manage',
             children: [
+                {
+                    label: 'Dashboard',
+                    href: '/operator/ppdb/dashboard',
+                    icon: UserRoundPlus,
+                },
+                {
+                    label: 'Pendaftar',
+                    href: '/operator/ppdb/pendaftar',
+                    icon: UserRoundPlus,
+                },
+                {
+                    label: 'Seleksi',
+                    href: '/operator/ppdb/seleksi',
+                    icon: UserRoundPlus,
+                },
                 {
                     label: 'Periode & Jalur',
                     href: '/operator/ppdb/periode',

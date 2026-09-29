@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property CarbonImmutable $opens_at
  * @property CarbonImmutable $closes_at
  * @property CarbonImmutable|null $announces_at
+ * @property CarbonImmutable|null $results_published_at
  * @property string|null $description
  * @property bool $is_active
  * @property int|null $created_by
@@ -31,7 +32,7 @@ class PpdbPeriod extends Model
 {
     use HasPublicId, SoftDeletes;
 
-    protected $fillable = ['name', 'academic_year_id', 'grade', 'opens_at', 'closes_at', 'announces_at', 'description', 'is_active', 'created_by'];
+    protected $fillable = ['name', 'academic_year_id', 'grade', 'opens_at', 'closes_at', 'announces_at', 'results_published_at', 'description', 'is_active', 'created_by'];
 
     protected $hidden = ['id', 'academic_year_id', 'created_by'];
 
@@ -45,6 +46,7 @@ class PpdbPeriod extends Model
             'opens_at' => 'immutable_datetime',
             'closes_at' => 'immutable_datetime',
             'announces_at' => 'immutable_datetime',
+            'results_published_at' => 'immutable_datetime',
             'is_active' => 'boolean',
         ];
     }

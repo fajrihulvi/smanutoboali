@@ -26,7 +26,18 @@ export type ApplicantRow = {
     revision_note: string | null;
     submitted_at: string | null;
     created_at: string;
-    can: { update: boolean; delete: boolean };
+    reregistration_submitted_at: string | null;
+    reregistered_at: string | null;
+    can: { update: boolean; delete: boolean; reregister: boolean };
+    /** Hanya untuk staf. */
+    selection?: {
+        score: number | null;
+        note: string | null;
+        proposal: { value: 'DITERIMA' | 'TIDAK'; label: string } | null;
+        decided_at: string | null;
+        result_notified_at: string | null;
+    };
+    verified_at?: string | null;
 };
 
 export type StudentData = {

@@ -4,11 +4,17 @@ namespace App\Modules\Ppdb\Database\Seeders;
 
 use App\Models\User;
 use App\Modules\Core\Enums\Role;
+use App\Modules\Ppdb\Actions\ReviewDocumentAction;
 use App\Modules\Ppdb\Actions\SaveApplicationDraftAction;
 use App\Modules\Ppdb\Actions\SavePeriodAction;
+use App\Modules\Ppdb\Actions\ScoreApplicantAction;
 use App\Modules\Ppdb\Actions\StartApplicationAction;
 use App\Modules\Ppdb\Actions\SubmitApplicationAction;
+use App\Modules\Ppdb\Actions\TransitionApplicantAction;
 use App\Modules\Ppdb\Actions\UploadDocumentAction;
+use App\Modules\Ppdb\Enums\DocumentStatus;
+use App\Modules\Ppdb\Models\PpdbApplicant;
+use App\Modules\Ppdb\Models\PpdbDocument;
 use App\Modules\Ppdb\Models\PpdbPeriod;
 use App\Modules\Ppdb\Models\PpdbTrack;
 use App\Modules\School\Actions\CreateAcademicYearAction;
@@ -31,6 +37,9 @@ class PpdbDemoSeeder extends Seeder
         UploadDocumentAction $upload,
         SubmitApplicationAction $submit,
         CreateAcademicYearAction $createYear,
+        ReviewDocumentAction $review,
+        TransitionApplicantAction $transition,
+        ScoreApplicantAction $scorer,
     ): void {
         $operator = User::query()->where('email', 'operator@skoolia.test')->first();
 
@@ -79,9 +88,16 @@ class PpdbDemoSeeder extends Seeder
         $draft = $start->handle($demo, $regular);
         $save->handle($draft, ['name' => 'Raka Wijaya', 'gender' => 'L']);
 
-        foreach ([['Dimas Saputra', 'L', 'Agus Saputra', $regular], ['Salsa Maharani', 'P', 'Rina Maharani', $achievement], ['Fajar Nugroho', 'L', 'Tono Nugroho', $regular]] as $i => [$child, $gender, $parent, $track]) {
+        foreach ([['Dimas Saputra', 'L', 'Agus Saputra', $regular, 86.5], ['Salsa Maharani', 'P', 'Rina Maharani', $achievement, 92], ['Fajar Nugroho', 'L', 'Tono Nugroho', $regular, null]] as $i => [$child, $gender, $parent, $track, $score]) {
             $account = $this->applicantAccount("pendaftar{$i}@skoolia.test", $parent);
-            $this->completeApplication($start, $save, $upload, $submit, $account, $track, $child, $gender, '2014-0'.($i + 1).'-15', $parent, '0812330000'.$i);
+            $applicant = $this->completeApplication($start, $save, $upload, $submit, $account, $track, $child, $gender, '2014-0'.($i + 1).'-15', $parent, '0812330000'.$i);
+
+            // Dua pendaftar sudah diverifikasi & diberi skor agar menu Seleksi langsung bisa dicoba.
+            if ($score !== null) {
+                $applicant->documents()->get()->each(fn (PpdbDocument $d) => $review->handle($d, DocumentStatus::Valid, null, $operator));
+                $transition->verify($applicant, $operator);
+                $scorer->handle($applicant, (float) $score, null, null);
+            }
         }
     }
 
@@ -106,7 +122,7 @@ class PpdbDemoSeeder extends Seeder
         string $birthDate,
         string $parent,
         string $phone,
-    ): void {
+    ): PpdbApplicant {
         $applicant = $start->handle($account, $track);
         $save->handle($applicant, [
             'name' => $child, 'nik' => '19710'.str_pad((string) random_int(0, 99999999999), 11, '0', STR_PAD_LEFT), 'gender' => $gender,
@@ -121,6 +137,6 @@ class PpdbDemoSeeder extends Seeder
             $upload->handle($applicant, $requirement, UploadedFile::fake()->image(str($requirement->name)->slug().'.jpg', 800, 1100), $account);
         }
 
-        $submit->handle($applicant->fresh() ?? $applicant);
+        return $submit->handle($applicant->fresh() ?? $applicant);
     }
 }

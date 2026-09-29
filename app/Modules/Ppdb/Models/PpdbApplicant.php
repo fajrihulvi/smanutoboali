@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Modules\People\Enums\Gender;
 use App\Modules\People\Enums\Religion;
 use App\Modules\Ppdb\Enums\ApplicantStatus;
+use App\Modules\Ppdb\Enums\SelectionProposal;
 use App\Support\Concerns\HasPublicId;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Collection;
@@ -35,6 +36,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $previous_school
  * @property string|null $revision_note
  * @property string|null $score
+ * @property string|null $selection_note
+ * @property SelectionProposal|null $proposal
+ * @property int|null $decided_by
+ * @property CarbonImmutable|null $result_notified_at
+ * @property CarbonImmutable|null $reregistration_submitted_at
+ * @property CarbonImmutable|null $reregistered_at
+ * @property int|null $reregistered_by
  * @property int|null $student_id
  * @property CarbonImmutable|null $submitted_at
  * @property CarbonImmutable|null $verified_at
@@ -53,10 +61,11 @@ class PpdbApplicant extends Model
     protected $fillable = [
         'registration_number', 'ppdb_period_id', 'ppdb_track_id', 'user_id', 'status',
         'name', 'nik', 'nisn', 'gender', 'birth_place', 'birth_date', 'religion', 'address', 'previous_school',
-        'revision_note', 'score', 'student_id', 'submitted_at', 'verified_at', 'decided_at',
+        'revision_note', 'score', 'selection_note', 'proposal', 'student_id', 'submitted_at', 'verified_at',
+        'decided_at', 'decided_by', 'result_notified_at', 'reregistration_submitted_at', 'reregistered_at', 'reregistered_by',
     ];
 
-    protected $hidden = ['id', 'ppdb_period_id', 'ppdb_track_id', 'user_id', 'student_id'];
+    protected $hidden = ['id', 'ppdb_period_id', 'ppdb_track_id', 'user_id', 'student_id', 'decided_by', 'reregistered_by'];
 
     /**
      * @return array<string, string>
@@ -71,7 +80,27 @@ class PpdbApplicant extends Model
             'submitted_at' => 'immutable_datetime',
             'verified_at' => 'immutable_datetime',
             'decided_at' => 'immutable_datetime',
+            'proposal' => SelectionProposal::class,
+            'result_notified_at' => 'immutable_datetime',
+            'reregistration_submitted_at' => 'immutable_datetime',
+            'reregistered_at' => 'immutable_datetime',
         ];
+    }
+
+    /**
+     * Status yang boleh dilihat pendaftar: keputusan (diterima/tidak) baru terlihat
+     * setelah hasil periode diumumkan; sebelumnya tetap "Seleksi".
+     */
+    public function visibleStatus(): ApplicantStatus
+    {
+        $decided = in_array($this->status, [ApplicantStatus::Accepted, ApplicantStatus::Rejected], true);
+
+        return $decided && $this->period->results_published_at === null ? ApplicantStatus::InSelection : $this->status;
+    }
+
+    public function resultPublished(): bool
+    {
+        return $this->period->results_published_at !== null && $this->decided_at !== null;
     }
 
     /**

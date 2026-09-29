@@ -50,7 +50,8 @@ function conditionScenario(): array
     enrollIn($classroom, $child);
 
     $otherParent = User::factory()->withRole(Role::Guardian)->create();
-    $otherChild = Student::factory()->withGuardian(Guardian::factory()->withAccount($otherParent)->create())->create();
+    // Nama tetap: nama acak Faker bisa mengandung "ani" dan merusak test pencarian.
+    $otherChild = Student::factory()->withGuardian(Guardian::factory()->withAccount($otherParent)->create())->create(['name' => 'Bima']);
     enrollIn($classroom, $otherChild);
 
     return [

@@ -31,22 +31,40 @@ class ApplicantResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // Pemilik hanya melihat keputusan setelah hasil diumumkan.
+        $owner = $request->user()?->id === $this->user_id;
+        $status = $owner ? $this->visibleStatus() : $this->status;
+
         $data = [
             'public_id' => $this->public_id,
             'registration_number' => $this->registration_number,
-            'status' => $this->status->toOption(),
-            'step' => $this->status->step(),
+            'status' => $status->toOption(),
+            'step' => $status->step(),
             'name' => $this->name,
             'period' => ['public_id' => $this->period->public_id, 'name' => $this->period->name, 'grade' => $this->period->grade, 'announces_at' => $this->period->announces_at?->toIso8601String()],
             'track' => ['public_id' => $this->track->public_id, 'name' => $this->track->name],
             'revision_note' => $this->revision_note,
             'submitted_at' => $this->submitted_at?->toIso8601String(),
             'created_at' => $this->created_at->toIso8601String(),
+            'reregistration_submitted_at' => $this->reregistration_submitted_at?->toIso8601String(),
+            'reregistered_at' => $this->reregistered_at?->toIso8601String(),
             'can' => [
                 'update' => $request->user()?->can('update', $this->resource) ?? false,
                 'delete' => $request->user()?->can('delete', $this->resource) ?? false,
+                'reregister' => $request->user()?->can('reregister', $this->resource) ?? false,
             ],
         ];
+
+        if (! $owner) {
+            $data['selection'] = [
+                'score' => $this->score !== null ? (float) $this->score : null,
+                'note' => $this->selection_note,
+                'proposal' => $this->proposal ? ['value' => $this->proposal->value, 'label' => $this->proposal->label()] : null,
+                'decided_at' => $this->decided_at?->toIso8601String(),
+                'result_notified_at' => $this->result_notified_at?->toIso8601String(),
+            ];
+            $data['verified_at'] = $this->verified_at?->toIso8601String();
+        }
 
         if (! $this->detail) {
             return $data;

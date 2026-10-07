@@ -8,6 +8,7 @@ use App\Modules\People\Http\Controllers\Operator\StudentController;
 use App\Modules\People\Http\Controllers\Operator\StudentGuardianController;
 use App\Modules\People\Http\Controllers\Operator\StudentImportController;
 use App\Modules\People\Http\Controllers\Operator\TeacherController;
+use App\Modules\People\Http\Controllers\Operator\TeacherImportController;
 use App\Modules\People\Http\Controllers\Principal\StudentController as PrincipalStudentController;
 use App\Modules\People\Http\Controllers\Principal\TeacherController as PrincipalTeacherController;
 use App\Modules\People\Http\Controllers\Teacher\ProfileController as TeacherProfileController;
@@ -25,6 +26,9 @@ Route::middleware(['auth', 'active.role:operator', 'permission:master_data.manag
         Route::get('guru', [TeacherController::class, 'index'])->name('teachers.index');
         Route::get('guru/tambah', [TeacherController::class, 'create'])->name('teachers.create');
         Route::post('guru', [TeacherController::class, 'store'])->name('teachers.store');
+        Route::get('guru/impor', [TeacherImportController::class, 'index'])->name('teachers.import');
+        Route::post('guru/impor', [TeacherImportController::class, 'store'])->name('teachers.import.store');
+        Route::get('guru/impor/template', [TeacherImportController::class, 'template'])->name('teachers.import.template');
         Route::get('guru/{teacher}/ubah', [TeacherController::class, 'edit'])->name('teachers.edit');
         Route::post('guru/{teacher}', [TeacherController::class, 'update'])->name('teachers.update');
         Route::delete('guru/{teacher}', [TeacherController::class, 'destroy'])->name('teachers.destroy');

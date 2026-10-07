@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import { Plus } from 'lucide-react';
+import { FileSpreadsheet, Plus } from 'lucide-react';
 import { FilterBar } from '@/Components/shared/FilterBar';
 import { PageHeader } from '@/Components/shared/PageHeader';
 import { Button } from '@/Components/ui/button';
@@ -45,12 +45,20 @@ export default function TeachersIndex({ teachers, filters, options }: Props) {
                 title="Data Guru"
                 description="Kelola data induk guru dan akun login mereka."
                 actions={
-                    <Button asChild>
-                        <Link href="/operator/master-data/guru/tambah">
-                            <Plus />
-                            Tambah guru
-                        </Link>
-                    </Button>
+                    <>
+                        <Button variant="outline" asChild>
+                            <Link href="/operator/master-data/guru/impor">
+                                <FileSpreadsheet />
+                                Impor Excel
+                            </Link>
+                        </Button>
+                        <Button asChild>
+                            <Link href="/operator/master-data/guru/tambah">
+                                <Plus />
+                                Tambah guru
+                            </Link>
+                        </Button>
+                    </>
                 }
             />
 

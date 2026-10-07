@@ -19,11 +19,12 @@ class CreateTeacherAction
 
     /**
      * @param  array<string, mixed>  $data  atribut teachers yang tervalidasi
+     * @param  bool  $audit  false untuk import massal (dicatat sekali per file)
      * @return array{teacher: Teacher, temporary_password: string|null}
      */
-    public function handle(array $data, ?UploadedFile $photo = null, ?string $accountEmail = null): array
+    public function handle(array $data, ?UploadedFile $photo = null, ?string $accountEmail = null, bool $audit = true): array
     {
-        return DB::transaction(function () use ($data, $photo, $accountEmail) {
+        return DB::transaction(function () use ($data, $photo, $accountEmail, $audit) {
             $teacher = Teacher::query()->create($data);
 
             if ($photo) {
@@ -32,9 +33,11 @@ class CreateTeacherAction
                 ])->save();
             }
 
-            $this->audit->record('people', 'created', "Menambah guru {$teacher->name}", $teacher, [
-                'attributes' => array_map(fn (mixed $value) => $value instanceof \BackedEnum ? $value->value : $value, $data),
-            ]);
+            if ($audit) {
+                $this->audit->record('people', 'created', "Menambah guru {$teacher->name}", $teacher, [
+                    'attributes' => array_map(fn (mixed $value) => $value instanceof \BackedEnum ? $value->value : $value, $data),
+                ]);
+            }
 
             $password = $accountEmail ? $this->linkAccount->handle($teacher, $accountEmail) : null;
 

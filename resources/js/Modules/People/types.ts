@@ -52,7 +52,7 @@ export type StudentRow = {
     guardians?: StudentGuardian[];
 };
 
-export type StudentImportRow = {
+export type ImportRow = {
     public_id: string;
     original_name: string;
     status: Option;

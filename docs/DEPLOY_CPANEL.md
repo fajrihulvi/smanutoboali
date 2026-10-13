@@ -2,6 +2,8 @@
 
 Panduan langkah demi langkah untuk memasang aplikasi (kode: Skoolia) di hosting cPanel **tanpa Node.js atau supervisor**. Arsip bisa diunggah lewat **SSH** (§2a, direkomendasikan) atau File Manager + Terminal cPanel (§2). Berlaku untuk staging maupun produksi.
 
+> Punya **VPS** dan ingin deploy dengan `git push` → `git pull` dari GitHub? Lihat `docs/DEPLOY_VPS_GITHUB.md`.
+
 > Diperbarui untuk **v1.0.0** berdasarkan geladi staging (S35). Arsip rilis dipasang di folder & database baru dengan `APP_ENV=production`, lalu semua halaman keempat portal dibuka. Temuannya dicatat di §12.
 
 ---

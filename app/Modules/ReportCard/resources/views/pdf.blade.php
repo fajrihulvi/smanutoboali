@@ -47,7 +47,7 @@
             @if ($school->npsn)<div class="muted">NPSN {{ $school->npsn }}</div>@endif
             @if ($school->address)<div class="muted">{{ $school->address }}</div>@endif
         </td>
-        <td style="text-align: right;">
+        <td style="text-align: right; white-space: nowrap; padding-left: 12px;">
             <h1>LAPORAN HASIL BELAJAR</h1>
             <div class="muted">{{ $card->semester->label() }} · TA {{ $card->semester->academicYear->name }}</div>
         </td>

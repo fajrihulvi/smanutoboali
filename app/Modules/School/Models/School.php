@@ -29,6 +29,9 @@ class School extends Model
     /** Nama bawaan sebelum profil diisi di Pengaturan Sekolah. */
     public const DEFAULT_NAME = 'SMA NU Toboali';
 
+    /** Alamat bawaan (kop raport & dokumen) sebelum diubah di Pengaturan Sekolah. */
+    public const DEFAULT_ADDRESS = 'Jl. Rias, Desa Rias, Kec. Toboali, Kab. Bangka Selatan, Toboali, Kab. Bangka Selatan, Prov. Kepulauan Bangka Belitung';
+
     protected $fillable = [
         'name', 'npsn', 'level', 'address', 'phone', 'email',
         'logo_file_id', 'principal_name', 'principal_nip', 'principal_signature_file_id',
@@ -66,6 +69,6 @@ class School extends Model
     public static function current(): self
     {
         return static::query()->with('logo')->oldest('id')->first()
-            ?? static::query()->create(['name' => self::DEFAULT_NAME, 'level' => SchoolLevel::Smp]);
+            ?? static::query()->create(['name' => self::DEFAULT_NAME, 'address' => self::DEFAULT_ADDRESS, 'level' => SchoolLevel::Smp]);
     }
 }

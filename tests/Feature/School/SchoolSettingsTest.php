@@ -45,7 +45,9 @@ function schoolPayload(array $overrides = []): array
 it('migrasi membuat satu profil sekolah default', function () {
     expect(School::query()->count())->toBe(1)
         ->and(School::current()->level)->toBe(SchoolLevel::Smp)
-        ->and(School::current()->name)->toBe(School::DEFAULT_NAME);
+        ->and(School::current()->name)->toBe(School::DEFAULT_NAME)
+        // Alamat untuk kop raport diisi migrasi 2026_10_13 bila masih kosong.
+        ->and(School::current()->address)->toBe(School::DEFAULT_ADDRESS);
 });
 
 it('migrasi memindahkan identitas lama dari settings ke schools', function () {

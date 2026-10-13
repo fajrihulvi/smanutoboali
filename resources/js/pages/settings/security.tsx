@@ -1,4 +1,5 @@
 import { Head, useForm } from '@inertiajs/react';
+import { AlertTriangle } from 'lucide-react';
 import type { FormEvent } from 'react';
 import InputError from '@/Components/input-error';
 import PasswordInput from '@/Components/password-input';
@@ -8,7 +9,12 @@ import { Spinner } from '@/Components/ui/spinner';
 import RoleLayout from '@/Layouts/RoleLayout';
 import SettingsLayout from '@/Layouts/settings/layout';
 
-export default function Security() {
+type Props = {
+    /** Akun berpassword awal: wajib ganti sebelum memakai aplikasi. */
+    mustChangePassword: boolean;
+};
+
+export default function Security({ mustChangePassword }: Props) {
     const form = useForm({
         current_password: '',
         password: '',
@@ -33,6 +39,19 @@ export default function Security() {
             <Head title="Keamanan" />
 
             <SettingsLayout>
+                {mustChangePassword && (
+                    <p
+                        role="alert"
+                        className="mb-6 flex items-start gap-2 rounded-xl bg-amber-50 p-3 text-sm text-amber-900"
+                    >
+                        <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+                        <span>
+                            <strong>Ganti password awal Anda.</strong> Akun ini
+                            masih memakai password bawaan dari sekolah. Menu
+                            lain bisa dibuka setelah password diganti.
+                        </span>
+                    </p>
+                )}
                 <h2 className="text-base font-semibold text-slate-900">
                     Ganti password
                 </h2>

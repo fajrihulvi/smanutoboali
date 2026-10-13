@@ -14,16 +14,31 @@ use Illuminate\Validation\Rules\Password;
 use RuntimeException;
 
 /**
- * Seeder produksi (S35): TANPA data demo.
+ * Seeder produksi: TANPA data demo.
  *
  * - role & permission (aman dijalankan ulang; perubahan di menu Role & Permission tidak dicabut);
  * - profil sekolah awal (nama/jenjang dari SCHOOL_NAME / SCHOOL_LEVEL bila diisi);
+ * - empat akun default (operator, kepala sekolah, guru, orang tua) @ACCOUNT_DOMAIN dengan
+ *   password awal DEFAULT_ACCOUNT_PASSWORD (aturan password produksi). Pengguna wajib
+ *   mengganti password saat pertama login. Akun yang sudah ada tidak diubah.
+ *
  * Nilai dibaca lewat config('skoolia.setup') agar tetap jalan saat config di-cache.
- * - satu akun operator dari OPERATOR_NAME, OPERATOR_EMAIL, OPERATOR_PASSWORD (password kuat).
- *   Bila email sudah ada, akun tidak diubah. Hapus OPERATOR_PASSWORD dari .env setelah selesai.
+ * Hapus DEFAULT_ACCOUNT_PASSWORD dari .env setelah selesai.
  */
 class ProductionSeeder extends Seeder
 {
+    /**
+     * Akun default: [bagian lokal email, nama tampilan, role].
+     *
+     * @var list<array{0: string, 1: string, 2: Role}>
+     */
+    public const ACCOUNTS = [
+        ['operator', 'Operator Sekolah', Role::Operator],
+        ['kepsek', 'Kepala Sekolah', Role::Principal],
+        ['guru', 'Guru', Role::Teacher],
+        ['ortu', 'Orang Tua', Role::Guardian],
+    ];
+
     public function run(CreateUserAction $createUser): void
     {
         $this->call(RolesAndPermissionsSeeder::class);
@@ -36,39 +51,48 @@ class ProductionSeeder extends Seeder
             $school->update(array_filter(['name' => $name, 'level' => $level]));
         }
 
-        $email = strtolower(trim((string) config('skoolia.setup.operator_email')));
+        $domain = strtolower(trim((string) config('skoolia.setup.account_domain'), " \t\n\r\0\x0B@"));
+        $accounts = array_map(fn (array $a) => ['email' => "{$a[0]}@{$domain}", 'name' => $a[1], 'role' => $a[2]], self::ACCOUNTS);
+        $missing = array_values(array_filter($accounts, fn (array $a) => ! User::query()->where('email', $a['email'])->exists()));
 
-        if ($email === '') {
-            $this->command?->warn('OPERATOR_EMAIL kosong: akun operator tidak dibuat. Gunakan `php artisan skoolia:make-operator`.');
-
-            return;
-        }
-
-        if (User::query()->where('email', $email)->exists()) {
-            $this->command?->info("Operator {$email} sudah ada — dilewati.");
+        if ($missing === []) {
+            $this->command?->info('Akun default sudah ada — dilewati.');
 
             return;
         }
 
-        $data = [
-            'name' => trim((string) config('skoolia.setup.operator_name', 'Operator Sekolah')),
-            'email' => $email,
-            'password' => (string) config('skoolia.setup.operator_password'),
-        ];
+        $password = (string) config('skoolia.setup.default_password');
 
-        $validator = Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255'],
-            'password' => ['required', Password::default()],
-        ], [], ['password' => 'OPERATOR_PASSWORD']);
+        if ($password === '') {
+            $this->command?->warn('DEFAULT_ACCOUNT_PASSWORD kosong: akun default tidak dibuat. Isi di .env lalu jalankan ulang, atau pakai `php artisan skoolia:make-operator`.');
+
+            return;
+        }
+
+        $validator = Validator::make(
+            ['domain' => "operator@{$domain}", 'password' => $password],
+            ['domain' => ['required', 'email', 'max:255'], 'password' => ['required', Password::default()]],
+            [],
+            ['domain' => 'ACCOUNT_DOMAIN', 'password' => 'DEFAULT_ACCOUNT_PASSWORD'],
+        );
 
         if ($validator->fails()) {
-            throw new RuntimeException('Akun operator tidak dibuat: '.implode(' ', $validator->errors()->all()));
+            throw new RuntimeException('Akun default tidak dibuat: '.implode(' ', $validator->errors()->all()));
         }
 
-        $user = $createUser->handle([...$data, 'roles' => [Role::Operator->value], 'is_active' => true]);
-        $user->forceFill(['email_verified_at' => now()])->save();
+        foreach ($missing as $account) {
+            $user = $createUser->handle([
+                'name' => $account['name'],
+                'email' => $account['email'],
+                'password' => $password,
+                'roles' => [$account['role']->value],
+                'is_active' => true,
+            ]);
+            $user->forceFill(['email_verified_at' => now(), 'must_change_password' => true])->save();
 
-        $this->command?->info("Operator {$email} dibuat. Hapus OPERATOR_PASSWORD dari .env sekarang.");
+            $this->command?->info("Akun {$account['role']->label()} dibuat: {$account['email']}");
+        }
+
+        $this->command?->warn('Hapus DEFAULT_ACCOUNT_PASSWORD dari .env sekarang. Setiap akun wajib mengganti password saat pertama login.');
     }
 }

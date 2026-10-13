@@ -18,6 +18,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $name
  * @property string $email
  * @property bool $is_active
+ * @property bool $must_change_password
  * @property CarbonImmutable|null $email_verified_at
  * @property CarbonImmutable|null $last_login_at
  */
@@ -55,7 +56,20 @@ class User extends Authenticatable
             'last_login_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'must_change_password' => 'boolean',
         ];
+    }
+
+    /**
+     * Password diganti (lewat profil, reset password, atau operator) → kewajiban ganti password selesai.
+     */
+    protected static function booted(): void
+    {
+        static::updating(function (User $user) {
+            if ($user->isDirty('password') && ! $user->isDirty('must_change_password')) {
+                $user->must_change_password = false;
+            }
+        });
     }
 
     public function hasRoleEnum(Role $role): bool

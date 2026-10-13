@@ -129,7 +129,10 @@ class GoLiveCheck extends Command
         $weak = $admins->filter(fn (User $u) => Hash::check('password', $u->password))->pluck('email');
         $this->check('Tidak ada operator/kepsek berpassword "password"', $weak->isEmpty(), 'Ganti password: '.$weak->implode(', '));
 
-        $this->check('OPERATOR_PASSWORD sudah dihapus dari .env', blank(config('skoolia.setup.operator_password')), 'Hapus setelah seeding, lalu php artisan optimize', warnOnly: true);
+        $this->check('DEFAULT_ACCOUNT_PASSWORD sudah dihapus dari .env', blank(config('skoolia.setup.default_password')), 'Hapus setelah seeding, lalu php artisan optimize', warnOnly: true);
+
+        $initial = User::query()->where('is_active', true)->where('must_change_password', true)->pluck('email');
+        $this->check('Akun default sudah mengganti password awal', $initial->isEmpty(), 'Login & ganti password: '.$initial->implode(', '), warnOnly: true);
         $school = School::current();
         $this->check('Profil sekolah sudah diisi (NPSN & alamat)', filled($school->npsn) && filled($school->address), 'Menu Pengaturan Sekolah', warnOnly: true);
 

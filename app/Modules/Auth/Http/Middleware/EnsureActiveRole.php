@@ -14,9 +14,13 @@ use Symfony\Component\HttpFoundation\Response;
  * Alias 'active.role'.
  *  - active.role          : user login, aktif, dan punya role aktif yang sah.
  *  - active.role:teacher  : role aktif di session harus 'teacher'.
+ *  - akun berpassword awal (must_change_password) hanya boleh membuka halaman ganti password.
  */
 class EnsureActiveRole
 {
+    /** Halaman yang tetap bisa dibuka sebelum password awal diganti. */
+    private const PASSWORD_ROUTES = ['security.edit', 'user-password.update'];
+
     public function __construct(private ActiveRoleService $activeRole) {}
 
     public function handle(Request $request, Closure $next, ?string $required = null): Response
@@ -34,6 +38,12 @@ class EnsureActiveRole
 
             return redirect()->route('login')
                 ->with('error', 'Akun Anda sedang dinonaktifkan. Hubungi operator sekolah.');
+        }
+
+        if ($user->must_change_password && ! $request->routeIs(self::PASSWORD_ROUTES)) {
+            abort_if($request->expectsJson() && ! $request->header('X-Inertia'), 403, 'Ganti password awal terlebih dahulu.');
+
+            return redirect()->route('security.edit');
         }
 
         $session = $request->session();

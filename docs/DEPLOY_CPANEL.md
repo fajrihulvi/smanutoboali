@@ -1,6 +1,6 @@
-# Deploy Skoolia ke cPanel (Shared Hosting)
+# Deploy SMA NU Toboali ke cPanel (Shared Hosting)
 
-Panduan langkah demi langkah untuk memasang Skoolia di hosting cPanel **tanpa Node.js, supervisor, atau SSH wajib** (cukup Terminal cPanel). Berlaku untuk staging maupun produksi.
+Panduan langkah demi langkah untuk memasang aplikasi (kode: Skoolia) di hosting cPanel **tanpa Node.js atau supervisor**. Arsip bisa diunggah lewat **SSH** (§2a, direkomendasikan) atau File Manager + Terminal cPanel (§2). Berlaku untuk staging maupun produksi.
 
 > Diperbarui untuk **v1.0.0** berdasarkan geladi staging (S35). Arsip rilis dipasang di folder & database baru dengan `APP_ENV=production`, lalu semua halaman keempat portal dibuka. Temuannya dicatat di §12.
 
@@ -28,7 +28,7 @@ Catat path PHP CLI hosting, contoh `/opt/cpanel/ea-php83/root/usr/bin/php` (liha
 
 ```bash
 git status                          # pastikan bersih & sudah di-commit
-scripts/build-release.sh 1.0.0      # → build/skoolia-1.0.0.zip + .sha256
+scripts/build-release.sh 1.1.0      # → build/skoolia-1.1.0.zip + .sha256
 ```
 
 Arsip berisi `vendor/` (tanpa paket dev), `public/build/` (aset sudah di-build), dan file `VERSION`. Arsip **tidak** berisi `.env`, `node_modules`, `tests`, dan `docs`. Skrip gagal bila build frontend tidak menghasilkan `public/build/manifest.json`.
@@ -36,7 +36,7 @@ Arsip berisi `vendor/` (tanpa paket dev), `public/build/` (aset sudah di-build),
 Setelah diunggah, cocokkan checksum di Terminal server (opsional):
 
 ```bash
-sha256sum skoolia-1.0.0.zip      # harus sama dengan isi skoolia-1.0.0.zip.sha256
+sha256sum -c skoolia-1.1.0.zip.sha256   # harus: skoolia-1.1.0.zip: OK
 ```
 
 > Untuk geladi dengan perubahan yang belum di-commit: `git add -A && ALLOW_DIRTY=1 scripts/build-release.sh 1.0.0-rc1`.
@@ -54,7 +54,9 @@ sha256sum skoolia-1.0.0.zip      # harus sama dengan isi skoolia-1.0.0.zip.sha25
 └── public_html/             ← website lain / tidak dipakai
 ```
 
-1. *File Manager* → unggah zip ke `/home/<user>/`, lalu *Extract*. Hasilnya folder `skoolia/`.
+1. Unggah zip ke `/home/<user>/`, lalu ekstrak. Hasilnya folder `skoolia/`.
+   - **Lewat SSH:** ikuti §2a.
+   - **Lewat File Manager:** *File Manager* → *Upload*, lalu klik kanan zip → *Extract*.
 2. *Domains* → buat/ubah domain (mis. `sekolah.sch.id` atau `app.sekolah.sch.id`) dengan **Document Root** = `skoolia/public`.
 
 **Jika document root tidak bisa diubah** (hanya `public_html`):
@@ -69,6 +71,66 @@ sha256sum skoolia-1.0.0.zip      # harus sama dengan isi skoolia-1.0.0.zip.sha25
 
 ---
 
+## 2a. Unggah lewat SSH (direkomendasikan)
+
+SSH lebih cepat dan andal untuk arsip besar (±18 MB) daripada File Manager, dan semua perintah artisan bisa dijalankan dari terminal komputer sendiri.
+
+### Sekali saja: aktifkan akses SSH
+
+1. **Pastikan SSH tersedia di paket hosting.** Menu *SSH Access* atau *Terminal* harus ada di cPanel. Bila tidak ada, minta penyedia hosting mengaktifkannya dan tanyakan **port SSH**: tidak selalu `22`, banyak hosting memakai `2222` atau `64000`.
+2. **Buat kunci SSH di komputer lokal** (macOS/Linux: Terminal; Windows: PowerShell):
+   ```bash
+   ssh-keygen -t ed25519 -C "deploy-smanutoboali"
+   # Enter untuk lokasi bawaan (~/.ssh/id_ed25519), lalu isi passphrase
+   cat ~/.ssh/id_ed25519.pub        # salin seluruh baris ini
+   ```
+3. **Pasang kunci publik di cPanel:** *SSH Access* → *Manage SSH Keys* → *Import Key*.
+   - Isi nama (mis. `deploy-smanutoboali`) dan tempel isi `id_ed25519.pub` di kolom **Public Key**; kolom private key dikosongkan.
+   - Kembali ke daftar → **Manage** pada kunci tersebut → **Authorize**. Kunci yang belum di-*authorize* akan ditolak.
+4. **Simpan alamat server** di `~/.ssh/config` lokal agar perintah berikutnya pendek:
+   ```text
+   Host smanu
+       HostName smanutoboali.sch.id      # atau IP server dari halaman depan cPanel
+       User <user-cpanel>
+       Port 22                           # ganti sesuai port dari hosting
+       IdentityFile ~/.ssh/id_ed25519
+   ```
+5. **Uji:** `ssh smanu` → muncul prompt `[<user>@server ~]$`. Ketik `exit` untuk keluar.
+
+### Setiap rilis: unggah & ekstrak
+
+Di komputer lokal (folder proyek):
+
+```bash
+scripts/build-release.sh 1.1.0
+scp build/skoolia-1.1.0.zip build/skoolia-1.1.0.zip.sha256 smanu:~/
+ssh smanu
+```
+
+Di server (setelah `ssh smanu`):
+
+```bash
+cd ~
+sha256sum -c skoolia-1.1.0.zip.sha256     # harus: skoolia-1.1.0.zip: OK
+```
+
+Lalu ekstrak, sesuai jenis pemasangan:
+
+- **Pemasangan pertama:**
+  ```bash
+  unzip -q skoolia-1.1.0.zip               # → folder ~/skoolia
+  ```
+  Lanjutkan ke §2 langkah 2 (document root), §3 (`.env`), §4 (artisan), §5 (permission), dan §6 (cron).
+- **Update** dari versi sebelumnya: lihat §10.
+
+**Catatan PHP CLI:** perintah `php` di SSH kadang bukan versi yang dipakai website. Cek dengan `php -v`. Bila kurang dari 8.2, pakai path lengkap PHP dari *MultiPHP Manager* (contoh `/opt/cpanel/ea-php83/root/usr/bin/php artisan …`), atau buat alias sekali saja:
+
+```bash
+echo "alias php='/opt/cpanel/ea-php83/root/usr/bin/php'" >> ~/.bashrc && source ~/.bashrc
+```
+
+---
+
 ## 3. File `.env` (pertama kali)
 
 ```bash
@@ -76,13 +138,13 @@ cd ~/skoolia
 cp .env.example .env
 ```
 
-Edit `.env` (File Manager → Edit). **Nilai yang mengandung spasi wajib diberi tanda kutip**, misalnya `SCHOOL_NAME="SMP Negeri 1 Contoh"`. Tanpa kutip, semua perintah `artisan` gagal dengan *Failed to parse dotenv file* (temuan geladi).
+Edit `.env` lewat SSH (`nano .env`; simpan dengan Ctrl+O, Enter, lalu keluar dengan Ctrl+X) atau lewat File Manager → Edit. **Nilai yang mengandung spasi wajib diberi tanda kutip**, misalnya `SCHOOL_NAME="SMA NU Toboali"`. Tanpa kutip, semua perintah `artisan` gagal dengan *Failed to parse dotenv file* (temuan geladi).
 
 ```dotenv
-APP_NAME=Skoolia
+APP_NAME="SMA NU Toboali"
 APP_ENV=production
 APP_DEBUG=false                  # WAJIB false: detail error tidak boleh tampil
-APP_URL=https://sekolah.sch.id   # https wajib untuk produksi
+APP_URL=https://smanutoboali.sch.id   # https wajib untuk produksi
 APP_FORCE_HTTPS=true             # bila SSL aktif (AutoSSL/Let's Encrypt)
 TRUSTED_PROXIES=*                # bila memakai Cloudflare/proxy hosting
 HEALTH_TOKEN=<token-acak>        # php -r "echo bin2hex(random_bytes(24));"
@@ -107,7 +169,7 @@ MAIL_SCHEME=smtps
 MAIL_USERNAME=no-reply@sekolah.sch.id
 MAIL_PASSWORD=<password-email>
 MAIL_FROM_ADDRESS=no-reply@sekolah.sch.id
-MAIL_FROM_NAME="SMP Negeri 1 Contoh"
+MAIL_FROM_NAME="SMA NU Toboali"
 
 # Realtime (chat & notifikasi langsung) — dashboard.pusher.com, cluster ap1
 BROADCAST_CONNECTION=pusher
@@ -127,11 +189,10 @@ BACKUP_ARCHIVE_PASSWORD=<password-arsip> # opsional: enkripsi ZIP backup (simpan
 DB_DUMP_BINARY_PATH=/usr/bin             # folder mysqldump bila tidak ada di PATH
 
 # Pemasangan awal (dibaca sekali oleh db:seed — lihat §4)
-SCHOOL_NAME="SMP Negeri 1 Contoh"
-SCHOOL_LEVEL=SMP                         # SD / SMP / SMA / SMK
-OPERATOR_NAME="Nama Operator"
-OPERATOR_EMAIL=operator@sekolah.sch.id
-OPERATOR_PASSWORD="<min 12 karakter, huruf besar-kecil, angka, simbol>"
+SCHOOL_NAME="SMA NU Toboali"
+SCHOOL_LEVEL=SMA                         # SD / SMP / SMA / SMK
+ACCOUNT_DOMAIN=smanutoboali.sch.id       # akun default: operator@, kepsek@, guru@, ortu@<domain>
+DEFAULT_ACCOUNT_PASSWORD="<min 12 karakter, huruf besar-kecil, angka, simbol>"
 ```
 
 - `APP_VERSION` tidak perlu diisi; versi dibaca dari file `VERSION` di arsip rilis.
@@ -145,19 +206,32 @@ OPERATOR_PASSWORD="<min 12 karakter, huruf besar-kecil, angka, simbol>"
 cd ~/skoolia
 php artisan key:generate --force
 php artisan migrate --force
-php artisan db:seed --force        # produksi: role & permission + profil sekolah + 1 operator (tanpa data demo)
+php artisan db:seed --force        # produksi: role & permission + profil sekolah + 4 akun default (tanpa data demo)
 ```
 
-Lalu **hapus baris `OPERATOR_PASSWORD`** dari `.env`, dan lanjutkan:
+Lalu **hapus baris `DEFAULT_ACCOUNT_PASSWORD`** dari `.env`, dan lanjutkan:
 
 ```bash
 php artisan storage:link           # boleh gagal di hosting yang memblokir symlink (lihat §12)
 php artisan optimize
 ```
 
-- Di `APP_ENV=production`, `db:seed` **selalu** memakai `ProductionSeeder`. Akun demo (password `password`) tidak pernah dibuat, dan perintah aman dijalankan ulang (operator yang sudah ada tidak diubah).
-- Password operator yang lemah ditolak (min. 12 karakter, huruf besar & kecil, angka, simbol, dan tidak ada di daftar kebocoran publik).
-- Tanpa `OPERATOR_EMAIL`, buat operator secara interaktif: `php artisan skoolia:make-operator operator@sekolah.sch.id --name="Nama Operator"`.
+- Di `APP_ENV=production`, `db:seed` **selalu** memakai `ProductionSeeder`. Akun demo (`@skoolia.test`, password `password`) tidak pernah dibuat.
+- Akun default yang dibuat, semuanya dengan password awal `DEFAULT_ACCOUNT_PASSWORD`:
+
+  | Email | Role | Nama awal |
+  |---|---|---|
+  | `operator@smanutoboali.sch.id` | Operator | Operator Sekolah |
+  | `kepsek@smanutoboali.sch.id` | Kepala Sekolah | Kepala Sekolah |
+  | `guru@smanutoboali.sch.id` | Guru | Guru |
+  | `ortu@smanutoboali.sch.id` | Orang Tua | Orang Tua |
+
+- **Saat login pertama, setiap akun wajib mengganti password** sebelum bisa membuka menu lain.
+- Nama tampilan bisa diubah di *User Management* atau oleh pemilik akun di *Pengaturan Akun → Profil*.
+- Akun guru & orang tua belum tertaut ke data guru/siswa. Tautkan di *Master Data → Guru/Orang Tua → Ubah → Akun login* dengan email yang sama.
+- Perintah aman dijalankan ulang: akun yang sudah ada tidak diubah.
+- Password awal yang lemah ditolak (min. 12 karakter, huruf besar & kecil, angka, simbol, dan tidak ada di daftar kebocoran publik).
+- Tanpa `DEFAULT_ACCOUNT_PASSWORD`, akun default tidak dibuat. Buat operator secara interaktif: `php artisan skoolia:make-operator operator@smanutoboali.sch.id --name="Nama Operator"`.
 - **Staging yang butuh data demo**: `APP_ENV=staging`, lalu `php artisan migrate:fresh --seed --force`. Jangan pernah di server produksi.
 
 ---
@@ -206,7 +280,7 @@ Satu cron ini menjalankan semua tugas terjadwal:
 ## 7. Verifikasi
 
 1. Buka `https://<domain>/` → beranda website; `https://<domain>/login` → halaman pilihan portal.
-2. Login di `/login/operator` dengan akun dari §4.
+2. Login di `/login/operator` dengan `operator@smanutoboali.sch.id` dan password awal, lalu ganti password saat diminta.
 3. Tunggu ±1 menit setelah `php artisan optimize`. Perintah `optimize:clear` mengosongkan cache, termasuk detak scheduler, yang akan muncul lagi pada menit berikutnya.
 4. Jalankan checklist otomatis:
    ```bash
@@ -221,7 +295,7 @@ Satu cron ini menjalankan semua tugas terjadwal:
    - `status: "degraded"` → cron belum berjalan (scheduler tidak berdetak 5 menit).
    - HTTP `503` + `status: "down"` → koneksi database gagal.
    - HTTP `403` → token salah; `404` → `HEALTH_TOKEN` kosong di `.env`.
-6. Buka URL yang tidak ada (mis. `/xyz`) → halaman 404 bergaya Skoolia, tanpa detail teknis.
+6. Buka URL yang tidak ada (mis. `/xyz`) → halaman 404 berlogo sekolah, tanpa detail teknis.
 7. Menu **Sistem** (operator) menampilkan versi, antrean, backup terakhir, dan ukuran storage.
 8. Jalankan backup pertama: `php artisan skoolia:backup database` (atau tombol **Backup database sekarang** di menu Sistem).
 
@@ -274,10 +348,11 @@ Urutan ringkas; rinciannya ada di `docs/PANDUAN_PENGGUNA.md` (bagian Operator).
 
 ```bash
 # lokal
-scripts/build-release.sh 1.0.1
+scripts/build-release.sh 1.1.1
+scp build/skoolia-1.1.1.zip build/skoolia-1.1.1.zip.sha256 smanu:~/   # lewat SSH (§2a)
 ```
 
-Di server:
+Di server (`ssh smanu`, atau Terminal cPanel):
 
 1. Masuk mode perbaikan. Pengguna melihat halaman "Sedang dalam perbaikan", sementara Anda tetap bisa mengecek lewat tautan rahasia:
    ```bash
@@ -285,11 +360,18 @@ Di server:
    php artisan down --render="errors::503" --retry=60 --secret="<kata-rahasia>"
    # buka https://<domain>/<kata-rahasia> sekali → browser Anda melewati mode perbaikan
    ```
-2. Unggah & extract zip ke folder sementara, lalu salin **menimpa** isi `~/skoolia/` **kecuali** `.env` dan `storage/`.
+2. Ekstrak ke folder sementara, lalu salin **menimpa** isi `~/skoolia/` **kecuali** `.env` dan `storage/`:
+   ```bash
+   cd ~ && sha256sum -c skoolia-1.1.1.zip.sha256
+   rm -rf ~/rilis && mkdir ~/rilis && unzip -q skoolia-1.1.1.zip -d ~/rilis
+   rsync -a --exclude='.env' --exclude='storage/' --exclude='public/storage' ~/rilis/skoolia/ ~/skoolia/
+   rm -rf ~/rilis
+   ```
+   Tanpa `rsync`, pakai File Manager: salin isi `rilis/skoolia/` ke `skoolia/` kecuali `.env` dan `storage/`.
 3. Jalankan:
    ```bash
    php artisan migrate --force
-   php artisan db:seed --force          # tambah permission baru; operator tidak diubah
+   php artisan db:seed --force          # tambah permission baru; akun yang ada tidak diubah
    php artisan optimize:clear && php artisan optimize
    php artisan up
    ```
@@ -340,6 +422,11 @@ Log tidak pernah berisi password, token, atau kunci API.
 | Upload gagal untuk file besar | Batas PHP hosting lebih kecil dari pengaturan Skoolia | Naikkan `upload_max_filesize` & `post_max_size` di *MultiPHP INI Editor*, atau turunkan batas di *Pengaturan Sekolah* |
 | Login ditolak "Terlalu banyak percobaan" | Rate limit 5x/menit per email+IP | Tunggu 1 menit (tercatat di `auth-*.log`) |
 | `/kontak`, `/profil` → 404 | Halaman sistem belum diterbitkan | CMS Website → Halaman → isi & ubah status ke Terbit |
+| SSH: **Permission denied (publickey)** | Kunci belum di-*Authorize*, atau user/kunci salah | cPanel → *SSH Access* → *Manage* → **Authorize**; cek `User` & `IdentityFile` di `~/.ssh/config` |
+| SSH: **Connection refused / timed out** | Port salah, atau SSH belum diaktifkan hosting | Tanyakan port SSH ke penyedia hosting; ubah `Port` di `~/.ssh/config` |
+| `php artisan` di SSH: **requires PHP >= 8.2** | `php` di SSH versi lama | Pakai path PHP lengkap atau alias (§2a) |
+| `db:seed`: **Akun default tidak dibuat: … DEFAULT_ACCOUNT_PASSWORD** | Password awal kurang kuat | Ganti dengan min. 12 karakter campuran (mis. dari pengelola password), beri kutip, lalu `php artisan config:clear` dan ulangi |
+| Setelah login selalu kembali ke halaman *Keamanan* | Akun masih memakai password awal | Ganti password di halaman itu; menu lain terbuka setelahnya |
 
 ---
 
@@ -353,7 +440,7 @@ Jalankan `php artisan skoolia:go-live-check`. Perintah ini memeriksa sebagian be
 - [ ] Email produksi (SMTP) — coba "Lupa password" dan pastikan email diterima **(manual)**
 - [ ] Cron aktif, `/health` → `status: "ok"`
 - [ ] Backup database sudah berjalan, **restore sudah diuji** (§9) **(manual)**, salinan luar server dijadwalkan **(manual)**
-- [ ] Tidak ada akun demo (`@skoolia.test`); tidak ada operator/kepala sekolah berpassword lemah; `OPERATOR_PASSWORD` sudah dihapus dari `.env`
+- [ ] Tidak ada akun demo (`@skoolia.test`); tidak ada operator/kepala sekolah berpassword lemah; `DEFAULT_ACCOUNT_PASSWORD` sudah dihapus dari `.env`; keempat akun default sudah mengganti password awal
 - [ ] Pengaturan Sekolah terisi; halaman website sudah diterbitkan
 - [ ] Aset build ada, tidak ada `public/hot`, folder storage bisa ditulis, `.htaccess` folder upload ada
 - [ ] Temuan & rekomendasi di `docs/SECURITY_REVIEW.md` §4 sudah dipenuhi **(manual)**

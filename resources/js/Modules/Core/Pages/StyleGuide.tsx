@@ -167,7 +167,7 @@ export default function StyleGuide({ students, filters }: Props) {
 
             <PageHeader
                 title="Style Guide — Elegant Blue"
-                description="Semua komponen dasar Skoolia untuk review visual. Hanya tersedia di lingkungan lokal."
+                description="Semua komponen dasar aplikasi untuk review visual. Hanya tersedia di lingkungan lokal."
                 actions={
                     <>
                         <Button variant="outline" asChild>

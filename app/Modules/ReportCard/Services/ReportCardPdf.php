@@ -8,6 +8,7 @@ use App\Modules\ReportCard\Enums\ReportCardStatus;
 use App\Modules\ReportCard\Models\ReportCard;
 use App\Modules\ReportCard\Models\ReportCardDetail;
 use App\Modules\School\Models\School;
+use App\Modules\School\Services\SchoolLogo;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -33,7 +34,7 @@ class ReportCardPdf
         return Pdf::loadView('report-card::pdf', [
             'card' => $card,
             'school' => $school,
-            'logo' => $this->dataUri($school->logo),
+            'logo' => SchoolLogo::dataUri($school->logo),
             'principalSignature' => $this->dataUri($school->principalSignature),
             'homeroom' => $homeroom,
             'homeroomSignature' => $this->dataUri($homeroom?->signature),

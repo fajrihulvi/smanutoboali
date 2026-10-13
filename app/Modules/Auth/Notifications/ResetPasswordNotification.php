@@ -31,9 +31,9 @@ class ResetPasswordNotification extends Notification implements ShouldQueue
         $minutes = config('auth.passwords.'.config('auth.defaults.passwords').'.expire');
 
         return (new MailMessage)
-            ->subject('Atur Ulang Password Akun Skoolia')
+            ->subject('Atur Ulang Password Akun '.config('app.name'))
             ->greeting('Halo!')
-            ->line('Kami menerima permintaan untuk mengatur ulang password akun Skoolia Anda.')
+            ->line('Kami menerima permintaan untuk mengatur ulang password akun '.config('app.name').' Anda.')
             ->action('Atur Ulang Password', $url)
             ->line("Tautan ini berlaku selama {$minutes} menit.")
             ->line('Jika Anda tidak meminta pengaturan ulang password, abaikan email ini. Password Anda tidak akan berubah.')

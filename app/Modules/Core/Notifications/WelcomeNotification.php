@@ -27,7 +27,7 @@ class WelcomeNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'title' => 'Selamat datang di Skoolia',
+            'title' => 'Selamat datang di '.config('app.name'),
             'body' => 'Lengkapi profil Anda dan pastikan password sudah diganti.',
             'url' => '/settings/profile',
         ];

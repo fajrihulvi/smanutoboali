@@ -155,7 +155,7 @@ describe('log khusus', function () {
     });
 });
 
-it('halaman maintenance bergaya Skoolia dan halaman error tanpa tautan javascript', function () {
+it('halaman maintenance bergaya aplikasi dan halaman error tanpa tautan javascript', function () {
     $html = view('errors.503')->render();
     expect($html)->toContain('Sedang dalam perbaikan')->toContain('Coba lagi');
 

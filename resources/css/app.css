@@ -131,11 +131,12 @@
     }
 }
 
-/* Sidebar navy: gradient brand-950 → brand-900 (§6.3) */
+/* Sidebar hijau tua: gradient brand-950 → brand-900 (§6.3) */
 [data-sidebar='sidebar'] {
     background-image: linear-gradient(
         180deg,
         var(--color-brand-950) 0%,
-        var(--color-brand-900) 100%
+        var(--color-brand-900) 60%,
+        var(--color-brand-800) 100%
     );
 }

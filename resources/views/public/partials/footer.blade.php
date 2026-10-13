@@ -54,7 +54,7 @@
     <div class="border-t border-brand-900">
         <div class="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-5 text-xs text-brand-200/70 sm:flex-row sm:justify-between sm:px-6">
             <p>&copy; {{ now()->year }} {{ $school['name'] }}. {{ $settings['footer_text'] }}</p>
-            <p>Dikelola dengan Skoolia</p>
+            <p>Sistem Informasi Sekolah</p>
         </div>
     </div>
 </footer>

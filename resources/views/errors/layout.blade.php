@@ -1,5 +1,5 @@
 {{--
-    Layout halaman error Skoolia. Sengaja memakai CSS inline (tanpa Vite)
+    Layout halaman error aplikasi. Sengaja memakai CSS inline (tanpa Vite)
     agar tetap tampil walau public/build belum ada atau aplikasi gagal boot.
     Nilai warna = token design system di resources/css/app.css.
 --}}
@@ -9,13 +9,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex">
-    <meta name="theme-color" content="#0a1a3f">
-    <title>@yield('code') · @yield('title') — {{ config('app.name', 'Skoolia') }}</title>
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <meta name="theme-color" content="#0a2614">
+    <title>@yield('code') · @yield('title') — {{ config('app.name', 'SMA NU Toboali') }}</title>
+    <link rel="icon" href="/favicon.ico" sizes="any">
     <style>
         :root {
-            --brand-50: #eff6ff; --brand-100: #dbeafe; --brand-500: #3b82f6; --brand-600: #2563eb;
-            --brand-700: #1d4ed8; --brand-900: #0f2a5f; --brand-950: #0a1a3f; --accent: #38bdf8;
+            --brand-50: #effaf1; --brand-100: #d8f3dd; --brand-500: #2a9d4b; --brand-600: #1d803a;
+            --brand-700: #196631; --brand-900: #143f23; --brand-950: #0a2614; --accent: #a3e635;
             --slate-50: #f8fafc; --slate-200: #e2e8f0; --slate-500: #64748b; --slate-900: #0f172a;
         }
         * { box-sizing: border-box; }
@@ -25,13 +25,10 @@
             background: var(--slate-50); color: var(--slate-900); -webkit-font-smoothing: antialiased;
         }
         header {
-            background: linear-gradient(90deg, var(--brand-950), var(--brand-900));
+            background: linear-gradient(90deg, var(--brand-950), var(--brand-900) 60%, var(--brand-700));
             padding: 14px 20px; display: flex; align-items: center; gap: 10px; color: #fff;
         }
-        .logo {
-            width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center;
-            background: linear-gradient(135deg, var(--brand-500), var(--accent));
-        }
+        .logo { width: 36px; height: 36px; object-fit: contain; }
         .brand { font-weight: 600; font-size: 16px; letter-spacing: -0.01em; }
         main { flex: 1; display: grid; place-items: center; padding: 40px 16px; }
         .card {
@@ -55,16 +52,14 @@
         a.primary:hover { background: var(--brand-700); }
         a.secondary { color: var(--slate-900); border: 1px solid var(--slate-200); background: #fff; }
         a.secondary:hover { background: var(--brand-50); color: var(--brand-700); }
-        a:focus-visible { outline: 3px solid rgba(59, 130, 246, .4); outline-offset: 2px; }
+        a:focus-visible { outline: 3px solid rgba(42, 157, 75, .4); outline-offset: 2px; }
         footer { padding: 16px; text-align: center; font-size: 12px; color: var(--slate-500); }
     </style>
 </head>
 <body>
     <header>
-        <span class="logo" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>
-        </span>
-        <span class="brand">Skoolia</span>
+        <img class="logo" src="{{ asset('images/logo.png') }}" alt="" aria-hidden="true">
+        <span class="brand">{{ config('app.name', 'SMA NU Toboali') }}</span>
     </header>
 
     <main>
@@ -83,6 +78,6 @@
         </div>
     </main>
 
-    <footer>Sistem Informasi Sekolah Skoolia</footer>
+    <footer>Sistem Informasi Sekolah {{ config('app.name', 'SMA NU Toboali') }}</footer>
 </body>
 </html>

@@ -5,12 +5,12 @@
     <title>Bukti Pendaftaran {{ $applicant->registration_number }}</title>
     <style>
         body { font-family: 'dejavu sans', sans-serif; font-size: 11px; color: #0f172a; }
-        .head { border-bottom: 2px solid #1e40af; padding-bottom: 8px; margin-bottom: 14px; }
-        .school { font-size: 15px; font-weight: bold; color: #1e3a8a; }
+        .head { border-bottom: 2px solid #196631; padding-bottom: 8px; margin-bottom: 14px; }
+        .school { font-size: 15px; font-weight: bold; color: #17512a; }
         .muted { color: #64748b; }
         h1 { font-size: 16px; margin: 0 0 4px; }
-        .number { font-size: 20px; font-weight: bold; color: #1e3a8a; letter-spacing: 1px; }
-        h2 { font-size: 12px; margin: 16px 0 6px; color: #1e3a8a; border-bottom: 1px solid #e2e8f0; padding-bottom: 3px; }
+        .number { font-size: 20px; font-weight: bold; color: #17512a; letter-spacing: 1px; }
+        h2 { font-size: 12px; margin: 16px 0 6px; color: #17512a; border-bottom: 1px solid #e2e8f0; padding-bottom: 3px; }
         table { width: 100%; border-collapse: collapse; }
         td { padding: 3px 0; vertical-align: top; }
         td.label { width: 32%; color: #64748b; }
@@ -18,10 +18,17 @@
     </style>
 </head>
 <body>
-    <div class="head">
-        <div class="school">{{ $school->name }}</div>
-        <div class="muted">{{ $school->address }}</div>
-    </div>
+    <table class="head">
+        <tr>
+            @if ($logo)
+                <td style="width: 64px; vertical-align: middle;"><img src="{{ $logo }}" alt="Logo" style="height: 52px;"></td>
+            @endif
+            <td style="vertical-align: middle;">
+                <div class="school">{{ $school->name }}</div>
+                <div class="muted">{{ $school->address }}</div>
+            </td>
+        </tr>
+    </table>
 
     <h1>BUKTI PENDAFTARAN PPDB</h1>
     <div class="muted">{{ $applicant->period->name }} · Tahun ajaran {{ $applicant->period->academicYear->name }} · Kelas {{ $applicant->period->grade }} · Jalur {{ $applicant->track->name }}</div>

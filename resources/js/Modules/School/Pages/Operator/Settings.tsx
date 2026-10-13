@@ -770,7 +770,7 @@ export default function Settings({
                                     event.target.value,
                                 )
                             }
-                            placeholder="Transfer ke BSI 1234567890 a.n. Sekolah Skoolia. Cantumkan nama & NIS siswa di berita transfer."
+                            placeholder="Transfer ke BSI 1234567890 a.n. SMA NU Toboali. Cantumkan nama & NIS siswa di berita transfer."
                         />
                     </Field>
                 </Section>

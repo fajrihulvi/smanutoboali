@@ -37,7 +37,7 @@ return new class extends Migration
             : null;
 
         DB::table('schools')->insert([
-            'name' => $legacy->get('school_name') ?: 'Sekolah Skoolia',
+            'name' => $legacy->get('school_name') ?: 'SMA NU Toboali',
             'level' => 'SMP',
             'address' => $legacy->get('school_address'),
             'phone' => $legacy->get('school_phone'),

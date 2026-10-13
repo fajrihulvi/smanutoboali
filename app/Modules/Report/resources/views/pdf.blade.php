@@ -14,13 +14,13 @@
         .kop img { height: 48px; }
         .kop .school { font-size: 13px; font-weight: bold; }
         .muted { color: #475569; }
-        .rule { border-bottom: 2px solid #1e3a8a; margin: 6px 0 10px; }
+        .rule { border-bottom: 2px solid #196631; margin: 6px 0 10px; }
         h1 { font-size: 13px; margin: 0 0 3px; }
         .meta { margin: 0 0 8px; }
         .grid th, .grid td { border: 1px solid #cbd5e1; padding: 3px 5px; }
         .grid th { background: #e2e8f0; font-weight: bold; text-align: left; }
         .grid tr:nth-child(even) td { background: #f8fafc; }
-        .grid tfoot td { background: #eef2ff; font-weight: bold; }
+        .grid tfoot td { background: #effaf1; font-weight: bold; }
         .num { text-align: right; white-space: nowrap; }
         .empty { padding: 12px; text-align: center; color: #64748b; }
         .footer { position: fixed; bottom: -22px; left: 0; right: 0; font-size: 8px; color: #64748b; }

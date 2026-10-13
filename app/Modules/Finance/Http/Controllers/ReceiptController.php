@@ -5,6 +5,7 @@ namespace App\Modules\Finance\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Finance\Models\Payment;
 use App\Modules\School\Models\School;
+use App\Modules\School\Services\SchoolLogo;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
@@ -22,7 +23,8 @@ class ReceiptController extends Controller
         $pdf = Pdf::loadView('finance::receipt', [
             'payment' => $payment,
             'invoice' => $payment->invoice,
-            'school' => School::current(),
+            'school' => $school = School::current(),
+            'logo' => SchoolLogo::dataUri($school->logo),
         ])->setPaper('a5', 'landscape');
 
         return $pdf->download(Str::slug('kwitansi '.$payment->receipt_number).'.pdf');

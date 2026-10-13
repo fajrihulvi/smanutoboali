@@ -148,7 +148,7 @@ class CmsDemoSeeder extends Seeder
             'is_active' => true,
             'starts_at' => null,
             'ends_at' => null,
-            'image' => $this->image('#1e3a8a', 1600, 700),
+            'image' => $this->image('#196631', 1600, 700),
         ], $operator);
 
         $saveBanner->handle([
@@ -160,7 +160,7 @@ class CmsDemoSeeder extends Seeder
             'is_active' => true,
             'starts_at' => null,
             'ends_at' => null,
-            'image' => $this->image('#0f766e', 1600, 700),
+            'image' => $this->image('#17512a', 1600, 700),
         ], $operator);
 
         $settings->save([

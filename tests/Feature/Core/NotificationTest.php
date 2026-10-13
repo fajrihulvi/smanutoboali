@@ -24,7 +24,7 @@ it('mengembalikan notifikasi terbaru milik sendiri', function () {
     $this->getJson('/notifikasi/terbaru')
         ->assertOk()
         ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.title', 'Selamat datang di Skoolia')
+        ->assertJsonPath('data.0.title', 'Selamat datang di '.config('app.name'))
         ->assertJsonPath('data.0.url', '/settings/profile')
         ->assertJsonPath('unread', 1);
 });

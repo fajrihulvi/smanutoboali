@@ -64,14 +64,15 @@ describe('halaman error', function () {
         Route::middleware('web')->get('/_test/boom', fn () => throw new RuntimeException('DB_PASSWORD=rahasia bocor'));
     });
 
-    it('menampilkan halaman 404 bergaya Skoolia', function () {
+    it('menampilkan halaman 404 dengan identitas sekolah', function () {
         $this->get('/tidak-ada-halaman')
             ->assertNotFound()
             ->assertSee('Halaman tidak ditemukan')
-            ->assertSee('Skoolia');
+            ->assertSee(config('app.name'))
+            ->assertSee('images/logo.png');
     });
 
-    it('menampilkan halaman 403 bergaya Skoolia', function () {
+    it('menampilkan halaman 403 dengan identitas sekolah', function () {
         $this->actingAsRole(Role::Guardian);
 
         $this->get('/operator/users')

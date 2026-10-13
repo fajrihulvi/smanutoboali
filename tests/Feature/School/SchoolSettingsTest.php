@@ -6,6 +6,7 @@ use App\Modules\Core\Models\File;
 use App\Modules\Core\Services\SettingsService;
 use App\Modules\School\Enums\SchoolLevel;
 use App\Modules\School\Models\School;
+use App\Modules\School\Services\SchoolLogo;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -44,7 +45,7 @@ function schoolPayload(array $overrides = []): array
 it('migrasi membuat satu profil sekolah default', function () {
     expect(School::query()->count())->toBe(1)
         ->and(School::current()->level)->toBe(SchoolLevel::Smp)
-        ->and(School::current()->name)->toBe('Sekolah Skoolia');
+        ->and(School::current()->name)->toBe(School::DEFAULT_NAME);
 });
 
 it('migrasi memindahkan identitas lama dari settings ke schools', function () {
@@ -72,7 +73,7 @@ it('operator membuka halaman pengaturan sekolah', function () {
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('School::Operator/Settings')
-            ->where('school.name', 'Sekolah Skoolia')
+            ->where('school.name', School::DEFAULT_NAME)
             ->where('school.level', 'SMP')
             ->has('levels', 4)
             ->has('timezones', 3));
@@ -119,6 +120,18 @@ it('mengunggah logo sebagai file publik milik sekolah dan mengganti logo lama', 
 
     $this->post('/operator/settings', schoolPayload(['remove_logo' => true]));
     expect(School::current()->logo_file_id)->toBeNull();
+
+    // Tanpa logo unggahan dipakai logo bawaan public/images/logo.png.
+    $this->get('/operator/dashboard')
+        ->assertInertia(fn (Assert $page) => $page->where('school.logo_url', asset('images/logo.png')));
+});
+
+it('kop PDF memakai logo bawaan bila sekolah belum mengunggah logo', function () {
+    $default = SchoolLogo::dataUri(null);
+
+    expect($default)->toStartWith('data:image/png;base64,')
+        ->and(base64_decode(substr((string) $default, strlen('data:image/png;base64,'))))
+        ->toBe(file_get_contents(public_path('images/logo.png')));
 });
 
 it('menolak logo dengan MIME palsu walau berekstensi .png', function () {

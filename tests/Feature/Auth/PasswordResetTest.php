@@ -23,7 +23,7 @@ it('mengirim email reset berbahasa Indonesia', function () {
     Notification::assertSentTo($user, ResetPasswordNotification::class, function (ResetPasswordNotification $notification) use ($user) {
         $mail = $notification->toMail($user);
 
-        return $mail->subject === 'Atur Ulang Password Akun Skoolia'
+        return $mail->subject === 'Atur Ulang Password Akun '.config('app.name')
             && str_contains((string) $mail->actionUrl, '/reset-password/');
     });
 });

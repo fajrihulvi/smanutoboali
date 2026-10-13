@@ -6,8 +6,8 @@ import { portals } from '@/config/portals';
 import type { AuthLayoutProps } from '@/types';
 
 /**
- * Split-screen: panel gradient biru (identitas portal) | form putih.
- * Di mobile panel biru menjadi header ringkas.
+ * Split-screen: panel gradient hijau (identitas portal) | form putih.
+ * Di mobile panel hijau menjadi header ringkas.
  */
 export default function AuthLayout({
     children,
@@ -18,7 +18,7 @@ export default function AuthLayout({
     const { school } = usePage().props;
     const meta = portal ? portals[portal] : null;
     const PortalIcon = meta?.icon ?? ShieldCheck;
-    const heading = meta?.title ?? 'Selamat datang di Skoolia';
+    const heading = meta?.title ?? `Selamat datang di ${school.name}`;
     const tagline =
         meta?.tagline ??
         'Satu aplikasi untuk kepala sekolah, guru, operator, dan orang tua.';
@@ -27,7 +27,7 @@ export default function AuthLayout({
         <>
             <Head title={title} />
             <div className="grid min-h-dvh bg-white lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
-                {/* Panel biru — desktop */}
+                {/* Panel hijau — desktop */}
                 <aside className="relative hidden overflow-hidden bg-gradient-to-br from-brand-950 via-brand-900 to-brand-700 p-12 text-white lg:flex lg:flex-col">
                     <span className="pointer-events-none absolute -top-24 -right-24 size-80 rounded-full bg-brand-accent/20 blur-3xl" />
                     <span className="pointer-events-none absolute -bottom-32 -left-16 size-96 rounded-full bg-brand-500/25 blur-3xl" />
@@ -39,9 +39,17 @@ export default function AuthLayout({
                     </Link>
 
                     <div className="relative z-10 my-auto max-w-md">
-                        <span className="mb-6 flex size-14 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/20 backdrop-blur">
-                            <PortalIcon className="size-7 text-brand-accent" />
-                        </span>
+                        {meta ? (
+                            <span className="mb-6 flex size-14 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/20 backdrop-blur">
+                                <PortalIcon className="size-7 text-brand-accent" />
+                            </span>
+                        ) : (
+                            <img
+                                src={school.logo_url}
+                                alt={school.name}
+                                className="mb-8 size-32 object-contain drop-shadow-xl"
+                            />
+                        )}
                         <h2 className="text-3xl leading-tight font-semibold">
                             {heading}
                         </h2>

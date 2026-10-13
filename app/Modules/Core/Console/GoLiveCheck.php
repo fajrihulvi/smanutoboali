@@ -130,7 +130,8 @@ class GoLiveCheck extends Command
         $this->check('Tidak ada operator/kepsek berpassword "password"', $weak->isEmpty(), 'Ganti password: '.$weak->implode(', '));
 
         $this->check('OPERATOR_PASSWORD sudah dihapus dari .env', blank(config('skoolia.setup.operator_password')), 'Hapus setelah seeding, lalu php artisan optimize', warnOnly: true);
-        $this->check('Profil sekolah sudah diisi', School::current()->name !== 'Sekolah Skoolia', 'Menu Pengaturan Sekolah', warnOnly: true);
+        $school = School::current();
+        $this->check('Profil sekolah sudah diisi (NPSN & alamat)', filled($school->npsn) && filled($school->address), 'Menu Pengaturan Sekolah', warnOnly: true);
 
         // Halaman sistem (Profil, Visi Misi, Kontak, …) dibuat sebagai draf oleh migrasi (temuan geladi S35).
         $live = WebsitePage::query()->live()->count();

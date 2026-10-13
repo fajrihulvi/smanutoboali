@@ -32,7 +32,7 @@ class ProductionSeeder extends Seeder
         $name = trim((string) config('skoolia.setup.school_name'));
         $level = SchoolLevel::tryFrom(strtoupper(trim((string) config('skoolia.setup.school_level'))));
 
-        if ($name !== '' && $school->name === 'Sekolah Skoolia') {
+        if ($name !== '' && $school->name === School::DEFAULT_NAME) {
             $school->update(array_filter(['name' => $name, 'level' => $level]));
         }
 

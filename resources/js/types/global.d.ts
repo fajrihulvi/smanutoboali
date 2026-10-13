@@ -19,7 +19,7 @@ declare module '@inertiajs/core' {
                 }[];
                 activeChild: string | null;
             } | null;
-            school: { name: string; level: string; logo_url: string | null };
+            school: { name: string; level: string; logo_url: string };
             activePeriod: ActivePeriod | null;
             sidebarOpen: boolean;
             /** null = realtime nonaktif (tanpa kunci Pusher / tamu) → UI memakai fallback. */

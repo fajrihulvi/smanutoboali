@@ -18,9 +18,20 @@ class SchoolProfile
     public function __construct(private FileUrlGenerator $urls) {}
 
     /**
-     * @return array{name: string, level: string, logo_url: string|null}
+     * @return array{name: string, level: string, logo_url: string}
      */
     public function toArray(): array
+    {
+        $profile = $this->cached();
+
+        // Logo bawaan di luar cache agar URL-nya selalu mengikuti APP_URL.
+        return [...$profile, 'logo_url' => $profile['logo_url'] ?? SchoolLogo::defaultUrl()];
+    }
+
+    /**
+     * @return array{name: string, level: string, logo_url: string|null}
+     */
+    private function cached(): array
     {
         try {
             return Cache::rememberForever(self::CACHE_KEY, function () {

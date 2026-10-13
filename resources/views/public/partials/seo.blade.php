@@ -14,7 +14,7 @@
     <meta name="robots" content="noindex, nofollow">
 @endif
 <link rel="canonical" href="{{ $canonical }}">
-<meta name="theme-color" content="#0a1a3f">
+<meta name="theme-color" content="#0a2614">
 <meta property="og:site_name" content="{{ $siteName }}">
 <meta property="og:locale" content="id_ID">
 <meta property="og:type" content="{{ $seo['type'] ?? 'website' }}">

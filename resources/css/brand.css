@@ -1,6 +1,6 @@
 /*
 |--------------------------------------------------------------------------
-| Token "Elegant Blue" bersama — VIBE_PLANNING §6
+| Token warna brand (hijau SMA NU Toboali) bersama — VIBE_PLANNING §6
 |--------------------------------------------------------------------------
 | Dipakai aplikasi (app.css) dan website publik (public.css).
 | Satu-satunya tempat nilai hex warna brand.
@@ -12,16 +12,17 @@
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
 
-    --color-brand-50: #eff6ff;
-    --color-brand-100: #dbeafe;
-    --color-brand-200: #bfdbfe;
-    --color-brand-300: #93c5fd;
-    --color-brand-400: #60a5fa;
-    --color-brand-500: #3b82f6;
-    --color-brand-600: #2563eb;
-    --color-brand-700: #1d4ed8;
-    --color-brand-800: #163a80;
-    --color-brand-900: #0f2a5f;
-    --color-brand-950: #0a1a3f;
-    --color-brand-accent: #38bdf8;
+    /* Hijau SMA NU Toboali — diturunkan dari warna logo (public/images/logo.png). */
+    --color-brand-50: #effaf1;
+    --color-brand-100: #d8f3dd;
+    --color-brand-200: #b3e6be;
+    --color-brand-300: #80d295;
+    --color-brand-400: #4cb869;
+    --color-brand-500: #2a9d4b;
+    --color-brand-600: #1d803a;
+    --color-brand-700: #196631;
+    --color-brand-800: #17512a;
+    --color-brand-900: #143f23;
+    --color-brand-950: #0a2614;
+    --color-brand-accent: #a3e635;
 }

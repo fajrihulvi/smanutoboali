@@ -5,7 +5,7 @@ import { TooltipProvider } from '@/Components/ui/tooltip';
 import '../css/app.css';
 import { resolvePage } from '@/lib/resolve-page';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Skoolia';
+const appName = import.meta.env.VITE_APP_NAME || 'SMA NU Toboali';
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),

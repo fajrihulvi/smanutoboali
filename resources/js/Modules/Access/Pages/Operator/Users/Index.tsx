@@ -122,7 +122,7 @@ export default function UsersIndex({ users, filters, roles }: Props) {
 
             <PageHeader
                 title="Pengguna"
-                description="Kelola akun, role, dan status aktif pengguna Skoolia."
+                description="Kelola akun, role, dan status aktif pengguna aplikasi."
                 actions={
                     <Can permission="user.manage">
                         <Button asChild>

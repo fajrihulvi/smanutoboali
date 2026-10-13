@@ -14,7 +14,7 @@ export default function ApplicantLayout({ children }: { children: ReactNode }) {
 
     return (
         <div className="min-h-dvh bg-slate-50">
-            <header className="sticky top-0 z-30 bg-gradient-to-r from-brand-950 to-brand-900 text-white shadow-sm">
+            <header className="sticky top-0 z-30 bg-gradient-to-r from-brand-950 via-brand-900 to-brand-700 text-white shadow-sm">
                 <div className="mx-auto flex h-14 max-w-4xl items-center gap-2 px-4">
                     <Link
                         href="/ppdb/akun/dashboard"

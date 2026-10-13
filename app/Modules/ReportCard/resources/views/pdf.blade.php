@@ -18,7 +18,7 @@
         .kop img { height: 58px; }
         .kop .school { font-size: 14px; font-weight: bold; }
         .muted { color: #475569; }
-        .rule { border-bottom: 2px solid #1e3a8a; margin: 8px 0 12px; }
+        .rule { border-bottom: 2px solid #196631; margin: 8px 0 12px; }
         .identity td { padding: 2px 0; }
         .grid th, .grid td { border: 1px solid #94a3b8; padding: 5px 6px; vertical-align: top; }
         .grid th { background: #e2e8f0; font-weight: bold; text-align: center; }

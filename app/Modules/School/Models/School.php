@@ -26,6 +26,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class School extends Model
 {
+    /** Nama bawaan sebelum profil diisi di Pengaturan Sekolah. */
+    public const DEFAULT_NAME = 'SMA NU Toboali';
+
     protected $fillable = [
         'name', 'npsn', 'level', 'address', 'phone', 'email',
         'logo_file_id', 'principal_name', 'principal_nip', 'principal_signature_file_id',
@@ -63,6 +66,6 @@ class School extends Model
     public static function current(): self
     {
         return static::query()->with('logo')->oldest('id')->first()
-            ?? static::query()->create(['name' => 'Sekolah Skoolia', 'level' => SchoolLevel::Smp]);
+            ?? static::query()->create(['name' => self::DEFAULT_NAME, 'level' => SchoolLevel::Smp]);
     }
 }

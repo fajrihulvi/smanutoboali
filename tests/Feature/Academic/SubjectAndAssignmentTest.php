@@ -36,6 +36,22 @@ describe('mata pelajaran', function () {
             ->missing('subjects.data.0.id'));
     });
 
+    it('operator memakai kelompok mapel Kepesantrenan', function () {
+        $this->actingAsRole(Role::Operator);
+
+        $this->get('/operator/master-data/mapel')->assertInertia(fn (Assert $page) => $page
+            ->where('groups.3', ['value' => 'KEPESANTRENAN', 'label' => 'Kepesantrenan']));
+
+        $this->post('/operator/master-data/mapel', [
+            'code' => 'TAHFIDZ',
+            'name' => 'Tahfidz Al-Qur\'an',
+            'group' => SubjectGroup::Pesantren->value,
+            'is_active' => true,
+        ])->assertSessionHasNoErrors();
+
+        expect(Subject::query()->sole()->group)->toBe(SubjectGroup::Pesantren);
+    });
+
     it('kode mapel unik', function () {
         Subject::factory()->create(['code' => 'MTK']);
         $this->actingAsRole(Role::Operator);

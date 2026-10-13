@@ -62,6 +62,7 @@ const GROUP_LABEL: Record<string, string> = {
     UMUM: 'Umum',
     PILIHAN: 'Pilihan',
     MUATAN_LOKAL: 'Muatan Lokal',
+    KEPESANTRENAN: 'Kepesantrenan',
 };
 
 function Panel({

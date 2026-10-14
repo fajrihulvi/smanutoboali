@@ -27,3 +27,4 @@ yarn-error.log
 /.zed
 /build
 /VERSION
+/.deploy.env

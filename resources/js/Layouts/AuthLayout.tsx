@@ -1,4 +1,4 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { ShieldCheck } from 'lucide-react';
 import { AppLogo } from '@/Components/app/AppLogo';
 import { FlashToaster } from '@/Components/shared/FlashToaster';
@@ -34,9 +34,10 @@ export default function AuthLayout({
                     <span className="pointer-events-none absolute top-1/3 right-16 size-40 rounded-full border border-white/10" />
                     <span className="pointer-events-none absolute top-1/3 right-24 size-24 rounded-full border border-white/10" />
 
-                    <Link href="/" className="relative z-10 w-fit">
+                    {/* Website publik dirender Blade (bukan Inertia): <a>, bukan <Link>, agar tidak tampil sebagai modal. */}
+                    <a href="/" className="relative z-10 w-fit">
                         <AppLogo />
-                    </Link>
+                    </a>
 
                     <div className="relative z-10 my-auto max-w-md">
                         {meta ? (
@@ -67,9 +68,9 @@ export default function AuthLayout({
                     {/* Header ringkas — mobile */}
                     <header className="relative overflow-hidden bg-gradient-to-br from-brand-950 to-brand-800 px-6 pt-6 pb-8 text-white lg:hidden">
                         <span className="pointer-events-none absolute -top-16 -right-10 size-48 rounded-full bg-brand-accent/20 blur-2xl" />
-                        <Link href="/" className="relative z-10 inline-flex">
+                        <a href="/" className="relative z-10 inline-flex">
                             <AppLogo />
-                        </Link>
+                        </a>
                         <div className="relative z-10 mt-6 flex items-center gap-3">
                             <span className="flex size-10 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/20">
                                 <PortalIcon className="size-5 text-brand-accent" />

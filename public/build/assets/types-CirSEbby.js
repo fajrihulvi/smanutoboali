@@ -1,0 +1,1 @@
+const E={DRAFT:"neutral",REVIEW:"warning",PUBLISHED:"success",ARCHIVED:"neutral"},I={DRAFT:["REVIEW","PUBLISHED","ARCHIVED"],REVIEW:["DRAFT","PUBLISHED"],PUBLISHED:["DRAFT","ARCHIVED"],ARCHIVED:["DRAFT","PUBLISHED"]},A={DRAFT:"Kembalikan ke draf",REVIEW:"Ajukan untuk ditinjau",PUBLISHED:"Terbitkan sekarang",ARCHIVED:"Arsipkan"};export{E as S,I as T,A as a};

@@ -1,0 +1,1 @@
+function e(r){const[n,t]=r.split(":").map(Number);return n*60+t}function o(r){return r.reduce((n,t)=>n+e(t.end_time)-e(t.start_time),0)}function u(r){const n=Math.floor(r/60),t=r%60;return n===0?`${t} menit`:t===0?`${n} jam`:`${n} jam ${t} menit`}export{u as f,o as t};

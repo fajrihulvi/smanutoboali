@@ -34,11 +34,17 @@ class ImportStudentsJob implements ShouldQueue
     {
         $import = $this->import->fresh();
 
-        if (! $import || ! $import->status->canTransitionTo(ImportStatus::Processing)) {
+        // Dijalankan dua jalur (setelah respons unggah & antrean cadangan): hanya satu yang lolos.
+        if (! $import || ! $import->claimForProcessing()) {
             return;
         }
 
-        $import->forceFill(['status' => ImportStatus::Processing])->save();
+        // Jalur setelah-respons berjalan di proses web: jangan terhenti saat browser ditutup.
+        ignore_user_abort(true);
+
+        if (function_exists('set_time_limit')) {
+            @set_time_limit($this->timeout);
+        }
 
         $file = $import->file;
 

@@ -5,6 +5,7 @@ namespace App\Modules\People\Models;
 use App\Models\User;
 use App\Modules\Core\Models\File;
 use App\Modules\People\Enums\ImportStatus;
+use App\Modules\People\Models\Concerns\ProcessesImport;
 use App\Support\Concerns\HasPublicId;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
@@ -31,7 +32,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class StudentImport extends Model
 {
-    use HasPublicId;
+    use HasPublicId, ProcessesImport;
 
     /** Batas error yang disimpan (mencegah kolom JSON membengkak). */
     public const MAX_STORED_ERRORS = 500;

@@ -24,6 +24,9 @@ class StartTeacherImportAction
         // File ditolak (MIME palsu) → catatan import ikut dibatalkan.
         $import = DB::transaction(fn () => $this->prepare($upload, $user));
 
+        // Proses langsung setelah respons terkirim (tanpa menunggu cron/worker antrean);
+        // job antrean tetap dikirim sebagai cadangan bila proses web terhenti sebelum mulai.
+        ImportTeachersJob::dispatchAfterResponse($import);
         ImportTeachersJob::dispatch($import);
 
         return $import;

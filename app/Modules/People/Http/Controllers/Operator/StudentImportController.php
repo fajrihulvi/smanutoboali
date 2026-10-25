@@ -24,6 +24,8 @@ class StudentImportController extends Controller
     {
         $this->authorize('create', Student::class);
 
+        StudentImport::failStale();
+
         $imports = StudentImport::query()
             ->with('creator:id,name')
             ->latest('id')

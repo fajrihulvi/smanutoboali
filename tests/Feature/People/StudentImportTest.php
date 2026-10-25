@@ -8,6 +8,7 @@ use App\Modules\People\Models\Student;
 use App\Modules\People\Models\StudentImport;
 use App\Modules\People\Services\StudentImportRowProcessor;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 use Maatwebsite\Excel\Excel;
@@ -128,4 +129,48 @@ it('mengimpor file .xlsx dari template yang diunduh', function () {
     expect($import->status)->toBe(ImportStatus::Completed)
         ->and($import->success_rows)->toBe(1)
         ->and(Student::query()->where('nis', '20260001')->value('nisn'))->toBe('0112233445');
+});
+
+describe('proses import tanpa menunggu worker antrean', function () {
+    it('selesai pada request unggah itu juga (setelah respons), antrean cadangan tidak mengimpor ulang', function () {
+        config(['queue.default' => 'database']);
+        $this->actingAsRole(Role::Operator);
+
+        $this->post(IMPOR_BASE, ['file' => importCsv([
+            ['nis' => '20260101', 'nama' => 'Tanpa Cron', 'jenis_kelamin' => 'L'],
+        ])])->assertSessionHasNoErrors();
+
+        $import = StudentImport::query()->sole();
+        expect($import->status)->toBe(ImportStatus::Completed)
+            ->and($import->success_rows)->toBe(1)
+            ->and(DB::table('jobs')->count())->toBe(1);
+
+        // Worker cron mengambil job cadangan: import sudah diklaim, tidak ada yang diproses ulang.
+        $this->artisan('queue:work', ['--once' => true, '--stop-when-empty' => true])->assertSuccessful();
+
+        expect(DB::table('jobs')->count())->toBe(0)
+            ->and($import->fresh()->success_rows)->toBe(1)
+            ->and(Student::query()->where('nis', '20260101')->count())->toBe(1);
+    });
+
+    it('hanya satu proses yang bisa mengklaim import', function () {
+        $import = StudentImport::query()->create(['original_name' => 'a.csv', 'status' => ImportStatus::Pending]);
+
+        expect($import->claimForProcessing())->toBeTrue()
+            ->and($import->status)->toBe(ImportStatus::Processing)
+            ->and(StudentImport::query()->findOrFail($import->id)->claimForProcessing())->toBeFalse();
+    });
+
+    it('import yang terhenti lebih dari 15 menit ditandai gagal saat halaman dibuka', function () {
+        $stuck = StudentImport::query()->create(['original_name' => 'besar.xlsx', 'status' => ImportStatus::Processing]);
+        $stuck->forceFill(['updated_at' => now()->subMinutes(20)])->saveQuietly();
+        $running = StudentImport::query()->create(['original_name' => 'jalan.xlsx', 'status' => ImportStatus::Processing]);
+        $this->actingAsRole(Role::Operator);
+
+        $this->get(IMPOR_BASE)->assertOk();
+
+        expect($stuck->fresh()->status)->toBe(ImportStatus::Failed)
+            ->and($stuck->fresh()->failure_message)->toContain('terhenti')
+            ->and($running->fresh()->status)->toBe(ImportStatus::Processing);
+    });
 });

@@ -153,3 +153,19 @@ it('role lain tidak dapat mengimpor guru', function (Role $role) {
     $this->get(GURU_IMPOR_BASE.'/template')->assertForbidden();
     $this->post(GURU_IMPOR_BASE, ['file' => teacherImportCsv([])])->assertForbidden();
 })->with([Role::Principal, Role::Teacher, Role::Guardian]);
+
+it('impor guru selesai tanpa worker antrean dan job cadangan tidak mengimpor ulang', function () {
+    config(['queue.default' => 'database']);
+    $this->actingAsRole(Role::Operator);
+
+    $this->post(GURU_IMPOR_BASE, ['file' => teacherImportCsv([
+        ['nama' => 'Guru Tanpa Cron', 'jenis_kelamin' => 'P', 'status_kepegawaian' => 'GTY'],
+    ])])->assertSessionHasNoErrors();
+
+    expect(TeacherImport::query()->sole()->status)->toBe(ImportStatus::Completed);
+
+    $this->artisan('queue:work', ['--once' => true, '--stop-when-empty' => true])->assertSuccessful();
+
+    expect(Teacher::query()->where('name', 'Guru Tanpa Cron')->count())->toBe(1)
+        ->and(TeacherImport::query()->sole()->success_rows)->toBe(1);
+});

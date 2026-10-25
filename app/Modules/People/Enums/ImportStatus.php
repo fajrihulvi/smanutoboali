@@ -12,7 +12,7 @@ enum ImportStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::Pending => 'Menunggu antrean',
+            self::Pending => 'Menunggu diproses',
             self::Processing => 'Diproses',
             self::Completed => 'Selesai',
             self::Failed => 'Gagal',

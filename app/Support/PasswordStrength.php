@@ -9,8 +9,8 @@ use Illuminate\Validation\Rules\Password;
 /**
  * Aturan kekuatan password per jenis akun.
  *
- * - Akun yang HANYA orang tua / calon pendaftar PPDB: min. 8 karakter, huruf & angka
- *   (produksi: juga tidak boleh ada di daftar kebocoran publik).
+ * - Akun yang HANYA orang tua / calon pendaftar PPDB: min. 8 karakter; di produksi juga
+ *   wajib huruf & angka dan tidak boleh ada di daftar kebocoran publik.
  * - Akun dengan role staf (operator, kepala sekolah, guru) — termasuk guru yang juga
  *   orang tua: aturan bawaan Password::defaults() (produksi: min. 12, huruf besar-kecil,
  *   angka, simbol, tidak bocor).
@@ -46,10 +46,13 @@ final class PasswordStrength
         return $familyOnly ? self::family() : Password::default();
     }
 
+    /**
+     * Seperti Password::defaults(): syarat penuh hanya di produksi, lokal/testing cukup min. 8.
+     */
     private static function family(): Password
     {
-        $rule = Password::min(8)->letters()->numbers();
-
-        return app()->isProduction() ? $rule->uncompromised() : $rule;
+        return app()->isProduction()
+            ? Password::min(8)->letters()->numbers()->uncompromised()
+            : Password::min(8);
     }
 }

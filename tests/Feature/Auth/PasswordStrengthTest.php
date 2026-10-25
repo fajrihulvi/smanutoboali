@@ -25,6 +25,9 @@ function passwordPasses(Password $rule, string $password): bool
 }
 
 it('orang tua & calon pendaftar cukup 8 karakter berisi huruf dan angka', function (array $roles) {
+    app()->detectEnvironment(fn () => 'production');
+    Http::fake(['api.pwnedpasswords.com/*' => Http::response('', 200)]);   // tidak ada yang bocor
+
     $rule = PasswordStrength::forRoles($roles);
 
     expect(passwordPasses($rule, 'rahasia12'))->toBeTrue()

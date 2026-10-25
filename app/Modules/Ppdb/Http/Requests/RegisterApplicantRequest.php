@@ -3,6 +3,8 @@
 namespace App\Modules\Ppdb\Http\Requests;
 
 use App\Models\User;
+use App\Modules\Core\Enums\Role;
+use App\Support\PasswordStrength;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -18,7 +20,7 @@ class RegisterApplicantRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:150'],
             'email' => ['required', 'string', 'email', 'max:150', Rule::unique(User::class, 'email')],
-            'password' => ['required', 'confirmed', Password::defaults()],
+            'password' => ['required', 'confirmed', PasswordStrength::forRoles([Role::Applicant])],
         ];
     }
 

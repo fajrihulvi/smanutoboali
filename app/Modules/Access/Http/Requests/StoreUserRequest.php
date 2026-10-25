@@ -5,6 +5,7 @@ namespace App\Modules\Access\Http\Requests;
 use App\Concerns\PasswordValidationRules;
 use App\Models\User;
 use App\Modules\Core\Enums\Role;
+use App\Support\PasswordStrength;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -26,7 +27,7 @@ class StoreUserRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique(User::class)],
-            'password' => $this->passwordRules(),
+            'password' => $this->passwordRules(PasswordStrength::forRoles((array) $this->input('roles', []))),
             'roles' => ['required', 'array', 'min:1'],
             'roles.*' => ['string', 'distinct', Rule::enum(Role::class)],
             'is_active' => ['boolean'],

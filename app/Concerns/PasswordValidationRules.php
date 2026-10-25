@@ -10,11 +10,12 @@ trait PasswordValidationRules
     /**
      * Get the validation rules used to validate passwords.
      *
+     * @param  Password|null  $strength  aturan kekuatan (lihat PasswordStrength); default = aturan staf
      * @return array<int, Rule|array<mixed>|string>
      */
-    protected function passwordRules(): array
+    protected function passwordRules(?Password $strength = null): array
     {
-        return ['required', 'string', Password::default(), 'confirmed'];
+        return ['required', 'string', $strength ?? Password::default(), 'confirmed'];
     }
 
     /**

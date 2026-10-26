@@ -35,6 +35,8 @@ enum Permission: string
     case ReportExport = 'report.export';
     case SettingManage = 'setting.manage';
     case AuditLogView = 'audit_log.view';
+    case GuestBookManage = 'guest_book.manage';
+    case GuestBookView = 'guest_book.view';
 
     public function label(): string
     {
@@ -64,6 +66,8 @@ enum Permission: string
             self::ReportExport => 'Ekspor laporan',
             self::SettingManage => 'Kelola pengaturan sekolah',
             self::AuditLogView => 'Lihat audit log',
+            self::GuestBookManage => 'Kelola buku tamu',
+            self::GuestBookView => 'Lihat buku tamu',
         };
     }
 
@@ -83,6 +87,7 @@ enum Permission: string
             self::ChatUse, self::ChildConditionRespond, self::ChildConditionSubmit, self::AnnouncementManage => 'Komunikasi',
             self::UserManage, self::RoleManage, self::SettingManage, self::AuditLogView => 'Sistem',
             self::ReportExport => 'Laporan',
+            self::GuestBookManage, self::GuestBookView => 'Buku Tamu',
         };
     }
 
@@ -102,7 +107,8 @@ enum Permission: string
             self::UserManage,
             self::RoleManage,
             self::SettingManage,
-            self::GradeView => [Role::Operator],
+            self::GradeView,
+            self::GuestBookManage => [Role::Operator],
 
             self::StudentView,
             self::ChatUse => [Role::Principal, Role::Teacher, Role::Operator, Role::Guardian],
@@ -117,7 +123,8 @@ enum Permission: string
             self::ChildConditionRespond => [Role::Teacher],
 
             self::ReportCardApprove,
-            self::PpdbDecide => [Role::Principal],
+            self::PpdbDecide,
+            self::GuestBookView => [Role::Principal],
 
             self::FinanceView => [Role::Principal, Role::Operator, Role::Guardian],
             self::ReportExport => [Role::Principal, Role::Teacher, Role::Operator],

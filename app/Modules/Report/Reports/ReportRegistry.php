@@ -18,6 +18,7 @@ class ReportRegistry
         ReceiptsReport::class,
         OutstandingReport::class,
         PpdbReport::class,
+        GuestBookReport::class,
     ];
 
     public function __construct(private Container $container) {}

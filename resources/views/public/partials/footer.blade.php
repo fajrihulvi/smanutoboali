@@ -40,6 +40,7 @@
                 <li><a href="{{ url('guru') }}" class="hover:text-white">Guru</a></li>
                 <li><a href="{{ url('ppdb') }}" class="hover:text-white">PPDB</a></li>
                 <li><a href="{{ url('ppdb/hasil') }}" class="hover:text-white">Cek hasil PPDB</a></li>
+                <li><a href="{{ url('buku-tamu') }}" class="hover:text-white">Buku tamu</a></li>
                 <li><a href="{{ url('login') }}" class="hover:text-white">Masuk portal</a></li>
             </ul>
             @if ($socials)

@@ -13,6 +13,7 @@ use App\Modules\Cms\CmsServiceProvider;
 use App\Modules\Core\CoreServiceProvider;
 use App\Modules\Dashboard\DashboardServiceProvider;
 use App\Modules\Finance\FinanceServiceProvider;
+use App\Modules\GuestBook\GuestBookServiceProvider;
 use App\Modules\People\PeopleServiceProvider;
 use App\Modules\Portfolio\PortfolioServiceProvider;
 use App\Modules\Ppdb\PpdbServiceProvider;
@@ -35,6 +36,7 @@ return [
     CoreServiceProvider::class,
     DashboardServiceProvider::class,
     FinanceServiceProvider::class,
+    GuestBookServiceProvider::class,
     PeopleServiceProvider::class,
     PortfolioServiceProvider::class,
     PpdbServiceProvider::class,

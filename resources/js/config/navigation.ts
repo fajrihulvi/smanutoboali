@@ -2,6 +2,7 @@ import {
     Baby,
     BarChart3,
     BookOpen,
+    BookUser,
     CalendarDays,
     ClipboardCheck,
     FileText,
@@ -146,6 +147,12 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             href: '/kepala-sekolah/pengumuman',
             icon: Megaphone,
             permission: 'announcement.manage',
+        },
+        {
+            label: 'Buku Tamu',
+            href: '/kepala-sekolah/buku-tamu',
+            icon: BookUser,
+            permission: 'guest_book.view',
         },
         {
             label: 'Kondisi Anak',
@@ -361,6 +368,12 @@ export const navigation: Record<RoleCode, MenuItem[]> = {
             href: '/operator/pengumuman',
             icon: Megaphone,
             permission: 'announcement.manage',
+        },
+        {
+            label: 'Buku Tamu',
+            href: '/operator/buku-tamu',
+            icon: BookUser,
+            permission: 'guest_book.manage',
         },
         {
             label: 'Keuangan',

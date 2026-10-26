@@ -90,7 +90,7 @@ describe('akses', function () {
 
         $this->actingAsRole(Role::Operator);
         $this->reportBase = '/operator/laporan';
-        expect(reportCenterKeys())->toBe(['presensi-siswa', 'presensi-guru', 'nilai', 'raport', 'penerimaan', 'tunggakan', 'ppdb']);
+        expect(reportCenterKeys())->toBe(['presensi-siswa', 'presensi-guru', 'nilai', 'raport', 'penerimaan', 'tunggakan', 'ppdb', 'buku-tamu']);
 
         $this->actingAsRole(Role::Principal);
         $this->reportBase = '/kepala-sekolah/laporan';

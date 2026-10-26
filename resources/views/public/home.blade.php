@@ -190,6 +190,25 @@
         </div>
     </section>
 
+    {{-- Buku tamu --}}
+    <section class="px-4 pb-8 sm:px-6">
+        <div class="mx-auto flex max-w-6xl flex-col gap-5 rounded-3xl border border-brand-100 bg-brand-50 px-6 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-10">
+            <div class="flex items-start gap-4">
+                <span class="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-white text-brand-700 shadow-sm">
+                    @include('public.partials.icon', ['name' => 'book-open', 'class' => 'size-6'])
+                </span>
+                <div>
+                    <h2 class="text-xl font-bold text-brand-950">Berkunjung ke sekolah?</h2>
+                    <p class="mt-1 text-slate-600">Isi buku tamu terlebih dahulu agar kami dapat melayani keperluan Anda dengan cepat.</p>
+                </div>
+            </div>
+            <a href="{{ url('buku-tamu') }}" class="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-brand-700 px-5 py-3 font-semibold text-white hover:bg-brand-800">
+                Isi buku tamu
+                @include('public.partials.icon', ['name' => 'arrow-right', 'class' => 'size-4'])
+            </a>
+        </div>
+    </section>
+
     {{-- Ajakan PPDB --}}
     <section class="px-4 pb-16 sm:px-6">
         <div class="mx-auto max-w-6xl overflow-hidden rounded-3xl bg-gradient-to-br from-brand-800 via-brand-700 to-brand-600 px-6 py-12 text-white shadow-lg sm:px-12">

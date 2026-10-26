@@ -1,1 +1,0 @@
-import{c,j as n,a as m}from"./app-D5nK6ul0.js";function p(o){const s=c.c(8);let e,t,r;s[0]!==o?({message:e,className:r,...t}=o,s[0]=o,s[1]=e,s[2]=t,s[3]=r):(e=s[1],t=s[2],r=s[3]);const a=r===void 0?"":r;let l;return s[4]!==a||s[5]!==e||s[6]!==t?(l=e?n.jsx("p",{...t,className:m("text-sm text-rose-600",a),children:e}):null,s[4]=a,s[5]=e,s[6]=t,s[7]=l):l=s[7],l}export{p as I};

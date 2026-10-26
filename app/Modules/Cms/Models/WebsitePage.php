@@ -44,7 +44,7 @@ class WebsitePage extends Model
         'berita', 'agenda', 'galeri', 'guru', 'ppdb', 'login', 'logout', 'register', 'password', 'email', 'settings',
         'dashboard', 'operator', 'kepala-sekolah', 'orang-tua', 'files', 'media', 'webhooks', 'notifikasi',
         'health', 'sitemap', 'sitemap-xml', 'robots-txt', 'style-guide', 'build', 'storage', 'pratinjau', 'cari',
-        'halaman', 'pengumuman', 'laporan', 'up',
+        'halaman', 'pengumuman', 'laporan', 'up', 'buku-tamu',
     ];
 
     protected $fillable = [

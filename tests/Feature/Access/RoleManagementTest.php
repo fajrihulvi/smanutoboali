@@ -15,7 +15,7 @@ it('operator melihat daftar 5 role inti beserta jumlah permission', function () 
             ->has('roles.data', 5)
             ->where('roles.data.0.code', 'principal')
             ->where('roles.data.0.is_core', true)
-            ->where('roles.data.2.permissions_count', 19));
+            ->where('roles.data.2.permissions_count', 20));
 });
 
 it('menampilkan permission role dikelompokkan per modul', function () {

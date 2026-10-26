@@ -47,7 +47,7 @@ Operator menyiapkan data dan menjalankan administrasi harian. Urutan persiapan a
 
 1. **Pengaturan Sekolah** → nama, logo, alamat, NPSN, kepala sekolah & tanda tangan (untuk raport), batas ukuran upload, mode presensi (harian atau per mapel), KKM & predikat nilai.
 2. **Master Data → Tahun Ajaran** → buat tahun ajaran, lalu aktifkan tahun ajaran & semester yang berjalan. Pilihan di pojok atas (mis. "TA 2026/2027 · Ganjil") mengikuti yang aktif.
-3. **Master Data → Mata Pelajaran**.
+3. **Master Data → Mata Pelajaran** → tambah satu per satu atau **Impor Excel** (unduh templatnya dulu; isi kode, nama, kelompok, dan aktif Ya/Tidak). Kode yang sudah terdaftar dilewati dan dilaporkan.
 4. **Master Data → Guru** → tambah guru satu per satu atau **Impor Excel** (unduh templatnya dulu; kolom NIP/NUPTK biarkan berformat Teks). Centang *buat akun* agar guru bisa login; password sementara ditampilkan sekali. Guru hasil impor belum punya akun — buat dari halaman **Ubah** tiap guru.
 5. **Master Data → Kelas** → buat rombel, pilih wali kelas, lalu masukkan siswa ke rombel.
 6. **Master Data → Siswa** → tambah satu per satu atau **Impor** dari Excel (unduh templatnya dulu). Tautkan orang tua di halaman ubah siswa.

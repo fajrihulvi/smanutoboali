@@ -1,5 +1,5 @@
-import { Head } from '@inertiajs/react';
-import { BookOpen, Plus } from 'lucide-react';
+import { Head, Link } from '@inertiajs/react';
+import { BookOpen, FileSpreadsheet, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { DataTable } from '@/Components/shared/DataTable';
 import type { DataTableColumn } from '@/Components/shared/DataTable';
@@ -111,12 +111,22 @@ export default function SubjectsIndex({ subjects, filters, groups }: Props) {
                 title="Mata Pelajaran"
                 description="Daftar mata pelajaran yang dipakai untuk penugasan mengajar dan penilaian."
                 actions={
-                    <Button
-                        onClick={() => setDialog({ open: true, subject: null })}
-                    >
-                        <Plus />
-                        Tambah mapel
-                    </Button>
+                    <>
+                        <Button variant="outline" asChild>
+                            <Link href={`${BASE}/impor`}>
+                                <FileSpreadsheet />
+                                Impor Excel
+                            </Link>
+                        </Button>
+                        <Button
+                            onClick={() =>
+                                setDialog({ open: true, subject: null })
+                            }
+                        >
+                            <Plus />
+                            Tambah mapel
+                        </Button>
+                    </>
                 }
             />
 

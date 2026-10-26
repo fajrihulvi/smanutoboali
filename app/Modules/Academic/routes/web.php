@@ -6,6 +6,7 @@ use App\Modules\Academic\Http\Controllers\Operator\ClassroomEnrollmentController
 use App\Modules\Academic\Http\Controllers\Operator\PromotionController;
 use App\Modules\Academic\Http\Controllers\Operator\ScheduleController;
 use App\Modules\Academic\Http\Controllers\Operator\SubjectController;
+use App\Modules\Academic\Http\Controllers\Operator\SubjectImportController;
 use App\Modules\Academic\Http\Controllers\Operator\TeachingAssignmentController;
 use App\Modules\Academic\Http\Controllers\Principal\AcademicController as PrincipalAcademicController;
 use App\Modules\Academic\Http\Controllers\Teacher\ClassController;
@@ -35,6 +36,9 @@ Route::middleware(['auth', 'active.role:operator', 'permission:master_data.manag
             Route::post('kelas/{classroom}/siswa', [ClassroomEnrollmentController::class, 'store'])->name('classrooms.enroll');
             Route::delete('kelas/{classroom}/siswa/{student}', [ClassroomEnrollmentController::class, 'destroy'])->name('classrooms.unenroll');
 
+            Route::get('mapel/impor', [SubjectImportController::class, 'index'])->name('subjects.import');
+            Route::post('mapel/impor', [SubjectImportController::class, 'store'])->name('subjects.import.store');
+            Route::get('mapel/impor/template', [SubjectImportController::class, 'template'])->name('subjects.import.template');
             Route::get('mapel', [SubjectController::class, 'index'])->name('subjects.index');
             Route::post('mapel', [SubjectController::class, 'store'])->name('subjects.store');
             Route::put('mapel/{subject}', [SubjectController::class, 'update'])->name('subjects.update');

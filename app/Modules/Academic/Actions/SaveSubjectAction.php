@@ -11,12 +11,17 @@ class SaveSubjectAction
 
     /**
      * @param  array{code: string, name: string, group: string, is_active: bool}  $data
+     * @param  bool  $audit  false saat impor massal (dicatat sekali per file oleh ImportSubjectsJob)
      */
-    public function handle(array $data, ?Subject $subject = null): Subject
+    public function handle(array $data, ?Subject $subject = null, bool $audit = true): Subject
     {
         $isNew = $subject === null;
         $subject ??= new Subject;
         $subject->fill($data)->save();
+
+        if (! $audit) {
+            return $subject;
+        }
 
         $this->audit->record(
             'academic',

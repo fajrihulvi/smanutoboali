@@ -1,1 +1,0 @@
-import{c as r,j as o}from"./app-DWiw0K5G.js";import{S as l}from"./StatusBadge-CW8eWyQg.js";const u={AKTIF:"success",LULUS:"brand",PINDAH:"info",KELUAR:"neutral"};function m(n){const t=r.c(3),{status:s}=n,e=u[s.value]??"neutral";let a;return t[0]!==s.label||t[1]!==e?(a=o.jsx(l,{variant:e,dot:!0,children:s.label}),t[0]=s.label,t[1]=e,t[2]=a):a=t[2],a}export{m as S};

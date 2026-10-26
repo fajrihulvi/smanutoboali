@@ -1,1 +1,0 @@
-import{c as o}from"./FlashToaster-98zHGI0Z.js";const a=[["path",{d:"M9 14 4 9l5-5",key:"102s5s"}],["path",{d:"M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11",key:"f3b9sd"}]],d=o("Undo2",a);export{d as U};

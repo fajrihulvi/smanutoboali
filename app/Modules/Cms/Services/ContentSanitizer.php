@@ -43,7 +43,7 @@ class ContentSanitizer
             ->allowRelativeMedias()
             ->withMaxInputLength(self::MAX_LENGTH);
 
-        foreach (['p', 'h2', 'h3', 'h4', 'strong', 'b', 'em', 'i', 'u', 's', 'ul', 'ol', 'li', 'blockquote', 'br', 'hr', 'figure', 'figcaption', 'code', 'pre'] as $tag) {
+        foreach (['p', 'h2', 'h3', 'h4', 'strong', 'b', 'em', 'i', 'u', 's', 'ul', 'ol', 'li', 'blockquote', 'br', 'hr', 'figure', 'figcaption', 'code', 'pre', 'table', 'thead', 'tbody', 'tr', 'colgroup', 'col'] as $tag) {
             $config = $config->allowElement($tag);
         }
 
@@ -51,6 +51,8 @@ class ContentSanitizer
             ->allowElement('a', ['href', 'title', 'target'])
             ->forceAttribute('a', 'rel', 'noopener noreferrer')
             ->allowElement('img', ['src', 'alt', 'title', 'width', 'height'])
+            ->allowElement('th', ['colspan', 'rowspan'])
+            ->allowElement('td', ['colspan', 'rowspan'])
             ->blockElement('div')
             ->blockElement('span')
             ->blockElement('h1')

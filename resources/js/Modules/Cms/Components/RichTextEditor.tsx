@@ -1,4 +1,5 @@
 import Image from '@tiptap/extension-image';
+import { TableKit } from '@tiptap/extension-table';
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import {
@@ -14,6 +15,7 @@ import {
     Quote,
     Redo2,
     Strikethrough,
+    Table,
     Underline,
     Undo2,
     Unlink,
@@ -69,6 +71,33 @@ function ToolButton({
     );
 }
 
+function TableAction({
+    label,
+    danger,
+    active,
+    onClick,
+}: {
+    label: string;
+    danger?: boolean;
+    active?: boolean;
+    onClick: () => void;
+}) {
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            aria-pressed={active}
+            className={cn(
+                'rounded-md px-2 py-1 text-xs font-medium text-slate-600 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-900',
+                active && 'bg-brand-50 text-brand-700 hover:bg-brand-100',
+                danger && 'text-rose-600 hover:bg-rose-50 hover:text-rose-700',
+            )}
+        >
+            {label}
+        </button>
+    );
+}
+
 function Divider() {
     return <span className="mx-1 h-5 w-px bg-slate-200" aria-hidden />;
 }
@@ -95,6 +124,8 @@ export function RichTextEditor({ id, value, onChange, invalid }: Props) {
                 },
             }),
             Image.configure({ HTMLAttributes: { loading: 'lazy' } }),
+            // Lebar kolom tidak bisa diseret: atribut style dibuang sanitasi server.
+            TableKit.configure({ table: { resizable: false } }),
         ],
         content: value,
         immediatelyRender: false,
@@ -124,6 +155,8 @@ export function RichTextEditor({ id, value, onChange, invalid }: Props) {
                       ordered: e.isActive('orderedList'),
                       quote: e.isActive('blockquote'),
                       link: e.isActive('link'),
+                      table: e.isActive('table'),
+                      headerRow: e.isActive('tableHeader'),
                       canUndo: e.can().undo(),
                       canRedo: e.can().redo(),
                   }
@@ -297,6 +330,20 @@ export function RichTextEditor({ id, value, onChange, invalid }: Props) {
                     onClick={() => fileInput.current?.click()}
                 />
                 {uploading && <Spinner className="ml-1 size-4" />}
+                <ToolButton
+                    icon={Table}
+                    label="Sisipkan tabel"
+                    active={state?.table}
+                    onClick={() =>
+                        chain()
+                            ?.insertTable({
+                                rows: 3,
+                                cols: 3,
+                                withHeaderRow: true,
+                            })
+                            .run()
+                    }
+                />
                 <span className="ml-auto flex">
                     <ToolButton
                         icon={Undo2}
@@ -326,6 +373,45 @@ export function RichTextEditor({ id, value, onChange, invalid }: Props) {
                     }}
                 />
             </div>
+            {state?.table && (
+                <div
+                    role="toolbar"
+                    aria-label="Atur tabel"
+                    className="flex flex-wrap items-center gap-0.5 border-b border-slate-200 bg-white px-1 py-0.5"
+                >
+                    <span className="px-2 text-xs text-slate-500">Tabel:</span>
+                    <TableAction
+                        label="+ Baris"
+                        onClick={() => chain()?.addRowAfter().run()}
+                    />
+                    <TableAction
+                        label="+ Kolom"
+                        onClick={() => chain()?.addColumnAfter().run()}
+                    />
+                    <TableAction
+                        label="− Baris"
+                        onClick={() => chain()?.deleteRow().run()}
+                    />
+                    <TableAction
+                        label="− Kolom"
+                        onClick={() => chain()?.deleteColumn().run()}
+                    />
+                    <TableAction
+                        label="Baris judul"
+                        active={state.headerRow}
+                        onClick={() => chain()?.toggleHeaderRow().run()}
+                    />
+                    <TableAction
+                        label="Gabung/pisah sel"
+                        onClick={() => chain()?.mergeOrSplit().run()}
+                    />
+                    <TableAction
+                        label="Hapus tabel"
+                        danger
+                        onClick={() => chain()?.deleteTable().run()}
+                    />
+                </div>
+            )}
             <EditorContent editor={editor} />
         </div>
     );

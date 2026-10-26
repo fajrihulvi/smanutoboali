@@ -14,4 +14,11 @@ export const PROSE_CLASS = [
     '[&_hr]:my-6 [&_hr]:border-slate-200',
     '[&_img]:my-4 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-lg',
     '[&_img.ProseMirror-selectednode]:ring-2 [&_img.ProseMirror-selectednode]:ring-brand-400',
+    // Tabel memenuhi lebar editor; bergulir horizontal bila kolomnya terlalu banyak.
+    '[&_.tableWrapper]:my-4 [&_.tableWrapper]:overflow-x-auto',
+    '[&_table]:w-full [&_table]:border-collapse [&_table]:text-sm',
+    '[&_th]:border [&_th]:border-slate-300 [&_th]:bg-slate-50 [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:align-top [&_th]:font-semibold [&_th]:text-slate-900',
+    '[&_td]:border [&_td]:border-slate-300 [&_td]:px-3 [&_td]:py-2 [&_td]:align-top',
+    '[&_td_p]:my-0 [&_th_p]:my-0 [&_td]:min-w-24 [&_th]:min-w-24',
+    '[&_.selectedCell]:bg-brand-50',
 ].join(' ');

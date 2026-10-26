@@ -107,6 +107,33 @@ describe('sanitasi HTML', function () {
             ->not->toContain('<style');
     });
 
+    it('menyimpan tabel dari editor dan menampilkannya di website dengan pembungkus gulir', function () {
+        $this->actingAs($this->operator)->post('/operator/cms/halaman', [
+            'title' => 'Jadwal Ekstrakurikuler',
+            'slug' => 'jadwal-ekskul',
+            'status' => ContentStatus::Published->value,
+            // Bentuk HTML keluaran TipTap (TableKit).
+            'content' => '<table style="min-width: 75px" onclick="x()"><colgroup><col style="min-width: 25px"></colgroup><tbody>'
+                .'<tr><th colspan="1" rowspan="1"><p>Hari</p></th><th colspan="2" rowspan="1" style="color:red"><p>Kegiatan</p></th></tr>'
+                .'<tr><td colspan="1" rowspan="1"><p>Senin</p></td><td colspan="1" rowspan="1"><p>Pramuka</p></td><td><p>Hadroh</p></td></tr>'
+                .'</tbody></table>',
+        ])->assertSessionHasNoErrors();
+
+        $content = WebsitePage::query()->where('slug', 'jadwal-ekskul')->sole()->content;
+
+        expect($content)
+            ->toContain('<table>')
+            ->toContain('<th colspan="2" rowspan="1"><p>Kegiatan</p></th>')
+            ->toContain('<td colspan="1" rowspan="1"><p>Senin</p></td>')
+            ->not->toContain('style=')
+            ->not->toContain('onclick');
+
+        auth()->logout();
+        $this->get('/jadwal-ekskul')->assertOk()
+            ->assertSee('<div class="my-6 overflow-x-auto"><table>', false)
+            ->assertSee('</table></div>', false);
+    });
+
     it('menyimpan isi editor kosong sebagai string kosong', function () {
         $page = WebsitePage::query()->where('slug', 'profil')->sole();
 

@@ -6,6 +6,7 @@ use App\Modules\Core\Services\HealthCheckService;
 use App\Modules\People\Models\Student;
 use App\Modules\School\Models\School;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -131,5 +132,15 @@ describe('skoolia:go-live-check', function () {
             ->doesntExpectOutputToContain('Aktifkan SSL')
             ->doesntExpectOutputToContain('Nonaktifkan/hapus di User Management')
             ->doesntExpectOutputToContain('Ganti password');
+    });
+
+    it('menandai migrasi dan permission yang belum dijalankan setelah git pull', function () {
+        DB::table('migrations')->where('migration', '2026_10_26_120000_create_guest_visits_table')->delete();
+        Permission::query()->where('name', 'guest_book.manage')->delete();
+
+        $this->artisan('skoolia:go-live-check')
+            ->expectsOutputToContain('2026_10_26_120000_create_guest_visits_table — Jalankan php artisan migrate --force')
+            ->expectsOutputToContain('guest_book.manage — Jalankan php artisan db:seed --force')
+            ->assertFailed();
     });
 });

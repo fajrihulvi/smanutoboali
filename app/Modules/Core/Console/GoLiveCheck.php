@@ -3,6 +3,7 @@
 namespace App\Modules\Core\Console;
 
 use App\Models\User;
+use App\Modules\Access\Enums\Permission;
 use App\Modules\Cms\Models\WebsitePage;
 use App\Modules\Core\Enums\Role;
 use App\Modules\Core\Services\HealthCheckService;
@@ -12,6 +13,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Backup\BackupDestination\BackupDestination;
+use Spatie\Permission\Models\Permission as PermissionModel;
 use Throwable;
 
 /**
@@ -33,6 +35,7 @@ class GoLiveCheck extends Command
     public function handle(): int
     {
         $this->app();
+        $this->database();
         $this->services();
         $this->operations();
         $this->accounts();
@@ -71,6 +74,30 @@ class GoLiveCheck extends Command
         $missing = array_values(array_filter(self::PHP_EXTENSIONS, fn (string $ext) => ! extension_loaded($ext)));
         $this->check('Ekstensi PHP lengkap', $missing === [], 'Aktifkan di Select PHP Version → Extensions: '.implode(', ', $missing));
         $this->check('Config sudah di-cache (php artisan optimize)', app()->configurationIsCached(), 'Jalankan php artisan optimize', warnOnly: true);
+    }
+
+    /**
+     * Setelah git pull: migrasi & permission baru wajib dijalankan, kalau tidak halaman fitur baru error 500.
+     */
+    private function database(): void
+    {
+        try {
+            $migrator = app('migrator');
+            $files = $migrator->getMigrationFiles([database_path('migrations'), ...$migrator->paths()]);
+            $pending = array_values(array_diff(array_keys($files), $migrator->getRepository()->getRan()));
+        } catch (Throwable $e) {
+            $this->check('Database terhubung', false, 'Periksa DB_* di .env', info: class_basename($e));
+
+            return;
+        }
+
+        $this->check('Semua migrasi sudah dijalankan', $pending === [], 'Jalankan php artisan migrate --force', info: $pending === [] ? null : count($pending).' belum: '.implode(', ', array_slice($pending, 0, 3)));
+
+        $missing = array_values(array_diff(
+            array_map(fn (Permission $p) => $p->value, Permission::cases()),
+            PermissionModel::query()->pluck('name')->all(),
+        ));
+        $this->check('Semua permission terdaftar', $missing === [], 'Jalankan php artisan db:seed --force', info: $missing === [] ? null : 'Belum ada: '.implode(', ', $missing));
     }
 
     private function services(): void

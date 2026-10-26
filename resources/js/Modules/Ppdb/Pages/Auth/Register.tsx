@@ -55,7 +55,7 @@ export default function RegisterApplicant() {
                         aria-invalid={!!form.errors.email}
                     />
                     <p className="text-xs text-slate-500">
-                        Tautan verifikasi akan dikirim ke email ini.
+                        Dipakai untuk masuk dan menerima kabar pendaftaran.
                     </p>
                     <InputError message={form.errors.email} />
                 </div>

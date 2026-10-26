@@ -6,7 +6,6 @@ use App\Modules\Core\Models\File;
 use App\Modules\Ppdb\Enums\ApplicantStatus;
 use App\Modules\Ppdb\Models\PpdbApplicant;
 use App\Modules\Ppdb\Notifications\ApplicationSubmittedNotification;
-use App\Modules\Ppdb\Notifications\VerifyApplicantEmailNotification;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -17,35 +16,35 @@ beforeEach(function () {
 });
 
 describe('akun PPDB', function () {
-    it('daftar akun → email verifikasi → portal terbuka setelah verifikasi', function () {
+    it('daftar akun → langsung terverifikasi & masuk dashboard tanpa email verifikasi', function () {
         Notification::fake();
+        ['regular' => $regular] = ppdbScenario();
 
         $this->post('/ppdb/daftar', ['name' => 'Budi', 'email' => 'Budi@Contoh.test', 'password' => 'rahasia123', 'password_confirmation' => 'rahasia123'])
-            ->assertRedirect('/ppdb/akun/verifikasi-email');
+            ->assertRedirect('/ppdb/akun/dashboard?mulai=1');
 
         $user = User::query()->where('email', 'budi@contoh.test')->sole();
-        expect($user->hasRoleEnum(Role::Applicant))->toBeTrue()->and($user->email_verified_at)->toBeNull();
-        Notification::assertSentTo($user, VerifyApplicantEmailNotification::class);
+        expect($user->hasRoleEnum(Role::Applicant))->toBeTrue()
+            ->and($user->email_verified_at)->not->toBeNull();
+        $this->assertAuthenticatedAs($user);
+        Notification::assertNothingSentTo($user);
 
-        $this->get('/ppdb/akun/dashboard')->assertRedirect('/ppdb/akun/verifikasi-email');
+        // Dialog "Daftarkan calon siswa" langsung terbuka, lalu formulir data siswa bisa diisi.
+        $this->get('/ppdb/akun/dashboard?mulai=1')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->component('Ppdb::Applicant/Dashboard')
+            ->where('autoStart', true));
+        $this->post('/ppdb/akun/pendaftaran', ['track' => $regular->public_id])->assertRedirect();
+        expect(PpdbApplicant::query()->where('user_id', $user->id)->exists())->toBeTrue();
 
-        $url = VerifyApplicantEmailNotification::url($user);
-        expect($url)->toContain($user->public_id)->not->toContain('/'.$user->id.'/');
-        $this->get($url)->assertRedirect(route('applicant.dashboard'));
-        expect($user->fresh()->email_verified_at)->not->toBeNull();
-        // Guard di test menyimpan objek user dari request pendaftaran; di aplikasi nyata tiap request memuat ulang.
-        $this->actingAsRole(Role::Applicant, $user->fresh());
-        $this->get('/ppdb/akun/dashboard')->assertOk()->assertInertia(fn (Assert $page) => $page->component('Ppdb::Applicant/Dashboard'));
+        $this->get('/ppdb/akun/dashboard')->assertInertia(fn (Assert $page) => $page->where('autoStart', false));
+        $this->get('/ppdb/akun/verifikasi-email')->assertNotFound();
     });
 
-    it('tautan verifikasi palsu atau kedaluwarsa ditolak', function () {
+    it('akun PPDB lama yang belum terverifikasi tetap bisa membuka portal', function () {
         $user = User::factory()->withRole(Role::Applicant)->create(['email_verified_at' => null]);
+        $this->actingAsRole(Role::Applicant, $user);
 
-        $this->get("/ppdb/verifikasi/{$user->public_id}/".sha1($user->email))->assertForbidden();
-        $url = VerifyApplicantEmailNotification::url($user);
-        $this->travel(25)->hours();
-        $this->get($url)->assertForbidden();
-        expect($user->fresh()->email_verified_at)->toBeNull();
+        $this->get('/ppdb/akun/dashboard')->assertOk();
     });
 
     it('login /ppdb/masuk hanya untuk akun PPDB; email sudah dipakai ditolak saat daftar', function () {

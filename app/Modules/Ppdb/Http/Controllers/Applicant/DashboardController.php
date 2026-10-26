@@ -41,6 +41,8 @@ class DashboardController extends Controller
                 'description' => $p->description,
                 'tracks' => $p->tracks->map(fn (PpdbTrack $t) => ['public_id' => $t->public_id, 'name' => $t->name, 'quota' => $t->quota, 'description' => $t->description])->values(),
             ])->values(),
+            // Setelah daftar akun (?mulai=1): dialog pilih periode & jalur langsung terbuka.
+            'autoStart' => $request->boolean('mulai') && $periods->isNotEmpty() && $applicants->isEmpty(),
         ]);
     }
 }

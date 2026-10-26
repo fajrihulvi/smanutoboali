@@ -5,11 +5,11 @@ namespace App\Modules\Ppdb\Actions;
 use App\Models\User;
 use App\Modules\Core\Enums\Role;
 use App\Modules\Core\Services\AuditLogger;
-use App\Modules\Ppdb\Notifications\VerifyApplicantEmailNotification;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Buat akun calon orang tua (role applicant) lalu kirim tautan verifikasi email.
+ * Buat akun calon orang tua (role applicant). Tanpa verifikasi email: akun langsung
+ * dianggap terverifikasi agar orang tua bisa langsung mendaftarkan calon siswa.
  */
 class RegisterApplicantAction
 {
@@ -27,13 +27,13 @@ class RegisterApplicantAction
                 'password' => $data['password'],
                 'is_active' => true,
             ]);
+            $user->forceFill(['email_verified_at' => now()])->save();
             $user->assignRole(Role::Applicant->value);
 
             return $user;
         });
 
         $this->audit->record('ppdb', 'account_registered', "Akun PPDB baru: {$user->email}", $user, causer: $user);
-        $user->notify(new VerifyApplicantEmailNotification);
 
         return $user;
     }

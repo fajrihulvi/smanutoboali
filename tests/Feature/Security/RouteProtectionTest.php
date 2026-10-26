@@ -19,7 +19,7 @@ const PUBLIC_ROUTES = [
     '/', '{slug}', 'berita', 'berita/{slug}', 'agenda', 'agenda/{slug}', 'galeri', 'galeri/{slug}',
     'guru', 'ppdb', 'sitemap.xml', 'robots.txt',
     // PPDB tamu (S26–S27)
-    'ppdb/daftar', 'ppdb/masuk', 'ppdb/hasil', 'ppdb/verifikasi/{user}/{hash}',
+    'ppdb/daftar', 'ppdb/masuk', 'ppdb/hasil',
     // Mesin ke mesin & infrastruktur
     'webhooks/midtrans', 'health', 'up', 'broadcasting/auth',
     // File publik (hanya visibility public, dicek di controller)

@@ -45,7 +45,11 @@ type OpenPeriod = {
     }[];
 };
 
-type Props = { applicants: ApplicantRow[]; openPeriods: OpenPeriod[] };
+type Props = {
+    applicants: ApplicantRow[];
+    openPeriods: OpenPeriod[];
+    autoStart: boolean;
+};
 
 const VARIANT: Record<ApplicantRow['status']['value'], StatusVariant> = {
     DRAFT: 'neutral',
@@ -58,8 +62,12 @@ const VARIANT: Record<ApplicantRow['status']['value'], StatusVariant> = {
     RE_REGISTERED: 'success',
 };
 
-export default function ApplicantDashboard({ applicants, openPeriods }: Props) {
-    const [open, setOpen] = useState(false);
+export default function ApplicantDashboard({
+    applicants,
+    openPeriods,
+    autoStart,
+}: Props) {
+    const [open, setOpen] = useState(autoStart);
     const { confirmDelete, dialog } = useConfirmDelete();
 
     return (

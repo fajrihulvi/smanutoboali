@@ -9,7 +9,6 @@ use App\Modules\Ppdb\Http\Controllers\Operator\ApplicantController;
 use App\Modules\Ppdb\Http\Controllers\Operator\PeriodController;
 use App\Modules\Ppdb\Http\Controllers\PublicResultController;
 use App\Modules\Ppdb\Http\Controllers\SelectionController;
-use App\Modules\Ppdb\Http\Middleware\EnsureApplicantEmailVerified;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,28 +28,18 @@ Route::middleware('guest')->prefix('ppdb')->group(function () {
 Route::get('ppdb/hasil', [PublicResultController::class, 'show'])->name('ppdb.result');
 Route::post('ppdb/hasil', [PublicResultController::class, 'check'])->middleware('throttle:10,1')->name('ppdb.result.check');
 
-// Tautan dari email: bertanda tangan, tidak wajib login.
-Route::get('ppdb/verifikasi/{user}/{hash}', [AccountController::class, 'verify'])
-    ->middleware(['signed', 'throttle:6,1'])
-    ->name('ppdb.verify');
-
 Route::middleware(['auth', 'active.role:applicant'])->prefix('ppdb/akun')->name('applicant.')->group(function () {
-    Route::get('verifikasi-email', [AccountController::class, 'notice'])->name('verification.notice');
-    Route::post('verifikasi-email', [AccountController::class, 'resend'])->middleware('throttle:3,1')->name('verification.send');
-
-    Route::middleware(EnsureApplicantEmailVerified::class)->group(function () {
-        Route::get('dashboard', ApplicantDashboardController::class)->name('dashboard');
-        Route::post('pendaftaran', [ApplicationController::class, 'store'])->name('applications.store');
-        Route::get('pendaftaran/{applicant}', [ApplicationController::class, 'edit'])->name('applications.edit');
-        Route::put('pendaftaran/{applicant}', [ApplicationController::class, 'update'])->middleware('throttle:60,1')->name('applications.update');
-        Route::delete('pendaftaran/{applicant}', [ApplicationController::class, 'destroy'])->name('applications.destroy');
-        Route::post('pendaftaran/{applicant}/dokumen/{requirement}', [ApplicationController::class, 'upload'])->name('applications.documents.store');
-        Route::delete('pendaftaran/{applicant}/dokumen/{requirement}', [ApplicationController::class, 'removeDocument'])->name('applications.documents.destroy');
-        Route::post('pendaftaran/{applicant}/kirim', [ApplicationController::class, 'submit'])->name('applications.submit');
-        Route::get('pendaftaran/{applicant}/bukti.pdf', [ApplicationController::class, 'proof'])->name('applications.proof');
-        Route::get('pendaftaran/{applicant}/daftar-ulang', [ReregistrationController::class, 'edit'])->name('reregistration.edit');
-        Route::post('pendaftaran/{applicant}/daftar-ulang', [ReregistrationController::class, 'store'])->name('reregistration.store');
-    });
+    Route::get('dashboard', ApplicantDashboardController::class)->name('dashboard');
+    Route::post('pendaftaran', [ApplicationController::class, 'store'])->name('applications.store');
+    Route::get('pendaftaran/{applicant}', [ApplicationController::class, 'edit'])->name('applications.edit');
+    Route::put('pendaftaran/{applicant}', [ApplicationController::class, 'update'])->middleware('throttle:60,1')->name('applications.update');
+    Route::delete('pendaftaran/{applicant}', [ApplicationController::class, 'destroy'])->name('applications.destroy');
+    Route::post('pendaftaran/{applicant}/dokumen/{requirement}', [ApplicationController::class, 'upload'])->name('applications.documents.store');
+    Route::delete('pendaftaran/{applicant}/dokumen/{requirement}', [ApplicationController::class, 'removeDocument'])->name('applications.documents.destroy');
+    Route::post('pendaftaran/{applicant}/kirim', [ApplicationController::class, 'submit'])->name('applications.submit');
+    Route::get('pendaftaran/{applicant}/bukti.pdf', [ApplicationController::class, 'proof'])->name('applications.proof');
+    Route::get('pendaftaran/{applicant}/daftar-ulang', [ReregistrationController::class, 'edit'])->name('reregistration.edit');
+    Route::post('pendaftaran/{applicant}/daftar-ulang', [ReregistrationController::class, 'store'])->name('reregistration.store');
 });
 
 Route::middleware(['auth', 'active.role:operator', 'permission:ppdb.manage'])->prefix('operator/ppdb')->name('operator.ppdb.')->group(function () {

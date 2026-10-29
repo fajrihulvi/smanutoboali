@@ -180,7 +180,7 @@ export default function Discounts({
                 open={editing.open}
                 onOpenChange={(open) => setEditing((c) => ({ ...c, open }))}
             >
-                <DialogContent className="sm:max-w-lg">
+                <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-lg">
                     <DiscountForm
                         key={editing.row?.public_id ?? 'new'}
                         row={editing.row}
